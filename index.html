@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Tucha Games</title>
+<title>Tucha Games - Jackpot</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -81,36 +81,36 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 .primary.red { background: linear-gradient(135deg, #dc2626, #e11d48); box-shadow: 0 8px 25px rgba(220, 38, 38, 0.35); }
 .primary:disabled { opacity: .55; cursor: default; box-shadow: none; }
 
-/* ===== CRASH ===== */
-.history { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; scrollbar-width: none; }
-.history::-webkit-scrollbar { display: none; }
-.history span {
-    flex: 0 0 auto; padding: 8px 12px; border-radius: 20px; background: #ffffff;
-    border: 2px solid rgba(59, 130, 246, 0.12); color: #2563eb;
-    font-size: 12px; font-weight: 900; box-shadow: 0 3px 10px rgba(37, 99, 235, 0.06);
+/* ===== JACKPOT TAB ===== */
+.jackpot-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
 }
-.rocket-area {
-    position: relative; height: 290px; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 26px; background: linear-gradient(135deg, #dbeafe, #ede9fe);
-    border: 2px solid rgba(59, 130, 246, 0.2); box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.1);
+.jackpot-pot-box {
+    text-align: center; background: linear-gradient(135deg, #dbeafe, #ede9fe);
+    border: 2px solid rgba(59, 130, 246, 0.2); border-radius: 20px; padding: 16px; margin-bottom: 16px;
 }
-#rocket-wrap {
-    position: absolute; width: 150px; height: 150px; left: 50%; top: 42%;
-    transform: translate(-50%,-50%); display: flex; align-items: center; justify-content: center; z-index: 2;
+.jackpot-pot-title { font-size: 12px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+.jackpot-pot-sum { font-size: 32px; font-weight: 950; color: #1e1b4b; margin: 4px 0; }
+.jackpot-timer { font-size: 14px; font-weight: 900; color: #2563eb; }
+
+.jackpot-players-list {
+    display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; margin-bottom: 16px;
+    scrollbar-width: thin;
 }
-#rocket { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 8px 20px rgba(37, 99, 235, 0.3)); }
-#rocket.flying { animation: rocketFloat .45s ease-in-out infinite alternate; }
-@keyframes rocketFloat {
-    from { transform: translateY(4px) rotate(-3deg); }
-    to { transform: translateY(-8px) rotate(4deg); }
+.jackpot-player-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #f8fafc; border: 2px solid rgba(59, 130, 246, 0.08); border-radius: 14px; padding: 10px 14px;
 }
-#rocket.crashed { filter: grayscale(1); opacity: .65; }
-#crash-status {
-    position: absolute; left: 0; right: 0; bottom: 60px; text-align: center;
-    font-size: 34px; font-weight: 950; color: #1e1b4b; text-shadow: 0 3px 8px rgba(255,255,255,0.9);
+.jp-left { display: flex; align-items: center; gap: 10px; }
+.jp-avatar {
+    width: 38px; height: 38px; border-radius: 50%; background: #e2e8f0;
+    display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 16px;
+    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-.crash-form { margin-top: 16px; }
+.jp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.jp-name { font-size: 13px; font-weight: 950; color: #0f172a; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jp-chance { font-size: 11px; font-weight: 900; color: #7c3aed; margin-top: 2px; }
+.jp-bet { font-size: 14px; font-weight: 950; color: #16a34a; }
 
 /* ===== INPUT ===== */
 label { font-size: 13px; font-weight: 900; color: #475569; }
@@ -120,29 +120,6 @@ input[type="number"] {
     text-align: center; font-size: 22px; font-weight: 900; box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
 }
 input[type="number"]:focus { border-color: #2563eb; background: #ffffff; box-shadow: 0 0 15px rgba(37, 99, 235, 0.2); }
-
-/* ===== PLAYERS ===== */
-.section-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px; color: #1e1b4b; font-size: 15px; font-weight: 950;
-}
-.players { display: grid; gap: 9px; }
-.player {
-    display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 10px;
-    padding: 12px; border-radius: 14px; background: #f8fafc; border: 2px solid rgba(59, 130, 246, 0.08);
-}
-.player.you {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(124, 58, 237, 0.06));
-    border-color: rgba(37, 99, 235, 0.35); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
-}
-.player-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 900; font-size: 13px; color: #0f172a; }
-.player-detail { margin-top: 4px; color: #64748b; font-size: 11px; font-weight: 800; }
-.player-x { color: #16a34a; font-weight: 950; }
-.player-status { margin-top: 3px; font-size: 10px; font-weight: 900; text-align: right; }
-.status-win { color: #16a34a; }
-.status-loss { color: #dc2626; }
-.status-live { color: #d97706; }
-.status-wait { color: #64748b; }
 
 /* ===== MINES (MINECRAFT STYLE) ===== */
 .grid {
@@ -161,28 +138,16 @@ input[type="number"]:focus { border-color: #2563eb; background: #ffffff; box-sha
 .cell:not(:disabled):hover { filter: brightness(1.06); transform: translateY(-3px); border-bottom-width: 6px; }
 .cell:not(:disabled):active { transform: scale(0.92) translateY(3px); border-bottom-width: 2px; }
 
-/* Картинка заполняет ячейку полностью без отступов и рамок */
-.cell img {
-    width: 100%; height: 100%; object-fit: fill; display: block; border-radius: inherit;
-}
+.cell img { width: 100%; height: 100%; object-fit: fill; display: block; border-radius: inherit; }
 
-/* Сливание открытых безопасных ячеек с фоном сетки */
 .cell.safe, .cell.revealed-safe {
-    background: transparent !important;
-    border: none !important;
-    border-bottom: none !important;
-    box-shadow: none !important;
-    opacity: 1 !important;
+    background: transparent !important; border: none !important; border-bottom: none !important; box-shadow: none !important; opacity: 1 !important;
 }
-
 .cell.bomb {
     background: linear-gradient(145deg, #ef4444, #b91c1c); border-bottom: 5px solid #7f1d1d;
     box-shadow: 0 0 22px rgba(239, 68, 68, 0.5);
 }
-
-.cell[data-emerald="true"] img {
-    animation: emeraldPulse 1.5s infinite alternate;
-}
+.cell[data-emerald="true"] img { animation: emeraldPulse 1.5s infinite alternate; }
 @keyframes emeraldPulse {
     from { filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6)); }
     to { filter: drop-shadow(0 0 16px rgba(251, 191, 36, 1)); }
@@ -201,8 +166,7 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
 .case-card {
     position: relative; min-height: 240px; overflow: hidden; padding: 14px; border-radius: 22px;
     border: 2px solid rgba(59, 130, 246, 0.12); background: linear-gradient(145deg, #ffffff, #f8fafc);
-    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
-    transition: transform .18s, border-color .18s, box-shadow .18s;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08); transition: transform .18s, border-color .18s, box-shadow .18s;
 }
 .case-card.available { cursor: pointer; border-color: rgba(37, 99, 235, 0.4); box-shadow: 0 12px 30px rgba(37, 99, 235, 0.15); }
 .case-card.available:active { transform: scale(.975); }
@@ -247,29 +211,17 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
     filter: drop-shadow(0 15px 35px rgba(37, 99, 235, 0.25)); transition: transform .25s, opacity .25s;
 }
 .case-detail-card.ready .case-big-image { animation: caseFloat 2.4s ease-in-out infinite alternate; }
-@keyframes caseFloat {
-    from { transform: translateY(3px); }
-    to { transform: translateY(-8px); }
-}
+@keyframes caseFloat { from { transform: translateY(3px); } to { transform: translateY(-8px); } }
 
-.case-quantity-selector {
-    display: flex; justify-content: center; gap: 8px; margin: 15px 0 10px;
-}
+.case-quantity-selector { display: flex; justify-content: center; gap: 8px; margin: 15px 0 10px; }
 .qty-btn {
     width: 36px; height: 36px; border-radius: 10px; border: 2px solid rgba(59, 130, 246, 0.2);
-    background: #f8fafc; color: #2563eb; font-size: 14px; font-weight: 950;
-    transition: all .15s;
+    background: #f8fafc; color: #2563eb; font-size: 14px; font-weight: 950; transition: all .15s;
 }
 .qty-btn:active { transform: scale(0.9); }
-.qty-btn.active {
-    background: #2563eb; color: #fff; border-color: #2563eb; 
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-}
+.qty-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
 
-#roulettes-container {
-    display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;
-}
-
+#roulettes-container { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 .roulette-wrap {
     position: relative; overflow: hidden; height: 90px; margin: 0; border-radius: 18px;
     background: linear-gradient(135deg, #e0e7ff, #ede9fe); border: 2px solid rgba(59, 130, 246, 0.2);
@@ -297,8 +249,7 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
 }
 .roulette-marker::before {
     content: ""; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-    width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-top: 10px solid #2563eb;
+    width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #2563eb;
 }
 
 /* ===== CASE PRIZES ===== */
@@ -339,13 +290,11 @@ nav {
 }
 nav button {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 4px; border: 0; background: none; color: #64748b; font-size: 10px; font-weight: 950;
-    transition: color .15s;
+    gap: 4px; border: 0; background: none; color: #64748b; font-size: 10px; font-weight: 950; transition: color .15s;
 }
 nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 235, 0.3)); }
 .nav-icon { height: 26px; font-size: 22px; }
 
-/* ===== SMALL SCREEN ===== */
 @media (max-width: 360px) {
     main { padding-left: 10px; padding-right: 10px; }
     .case-grid { gap: 10px; }
@@ -367,21 +316,15 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
 .deposit-overlay {
     position: fixed; inset: 0; z-index: 1000; display: none;
     align-items: flex-end; justify-content: center;
-    background: rgba(30, 27, 75, 0.55);
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    background: rgba(30, 27, 75, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
 .deposit-overlay.active { display: flex; }
 .deposit-sheet {
     width: 100%; max-width: 560px; background: #ffffff;
-    border-radius: 26px 26px 0 0;
-    padding: 20px 18px calc(22px + env(safe-area-inset-bottom));
-    box-shadow: 0 -12px 40px rgba(37, 99, 235, 0.18);
-    animation: sheetUp .22s ease-out;
+    border-radius: 26px 26px 0 0; padding: 20px 18px calc(22px + env(safe-area-inset-bottom));
+    box-shadow: 0 -12px 40px rgba(37, 99, 235, 0.18); animation: sheetUp .22s ease-out;
 }
-@keyframes sheetUp {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: none; opacity: 1; }
-}
+@keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .deposit-head { display: flex; align-items: center; justify-content: space-between; color: #1e1b4b; font-size: 19px; font-weight: 950; }
 .deposit-close { width: 34px; height: 34px; border: 0; border-radius: 10px; background: #eef2ff; color: #1e1b4b; font-weight: 950; }
 .deposit-sub { margin: 8px 0 14px; color: #64748b; font-size: 12px; font-weight: 800; line-height: 1.45; }
@@ -397,8 +340,7 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
 .deposit-status.wait { color: #d97706; }
 .deposit-check {
     width: 100%; margin-top: 10px; padding: 12px; border-radius: 14px;
-    border: 2px solid rgba(37, 99, 235, 0.3); background: #ffffff;
-    color: #2563eb; font-size: 13px; font-weight: 950;
+    border: 2px solid rgba(37, 99, 235, 0.3); background: #ffffff; color: #2563eb; font-size: 13px; font-weight: 950;
 }
 </style>
 </head>
@@ -424,42 +366,34 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
 <!-- MAIN -->
 <main>
 
-<!-- CRASH TAB -->
-<section id="tab-crash" class="tab active">
-    <div id="crash-history" class="history">
-        <span>1.42x</span>
-        <span>2.15x</span>
-        <span>1.08x</span>
-        <span>3.72x</span>
-        <span>1.31x</span>
-    </div>
-
-    <div class="rocket-area">
-        <div id="rocket-wrap">
-            <img id="rocket" src="./rocket.gif.gif" alt="Ракета" class="flying">
+<!-- JACKPOT / MULTIPLAYER ROULETTE TAB -->
+<section id="tab-jackpot" class="tab active">
+    <div class="panel">
+        <div class="jackpot-pot-box">
+            <div class="jackpot-pot-title">Общий банк раунда</div>
+            <div id="jp-total-pot" class="jackpot-pot-sum">$0.00</div>
+            <div id="jp-timer" class="jackpot-timer">Ожидание ставки...</div>
         </div>
-        <div id="crash-status">ОЖИДАНИЕ</div>
-    </div>
 
-    <div class="panel crash-form">
-        <label>Сумма ставки</label>
-        <input id="crash-bet" type="number" min="0.01" step="0.01" value="0.10">
-        <button id="crash-button" class="primary" onclick="handleCrashAction()">СДЕЛАТЬ СТАВКУ</button>
-    </div>
-
-    <div class="panel" style="margin-top:16px">
-        <div class="section-head">
-            <b>Игроки</b>
-            <span style="color:#16a34a; font-size:11px; font-weight:950;">● LIVE</span>
+        <div class="jackpot-header">
+            <b style="font-size: 15px; color: #1e1b4b;">🎯 Участники (<span id="jp-players-count">0</span>)</b>
+            <span style="font-size: 11px; font-weight: 900; color: #64748b;">Шанс зависит от ставки</span>
         </div>
-        <div id="live-bets" class="players"></div>
+
+        <div id="jp-players-list" class="jackpot-players-list">
+            <div style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">Пока никто не сделал ставку в этом раунде. Будь первым!</div>
+        </div>
+
+        <label>Ваша ставка ($)</label>
+        <input id="jp-bet-input" type="number" min="0.10" step="0.10" value="0.50">
+        <button id="jp-action-btn" class="primary" onclick="joinJackpot()">СДЕЛАТЬ СТАВКУ</button>
     </div>
 </section>
 
 <!-- MINES TAB -->
 <section id="tab-mines" class="tab">
     <div class="panel">
-        <div class="section-head">
+        <div class="section-head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; color:#1e1b4b; font-size:15px; font-weight:950;">
             <b>💣 МИНЫ</b>
             <span id="mines-state-label" style="color:#64748b; font-size:12px; font-weight:900;">Новая игра</span>
         </div>
@@ -647,8 +581,8 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
 
 <!-- NAVIGATION -->
 <nav>
-    <button data-tab="crash" class="active" onclick="switchTab('crash')">
-        <span class="nav-icon">🚀</span> РАКЕТКА
+    <button data-tab="jackpot" class="active" onclick="switchTab('jackpot')">
+        <span class="nav-icon">🎲</span> РУЛЕТКА
     </button>
     <button data-tab="mines" onclick="switchTab('mines')">
         <span class="nav-icon">💣</span> МИНЫ
@@ -685,14 +619,12 @@ function notify(type = "success") {
     try { tg?.HapticFeedback?.notificationOccurred(type); } catch(e) {}
 }
 
-// =========================================================
-// НАСТРОЙКИ (ССЫЛКА НА БАЗУ ДАННЫХ)
-// =========================================================
 const ADMIN_PASSWORD = "tucha2026";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAuc6L9YHv-IT77kz6sWEJEYyvKURRojhb8SjjBOS4ViCnK_af/exec";
 
 const userId = telegramUser ? String(telegramUser.id) : "demo_user";
 const userName = telegramUser?.first_name || "Игрок";
+const userPhoto = telegramUser?.photo_url || null;
 
 let balance = 0.10;
 let bonusCount = 0;
@@ -757,9 +689,7 @@ function saveUserData() {
 function updateBalance(shouldSave = true) {
     $("header-balance").textContent = money(balance);
     $("profile-balance").textContent = money(balance);
-    if (shouldSave) {
-        saveUserData();
-    }
+    if (shouldSave) saveUserData();
 }
 
 if (telegramUser) {
@@ -785,9 +715,7 @@ function openAdminPanel() {
     }
 }
 
-function closeAdminPanel() {
-    $("admin-modal").style.display = "none";
-}
+function closeAdminPanel() { $("admin-modal").style.display = "none"; }
 
 function fetchAllPlayers() {
     const listDiv = $("admin-players-list");
@@ -796,10 +724,7 @@ function fetchAllPlayers() {
         listDiv.innerHTML = '<p style="color: #f87171; text-align: center;">Укажи ссылку на Google Таблицу в коде (SCRIPT_URL)!</p>';
         return;
     }
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({action: "get_all"})
-    })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get_all"}) })
     .then(res => res.json())
     .then(data => {
         if(data.status === "success") {
@@ -822,9 +747,7 @@ function fetchAllPlayers() {
                 `;
             });
         }
-    }).catch(err => {
-        listDiv.innerHTML = '<p style="color: #f87171; text-align: center;">Ошибка соединения с базой.</p>';
-    });
+    }).catch(err => { listDiv.innerHTML = '<p style="color: #f87171; text-align: center;">Ошибка соединения с базой.</p>'; });
 }
 
 function adminEditBalance(targetId, targetName, currentBal, currentBonus) {
@@ -854,222 +777,173 @@ function switchTab(name) {
     haptic();
 }
 
-/* CRASH LOGIC */
-let crashState = "waiting", crashBet = 0, inCrash = false, crashMultiplier = 1, crashTarget = 2;
-let crashTimer = null, crashTick = null, crashRestart = null, simulatedPlayers = [], myCrashResult = null;
-let crashHistoryList = [1.42, 2.15, 1.08, 3.72, 1.31];
-const rocket = $("rocket");
+/* =========================================================
+   JACKPOT ROULETTE LOGIC (МНОГОПОЛЬЗОВАТЕЛЬСКАЯ РУЛЕТКА)
+   ======================================================== */
+let jpPlayers = []; // Массив участников раунда
+let jpState = "waiting"; // waiting, running, finished
+let jpTimer = null;
+let jpSecondsLeft = 15;
+const botNamesList = ["CryptoKing", "TuchaPro", "Sanya_Top", "LuckyMax", "DarkWinner", "Vova_Rich", "BrawlGod", "MegaBet", "TuskWin", "CryptoNinja"];
 
-function updateCrashHistoryUI() {
-    const container = $("crash-history");
-    if (!container) return;
-    container.innerHTML = "";
-    crashHistoryList.forEach(val => {
-        const span = document.createElement("span");
-        span.textContent = val.toFixed(2) + "x";
-        container.appendChild(span);
+function renderJackpotUI() {
+    const listEl = $("jp-players-list");
+    const countEl = $("jp-players-count");
+    const potEl = $("jp-total-pot");
+
+    countEl.textContent = jpPlayers.length;
+
+    let totalPot = jpPlayers.reduce((sum, p) => sum + p.bet, 0);
+    potEl.textContent = "$" + money(totalPot);
+
+    if (jpPlayers.length === 0) {
+        listEl.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">Пока никто не сделал ставку в этом раунде. Будь первым!</div>`;
+        return;
+    }
+
+    listEl.innerHTML = "";
+    jpPlayers.forEach(p => {
+        let chance = totalPot > 0 ? ((p.bet / totalPot) * 100).toFixed(1) : 0;
+        listEl.innerHTML += `
+            <div class="jackpot-player-item" style="${p.isMe ? 'border-color: #2563eb; background: rgba(37,99,235,0.04);' : ''}">
+                <div class="jp-left">
+                    <div class="jp-avatar">${p.avatar ? `<img src="${p.avatar}">` : '👤'}</div>
+                    <div>
+                        <div class="jp-name">${p.name} ${p.isMe ? '(Вы)' : ''}</div>
+                        <div class="jp-chance">Шанс: ${chance}%</div>
+                    </div>
+                </div>
+                <div class="jp-bet">$${money(p.bet)}</div>
+            </div>
+        `;
     });
 }
 
-function createDemoPlayers() {
-    const names = ["Саня", "CryptoKing", "Masha", "DarkPro", "Ivan", "TuchaFan", "Lucky"];
-    simulatedPlayers = Array.from({length: 7}, (_, index) => ({
-        id: "bot-" + index,
-        name: names[Math.floor(Math.random() * names.length)],
-        bet: Math.round((.10 + Math.random() * 2) * 100) / 100,
-        cashout: Math.random() < .75 ? Number((1.1 + Math.random() * 3).toFixed(2)) : null,
-        status: "waiting"
-    }));
+function checkAndStartBots() {
+    // Если игроков меньше 6, с некоторой вероятностью подсаживаем ботов в течение таймера
+    if (jpState === "running" && jpPlayers.length < 8 && jpSecondsLeft > 2) {
+        if (Math.random() < 0.6) {
+            const randomBotName = botNamesList[Math.floor(Math.random() * botNamesList.length)];
+            // Проверим, нет ли уже такого бота
+            if (!jpPlayers.some(p => p.name === randomBotName)) {
+                const botBet = Math.round((Math.random() * 2 + 0.10) * 100) / 100;
+                jpPlayers.push({
+                    name: randomBotName,
+                    avatar: null,
+                    bet: botBet,
+                    isMe: false
+                });
+                renderJackpotUI();
+            }
+        }
+    }
 }
 
-function renderCrashPlayers() {
-    const container = $("live-bets");
-    container.innerHTML = "";
-    const list = simulatedPlayers.map(player => ({ ...player, you: false }));
-    if (crashBet > 0) {
-        list.unshift({
-            id: "you",
-            name: telegramUser?.first_name || "Ты",
-            bet: crashBet,
-            you: true,
-            cashout: myCrashResult?.x || null,
-            status: myCrashResult?.status || (inCrash ? "playing" : "waiting")
+function joinJackpot() {
+    if (jpState === "finished") return;
+
+    const betVal = Number($("jp-bet-input").value);
+    if (!Number.isFinite(betVal) || betVal <= 0 || betVal > balance) {
+        alert("Проверьте сумму ставки и ваш баланс!");
+        notify("error");
+        return;
+    }
+
+    balance -= betVal;
+    updateBalance(true);
+
+    // Проверим, есть ли уже текущий пользователь в списке участников этого раунда
+    let myEntry = jpPlayers.find(p => p.isMe);
+    if (myEntry) {
+        myEntry.bet += Math.round(betVal * 100) / 100;
+    } else {
+        jpPlayers.push({
+            name: userName,
+            avatar: userPhoto,
+            bet: Math.round(betVal * 100) / 100,
+            isMe: true
         });
     }
-    list.forEach(player => {
-        const row = document.createElement("div");
-        row.className = "player" + (player.you ? " you" : "");
-        const left = document.createElement("div");
-        const name = document.createElement("div");
-        name.className = "player-name";
-        name.textContent = (player.you ? "👤 " : "👥 ") + player.name + (player.you ? " (ТЫ)" : "");
-        const detail = document.createElement("div");
-        detail.className = "player-detail";
-        detail.textContent = "Ставка: $" + money(player.bet);
-        left.appendChild(name);
-        left.appendChild(detail);
 
-        const right = document.createElement("div");
-        const x = document.createElement("div");
-        x.className = "player-x";
-        const status = document.createElement("div");
-        status.className = "player-status";
+    if (jpState === "waiting") {
+        jpState = "running";
+        jpSecondsLeft = 15;
+        startJpTimer();
+    }
 
-        if (player.status === "won") {
-            x.textContent = Number(player.cashout).toFixed(2) + "x";
-            status.classList.add("status-win");
-            status.textContent = "✓ ЗАБРАЛ";
-        } else if (player.status === "lost") {
-            x.textContent = crashTarget.toFixed(2) + "x";
-            status.classList.add("status-loss");
-            status.textContent = "✕ НЕ УСПЕЛ";
-        } else if (player.status === "playing") {
-            x.textContent = crashMultiplier.toFixed(2) + "x";
-            status.classList.add("status-live");
-            status.textContent = "В ИГРЕ";
-        } else {
-            x.textContent = "—";
-            status.classList.add("status-wait");
-            status.textContent = "ОЖИДАНИЕ";
-        }
-        right.appendChild(x);
-        right.appendChild(status);
-        row.appendChild(left);
-        row.appendChild(right);
-        container.appendChild(row);
-    });
+    renderJackpotUI();
+    haptic("medium");
 }
 
-function startCrashRound() {
-    clearInterval(crashTimer);
-    clearInterval(crashTick);
-    clearTimeout(crashRestart);
-    crashState = "waiting";
-    crashBet = 0;
-    inCrash = false;
-    myCrashResult = null;
-    crashMultiplier = 1;
-    rocket.className = "flying";
-    rocket.style.transform = "";
-    $("crash-status").style.color = "#1e1b4b";
-    $("crash-button").disabled = false;
-    $("crash-button").className = "primary";
-    $("crash-button").textContent = "СДЕЛАТЬ СТАВКУ";
-    createDemoPlayers();
-    let seconds = 3;
-    $("crash-status").textContent = "СТАРТ ЧЕРЕЗ " + seconds;
-    renderCrashPlayers();
-    crashTimer = setInterval(() => {
-        seconds--;
-        if (seconds > 0) {
-            $("crash-status").textContent = "СТАРТ ЧЕРЕЗ " + seconds;
-        } else {
-            clearInterval(crashTimer);
-            runCrash();
+function startJpTimer() {
+    clearInterval(jpTimer);
+    const timerEl = $("jp-timer");
+    const btn = $("jp-action-btn");
+    btn.textContent = "ДОП. СТАВКА";
+
+    jpTimer = setInterval(() => {
+        jpSecondsLeft--;
+        timerEl.textContent = `Розыгрыш через: ${jpSecondsLeft} сек`;
+        checkAndStartBots();
+
+        if (jpSecondsLeft <= 0) {
+            clearInterval(jpTimer);
+            runJackpotSpin();
         }
     }, 1000);
 }
 
-function runCrash() {
-    crashState = "flying";
-    crashMultiplier = 1;
-    
-    const rand = Math.random();
-    if (rand < 0.65) {
-        crashTarget = 1.05 + Math.random() * 0.95;
-    } else if (rand < 0.90) {
-        crashTarget = 2.0 + Math.random() * 2.5;
-    } else {
-        crashTarget = 4.5 + Math.random() * 7.5;
-    }
+function runJackpotSpin() {
+    jpState = "finished";
+    const timerEl = $("jp-timer");
+    const btn = $("jp-action-btn");
+    btn.disabled = true;
+    btn.textContent = "РОЗЫГРЫШ...";
+    timerEl.textContent = "Крутим рулетку...";
+    notify("medium");
 
-    $("crash-status").textContent = "1.00x";
-    $("crash-button").disabled = !inCrash;
-    simulatedPlayers.forEach(player => { player.status = "playing"; });
-    renderCrashPlayers();
-    
-    crashTick = setInterval(() => {
-        crashMultiplier += .02;
-        $("crash-status").textContent = crashMultiplier.toFixed(2) + "x";
-        if (inCrash) {
-            $("crash-button").textContent = "ЗАБРАТЬ $" + money(crashBet * crashMultiplier);
+    // Выбираем победителя честно по весам ставок (чем больше ставка, тем шире отрезок)
+    let totalPot = jpPlayers.reduce((sum, p) => sum + p.bet, 0);
+    let winningPoint = Math.random() * totalPot;
+    let currentSum = 0;
+    let winner = jpPlayers[0];
+
+    for (let p of jpPlayers) {
+        currentSum += p.bet;
+        if (winningPoint <= currentSum) {
+            winner = p;
+            break;
         }
-        simulatedPlayers.forEach(player => {
-            if (player.status === "playing" && player.cashout !== null && crashMultiplier >= player.cashout && player.cashout < crashTarget) {
-                player.status = "won";
-            }
-        });
-        renderCrashPlayers();
-        if (crashMultiplier >= crashTarget) {
-            crashEnd();
+    }
+
+    setTimeout(() => {
+        timerEl.textContent = `🏆 Победитель: ${winner.name}!`;
+        btn.textContent = "НОВЫЙ РАУНД";
+        btn.disabled = false;
+        btn.onclick = resetJackpotGame;
+
+        if (winner.isMe) {
+            balance += totalPot;
+            updateBalance(true);
+            notify("success");
+            alert(`🎉 Поздравляем! Вы выиграли джекпот $${money(totalPot)}!`);
+        } else {
+            notify("error");
+            alert(`😢 Победил ${winner.name} с банком $${money(winner.bet)}. Повезет в следующий раз!`);
         }
-    }, 60);
+    }, 2000);
 }
 
-function crashEnd() {
-    clearInterval(crashTick);
-    crashState = "crashed";
-    rocket.className = "crashed";
-    rocket.style.transform = "rotate(140deg)";
-    $("crash-status").textContent = "КРАШ " + crashTarget.toFixed(2) + "x";
-    $("crash-status").style.color = "#dc2626";
-
-    crashHistoryList.push(Number(crashTarget.toFixed(2)));
-    if (crashHistoryList.length > 8) crashHistoryList.shift();
-    updateCrashHistoryUI();
-
-    if (inCrash) {
-        inCrash = false;
-        myCrashResult = { status: "lost", x: null };
-    }
-    simulatedPlayers.forEach(player => {
-        if (player.status === "playing") player.status = "lost";
-    });
-    renderCrashPlayers();
-    $("crash-button").disabled = true;
-    $("crash-button").textContent = "РАУНД ЗАВЕРШЁН";
-    notify("error");
-    crashRestart = setTimeout(startCrashRound, 3000);
+function resetJackpotGame() {
+    jpPlayers = [];
+    jpState = "waiting";
+    $("jp-timer").textContent = "Ожидание ставки...";
+    const btn = $("jp-action-btn");
+    btn.textContent = "СДЕЛАТЬ СТАВКУ";
+    btn.onclick = joinJackpot;
+    renderJackpotUI();
 }
 
-function readBet(inputId) {
-    const value = Number($(inputId).value);
-    if (!Number.isFinite(value) || value <= 0 || value > balance) {
-        alert("Проверь сумму ставки и баланс.");
-        return null;
-    }
-    return Math.round(value * 100) / 100;
-}
-
-function handleCrashAction() {
-    if (crashState === "waiting") {
-        const bet = readBet("crash-bet");
-        if (bet === null) return;
-        balance -= bet;
-        crashBet = bet;
-        inCrash = true;
-        myCrashResult = { status: "playing", x: null };
-        updateBalance(true);
-        renderCrashPlayers();
-        $("crash-button").disabled = true;
-        $("crash-button").textContent = "СТАВКА ПРИНЯТА";
-        haptic("medium");
-        return;
-    }
-    if (crashState === "flying" && inCrash) {
-        const x = Number(crashMultiplier.toFixed(2));
-        const win = Math.floor(crashBet * x * 100) / 100;
-        balance += win;
-        inCrash = false;
-        myCrashResult = { status: "won", x: x };
-        updateBalance(true);
-        renderCrashPlayers();
-        $("crash-button").disabled = true;
-        $("crash-button").className = "primary green";
-        $("crash-button").textContent = "ВЫИГРАНО $" + money(win);
-        notify("success");
-    }
-}
 
 /* MINES LOGIC (MINECRAFT STYLE) */
 let minesState = "idle", minePositions = [], mineBet = 0, mineMultiplier = 1, safeOpened = 0, bombCount = 3;
@@ -1146,6 +1020,15 @@ function revealAllMines() {
     });
 }
 
+function readBet(inputId) {
+    const value = Number($(inputId).value);
+    if (!Number.isFinite(value) || value <= 0 || value > balance) {
+        alert("Проверь сумму ставки и баланс.");
+        return null;
+    }
+    return Math.round(value * 100) / 100;
+}
+
 function startMines() {
     const bet = readBet("mines-bet");
     if (bet === null) return;
@@ -1172,9 +1055,7 @@ function startMines() {
     if(safeIndices.length > 0) {
         const emeraldIndex = safeIndices[Math.floor(Math.random() * safeIndices.length)];
         const targetCell = minesGrid.children[emeraldIndex];
-        if(targetCell) {
-            targetCell.dataset.emerald = "true";
-        }
+        if(targetCell) targetCell.dataset.emerald = "true";
     }
 
     minesState = "playing";
@@ -1218,9 +1099,7 @@ function clickMine(index, cell) {
     
     let stepMultiplier = .95 / probability;
     
-    if (isEmerald) {
-        emeraldMultiplierApplied = true;
-    }
+    if (isEmerald) emeraldMultiplierApplied = true;
     
     if (emeraldMultiplierApplied) {
         mineMultiplier = stepMultiplier * 3;
@@ -1289,10 +1168,8 @@ let caseQuantity = 1;
 
 function openCase(id, name, price, image, prizes, weights) {
     currentActiveCase = { id, name, price, image, prizes, weights };
-
     $("cases-list").style.display = "none";
     $("case-detail").classList.add("active");
-
     $("detail-case-title").textContent = name;
     $("case-big-image").src = image;
 
@@ -1307,7 +1184,6 @@ function openCase(id, name, price, image, prizes, weights) {
             </div>
         `;
     });
-
     setCaseQuantity(1); 
     window.scrollTo({ top: 0, behavior: "smooth" });
     haptic();
@@ -1324,12 +1200,10 @@ function closeCaseDetail() {
 function setCaseQuantity(qty) {
     if (caseOpening) return;
     caseQuantity = qty;
-    
     document.querySelectorAll('.qty-btn').forEach(btn => {
         btn.classList.remove('active');
         if (parseInt(btn.textContent) === qty) btn.classList.add('active');
     });
-    
     updateActiveCaseState();
     renderIdleRoulettes();
     haptic("light");
@@ -1352,14 +1226,12 @@ function updateActiveCaseState() {
     const totalPrice = currentActiveCase.price * caseQuantity;
 
     $("detail-case-price").textContent = "1шт = $" + currentActiveCase.price.toFixed(2);
-
     if (caseOpening) {
         button.disabled = true;
         button.textContent = "ОТКРЫВАЕМ...";
         timer.textContent = "Рулетки запускаются...";
         return;
     }
-
     button.disabled = false;
     button.textContent = `ОТКРЫТЬ ${caseQuantity} ЗА $${totalPrice.toFixed(2)}`;
     timer.textContent = "Стоимость спишется с баланса";
@@ -1375,13 +1247,11 @@ function createRouletteDOM(winner, prizesList, weightsList) {
         <div class="roulette-marker"></div>
     `;
     const strip = wrap.querySelector(".roulette-strip");
-    
     const winnerIndex = 28;
     const values = [];
     for (let i = 0; i < 45; i++) {
         values.push(i === winnerIndex ? winner : chooseWeightedPrize(prizesList, weightsList));
     }
-    
     const maxPrize = Math.max(...prizesList);
     values.forEach(value => {
         const isTopPrize = value === maxPrize;
@@ -1397,7 +1267,6 @@ function createRouletteDOM(winner, prizesList, weightsList) {
         `;
         strip.appendChild(item);
     });
-    
     return { wrap, strip, winnerIndex };
 }
 
@@ -1414,12 +1283,10 @@ function spinCaseElem(strip, wrap, winnerIndex) {
     return new Promise((resolve) => {
         const item = strip.children[0];
         if (!item) { resolve(); return; }
-
         const itemWidth = item.getBoundingClientRect().width;
         const gap = 9; 
         const step = itemWidth + gap;
         const viewportWidth = wrap.getBoundingClientRect().width;
-
         const randomOffset = (Math.random() - 0.5) * (itemWidth * 0.7);
         const centerPosition = (winnerIndex * step) + (itemWidth / 2) + randomOffset;
         const translate = centerPosition - (viewportWidth / 2);
@@ -1440,15 +1307,12 @@ function spinCaseElem(strip, wrap, winnerIndex) {
 
 async function openCurrentCase() {
     if (!currentActiveCase || caseOpening) return;
-
     const totalCost = currentActiveCase.price * caseQuantity;
-    
     if (balance < totalCost) {
         alert("Недостаточно средств на балансе!");
         notify("error");
         return;
     }
-    
     balance -= totalCost;
     updateBalance(true);
 
@@ -1469,7 +1333,6 @@ async function openCurrentCase() {
     for (let i = 0; i < caseQuantity; i++) {
         const winner = chooseWeightedPrize(currentActiveCase.prizes, currentActiveCase.weights);
         totalWin += winner;
-        
         const { wrap, strip, winnerIndex } = createRouletteDOM(winner, currentActiveCase.prizes, currentActiveCase.weights);
         container.appendChild(wrap);
         
@@ -1482,7 +1345,6 @@ async function openCurrentCase() {
     }
 
     await Promise.all(spinPromises);
-
     balance = Math.round((balance + totalWin) * 100) / 100;
     updateBalance(true);
 
@@ -1495,26 +1357,16 @@ async function openCurrentCase() {
     notify("success");
 }
 
-/* DEPOSIT (CRYPTO BOT) */
+/* DEPOSIT */
 const DEPOSIT_MIN = 1;
 const DEPOSIT_MAX = 1000;
 let depositPollTimer = null;
 let depositPollUntil = 0;
 let depositChecking = false;
 
-function openDeposit() {
-    $("deposit-modal").classList.add("active");
-    haptic();
-}
-
-function closeDeposit() {
-    $("deposit-modal").classList.remove("active");
-}
-
-function setDepositAmount(value) {
-    $("deposit-amount").value = value;
-    haptic();
-}
+function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
+function closeDeposit() { $("deposit-modal").classList.remove("active"); }
+function setDepositAmount(value) { $("deposit-amount").value = value; haptic(); }
 
 function setDepositStatus(text, type) {
     const el = $("deposit-status");
@@ -1524,33 +1376,20 @@ function setDepositStatus(text, type) {
 
 function openPayLink(url) {
     try {
-        if (tg?.openTelegramLink && url.startsWith("https://t.me/")) {
-            tg.openTelegramLink(url);
-            return;
-        }
-        if (tg?.openLink) {
-            tg.openLink(url);
-            return;
-        }
+        if (tg?.openTelegramLink && url.startsWith("https://t.me/")) { tg.openTelegramLink(url); return; }
+        if (tg?.openLink) { tg.openLink(url); return; }
     } catch(e) {}
     window.open(url, "_blank");
 }
 
 function createDeposit() {
-    if (!isDatabaseConnected()) {
-        setDepositStatus("База не подключена (SCRIPT_URL).", "error");
-        return;
-    }
-    if (!telegramUser) {
-        setDepositStatus("Откройте игру через Telegram, чтобы пополнить баланс.", "error");
-        return;
-    }
+    if (!isDatabaseConnected()) { setDepositStatus("База не подключена (SCRIPT_URL).", "error"); return; }
+    if (!telegramUser) { setDepositStatus("Откройте игру через Telegram, чтобы пополнить баланс.", "error"); return; }
 
     const amount = Math.round(Number($("deposit-amount").value) * 100) / 100;
     if (!Number.isFinite(amount) || amount < DEPOSIT_MIN || amount > DEPOSIT_MAX) {
         setDepositStatus("Сумма должна быть от $" + DEPOSIT_MIN + " до $" + DEPOSIT_MAX + ".", "error");
-        notify("error");
-        return;
+        notify("error"); return;
     }
 
     const button = $("deposit-pay");
@@ -1565,7 +1404,7 @@ function createDeposit() {
     .then(res => res.json())
     .then(data => {
         if (data.status !== "success") throw new Error(data.message || "Ошибка сервера");
-        setDepositStatus("Счёт на $" + money(data.amount) + " создан. Оплатите его в Crypto Bot — баланс пополнится автоматически.", "wait");
+        setDepositStatus("Счёт на $" + money(data.amount) + " создан. Оплатите его в Crypto Bot.", "wait");
         $("deposit-check").style.display = "block";
         openPayLink(data.pay_url);
         startDepositPolling();
@@ -1584,10 +1423,7 @@ function startDepositPolling() {
     depositPollUntil = Date.now() + 10 * 60 * 1000;
     clearInterval(depositPollTimer);
     depositPollTimer = setInterval(() => {
-        if (Date.now() > depositPollUntil) {
-            clearInterval(depositPollTimer);
-            return;
-        }
+        if (Date.now() > depositPollUntil) { clearInterval(depositPollTimer); return; }
         checkPayments(true);
     }, 10000);
 }
@@ -1604,18 +1440,11 @@ function checkPayments(silent) {
     .then(res => res.json())
     .then(data => {
         if (data.status !== "success") throw new Error(data.message || "Ошибка сервера");
-        if (Number(data.found) > 0) {
-            saveUserData();
-        } else if (!silent) {
-            setDepositStatus("Оплата пока не найдена. Если вы уже оплатили — подождите минуту.", "wait");
-        }
+        if (Number(data.found) > 0) saveUserData();
+        else if (!silent) setDepositStatus("Оплата пока не найдена...", "wait");
     })
-    .catch(err => {
-        if (!silent) setDepositStatus("Ошибка проверки: " + err.message, "error");
-    })
-    .finally(() => {
-        depositChecking = false;
-    });
+    .catch(err => { if (!silent) setDepositStatus("Ошибка проверки: " + err.message, "error"); })
+    .finally(() => { depositChecking = false; });
 }
 
 function onDepositCredited(amount) {
@@ -1623,21 +1452,14 @@ function onDepositCredited(amount) {
     $("deposit-check").style.display = "none";
     setDepositStatus("✅ Зачислено $" + money(amount) + "!", "ok");
     notify("success");
-    const text = "✅ Баланс пополнен на $" + money(amount);
-    try {
-        if (tg?.showAlert) tg.showAlert(text);
-        else alert(text);
-    } catch(e) {}
+    try { if (tg?.showAlert) tg.showAlert("✅ Баланс пополнен на $" + money(amount)); } catch(e) {}
 }
 
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") checkPayments(true);
-});
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkPayments(true); });
 try { tg?.onEvent?.("activated", () => checkPayments(true)); } catch(e) {}
 
 loadUserData();
-updateCrashHistoryUI();
-startCrashRound();
+buildMinesGrid();
 
 const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png"];
 preloadImgs.forEach(src => {
