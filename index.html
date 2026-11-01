@@ -15,7 +15,7 @@ html, body {
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 body { overflow-x: hidden; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button { cursor: pointer; }
 
 /* ===== BRIGHT BACKGROUND GLOWS ===== */
@@ -112,64 +112,42 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 .crash-form { margin-top: 16px; }
 
-/* ===== WHEEL / JACKPOT TAB (СТИЛЬ КАК НА КАРТИНКЕ) =====  */
-.wheel-area {
-    position: relative; width: 280px; height: 280px; margin: 10px auto 20px;
-    display: flex; align-items: center; justify-content: center;
+/* ===== CHICKEN ROAD TAB ===== */
+.chicken-arena {
+    position: relative; height: 260px; border-radius: 22px; background: #1e293b;
+    border: 2px solid #334155; overflow: hidden; display: flex; align-items: center; padding: 0 20px;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.5); margin-bottom: 16px;
 }
-.wheel-svg-wrap {
-    width: 100%; height: 100%; border-radius: 50%;
-    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
-    background: #0f172a; position: relative; overflow: hidden;
-    border: 6px solid #1e293b;
-    transition: transform 5s cubic-bezier(0.15, 0.75, 0.05, 1);
+.chicken-track {
+    display: flex; gap: 15px; transition: transform 0.4s ease; will-change: transform;
 }
-.wheel-pointer {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    width: 28px; height: 32px; z-index: 20;
-    background: linear-gradient(135deg, #ffffff, #cbd5e1);
-    clip-path: polygon(50% 100%, 0 0, 100% 0);
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+.chicken-step-box {
+    width: 90px; height: 160px; border-radius: 16px; background: #0f172a;
+    border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; color: #94a3b8; font-weight: 950; font-size: 14px; position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-.wheel-center-hole {
-    position: absolute; width: 110px; height: 110px; border-radius: 50%;
-    background: #0f172a; border: 4px solid #1e293b;
-    z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; color: #fff; box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
-}
-.wheel-center-title { font-size: 13px; font-weight: 950; color: #facc15; }
-.wheel-center-sub { font-size: 9px; font-weight: 800; color: #94a3b8; margin-top: 2px; padding: 0 6px; }
+.chicken-step-box.active-step { border-color: #2563eb; background: #1e3a8a; color: #fff; box-shadow: 0 0 15px rgba(37,99,235,0.5); }
+.chicken-step-box.passed { border-color: #16a34a; background: #064e3b; color: #4ade80; }
+.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; }
 
-.wheel-info-box {
-    background: linear-gradient(135deg, #dbeafe, #ede9fe);
-    border: 2px solid rgba(59, 130, 246, 0.2); border-radius: 20px; padding: 14px; margin-bottom: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-}
-.wheel-pot-title { font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; }
-.wheel-pot-sum { font-size: 24px; font-weight: 950; color: #1e1b4b; }
-.wheel-timer-badge {
-    background: #2563eb; color: #fff; padding: 8px 14px; border-radius: 12px;
-    font-size: 13px; font-weight: 950; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+.chicken-avatar-pos {
+    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+    font-size: 32px; transition: all 0.3s ease;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
 }
 
-.wheel-players-list {
-    display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 16px;
-    scrollbar-width: thin;
+.preset-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.preset-buttons button {
+    padding: 10px 0; border-radius: 12px; background: #f8fafc; border: 2px solid rgba(59, 130, 246, 0.2);
+    color: #2563eb; font-weight: 950; font-size: 13px;
 }
-.wheel-player-item {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #f8fafc; border: 2px solid rgba(59, 130, 246, 0.08); border-radius: 14px; padding: 10px 14px;
+.preset-buttons button:active { transform: scale(0.95); }
+
+select {
+    width: 100%; padding: 14px; border-radius: 15px; border: 2px solid rgba(59, 130, 246, 0.2);
+    background: #f8fafc; color: #0f172a; font-weight: 950; font-size: 15px; outline: none; margin-bottom: 14px;
 }
-.wp-left { display: flex; align-items: center; gap: 10px; }
-.wp-avatar {
-    width: 36px; height: 36px; border-radius: 50%; background: #e2e8f0;
-    display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 14px;
-    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.wp-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.wp-name { font-size: 13px; font-weight: 950; color: #0f172a; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wp-chance { font-size: 11px; font-weight: 900; color: #7c3aed; margin-top: 2px; }
-.wp-bet { font-size: 14px; font-weight: 950; color: #16a34a; }
 
 /* ===== INPUT ===== */
 label { font-size: 13px; font-weight: 900; color: #475569; }
@@ -478,39 +456,39 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
     </div>
 </section>
 
-<!-- WHEEL / JACKPOT TAB (КОЛЕСО ФОРТУНЫ КАК НА КАРТИНКЕ) -->
-<section id="tab-wheel" class="tab">
+<!-- CHICKEN ROAD TAB -->
+<section id="tab-chicken" class="tab">
     <div class="panel">
-        <div class="wheel-info-box">
-            <div>
-                <div class="wheel-pot-title">Общий банк</div>
-                <div id="wheel-total-pot" class="wheel-pot-sum">$0.00</div>
-            </div>
-            <div id="wheel-timer-badge" class="wheel-timer-badge">Ожидание</div>
-        </div>
-
-        <div class="wheel-area">
-            <div class="wheel-pointer"></div>
-            <div id="wheel-svg-wrap" class="wheel-svg-wrap" style="transform: rotate(0deg);">
-                <svg id="wheel-svg" viewBox="0 0 200 200" width="100%" height="100%"></svg>
-            </div>
-            <div class="wheel-center-hole">
-                <div id="wheel-center-title" class="wheel-center-title">РУЛЕТКА</div>
-                <div id="wheel-center-sub" class="wheel-center-sub">Ждём ставки</div>
-            </div>
-        </div>
-
         <div class="section-head">
-            <b>Участники (<span id="wheel-players-count">0</span>)</b>
-            <span style="font-size: 11px; color: #64748b;">Живые игроки</span>
-        </div>
-        <div id="wheel-players-list" class="wheel-players-list">
-            <div style="text-align: center; color: #64748b; font-size: 12px; padding: 15px;">Пока никто не сделал ставку. Сделайте ставку первыми!</div>
+            <b>🐔 КУРИЦА (CHICKEN ROAD)</b>
+            <span id="chicken-status" style="color:#64748b; font-size:12px; font-weight:900;">Сделайте ставку</span>
         </div>
 
-        <label>Ваша ставка ($)</label>
-        <input id="wheel-bet-input" type="number" min="0.10" step="0.10" value="0.50">
-        <button id="wheel-action-btn" class="primary" onclick="joinWheelGame()">СДЕЛАТЬ СТАВКУ</button>
+        <div class="chicken-arena">
+            <div id="chicken-track" class="chicken-track">
+                <!-- Шаги генерируются скриптом -->
+            </div>
+            <div class="chicken-avatar-pos">🐔</div>
+        </div>
+
+        <label>Сложность</label>
+        <select id="chicken-difficulty" onchange="resetChickenGame()">
+            <option value="easy">Легкий (плавный рост х)</option>
+            <option value="medium" selected>Средний (стандарт)</option>
+            <option value="hard">Сложный (высокие х, риск)</option>
+        </select>
+
+        <label>Сумма ставки</label>
+        <input id="chicken-bet" type="number" min="0.01" step="0.01" value="0.50">
+
+        <div class="preset-buttons">
+            <button onclick="setChickenBet(0.25)">$0.25</button>
+            <button onclick="setChickenBet(0.50)">$0.50</button>
+            <button onclick="setChickenBet(1.00)">$1.00</button>
+            <button onclick="setChickenBet(5.00)">$5.00</button>
+        </div>
+
+        <button id="chicken-btn" class="primary green" onclick="handleChickenAction()">ИГРАТЬ</button>
     </div>
 </section>
 
@@ -708,8 +686,8 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
     <button data-tab="crash" class="active" onclick="switchTab('crash')">
         <span class="nav-icon">🚀</span> РАКЕТКА
     </button>
-    <button data-tab="wheel" onclick="switchTab('wheel')">
-        <span class="nav-icon">🎯</span> КОЛЕСО
+    <button data-tab="chicken" onclick="switchTab('chicken')">
+        <span class="nav-icon">🐔</span> КУРИЦА
     </button>
     <button data-tab="mines" onclick="switchTab('mines')">
         <span class="nav-icon">💣</span> МИНЫ
@@ -1130,238 +1108,118 @@ function handleCrashAction() {
 
 
 /* =========================================================
-   WHEEL / JACKPOT LOGIC (ТОЛЬКО ЖИВЫЕ ИГРОКИ, КАК НА КАРТИНКЕ)
+   CHICKEN ROAD LOGIC (КУРИЦА)
    ======================================================== */
-let wheelPlayers = []; // Реальные игроки
-let wheelState = "waiting"; // waiting, running, spinning, finished
-let wheelTimer = null;
-let wheelSecondsLeft = 15;
-const wheelColors = ["#2563eb", "#f59e0b", "#7c3aed", "#16a34a", "#db2777", "#06b6d4", "#ea580c"];
+let chickenState = "idle";
+let chickenBet = 0;
+let currentStep = 0;
+let chickenMultipliers = [];
+const chickenMultipliersConfig = {
+    easy: [1.12, 1.28, 1.48, 1.75, 2.10, 2.60, 3.30, 4.20],
+    medium: [1.18, 1.42, 1.75, 2.20, 2.80, 3.60, 4.80, 6.50],
+    hard: [1.28, 1.65, 2.20, 3.00, 4.20, 6.00, 8.50, 12.00]
+};
 
-function renderWheelUI() {
-    const listEl = $("wheel-players-list");
-    const countEl = $("wheel-players-count");
-    const potEl = $("wheel-total-pot");
-
-    countEl.textContent = wheelPlayers.length;
-    let totalPot = wheelPlayers.reduce((sum, p) => sum + p.bet, 0);
-    potEl.textContent = "$" + money(totalPot);
-
-    if (wheelPlayers.length === 0) {
-        listEl.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 12px; padding: 15px;">Пока никто не сделал ставку. Сделайте ставку первыми!</div>`;
-        drawWheelSvg([]);
-        return;
-    }
-
-    listEl.innerHTML = "";
-    wheelPlayers.forEach((p, idx) => {
-        let chance = totalPot > 0 ? ((p.bet / totalPot) * 100).toFixed(1) : 0;
-        listEl.innerHTML += `
-            <div class="wheel-player-item" style="${p.isMe ? 'border-color: #2563eb; background: rgba(37,99,235,0.04);' : ''}">
-                <div class="wp-left">
-                    <div class="wp-avatar" style="border-color: ${wheelColors[idx % wheelColors.length]}">${p.avatar ? `<img src="${p.avatar}">` : '👤'}</div>
-                    <div>
-                        <div class="wp-name">${p.name} ${p.isMe ? '(Вы)' : ''}</div>
-                        <div class="wp-chance">Шанс: ${chance}%</div>
-                    </div>
-                </div>
-                <div class="wp-bet">$${money(p.bet)}</div>
-            </div>
-        `;
-    });
-
-    drawWheelSvg(totalPot);
+function setChickenBet(val) {
+    $("chicken-bet").value = val;
+    haptic("light");
 }
 
-function drawWheelSvg(totalPot) {
-    const svg = $("wheel-svg");
-    if (!svg) return;
-    svg.innerHTML = "";
+function buildChickenTrack() {
+    const track = $("chicken-track");
+    if (!track) return;
+    track.innerHTML = "";
+    const diff = $("chicken-difficulty").value;
+    chickenMultipliers = chickenMultipliersConfig[diff] || chickenMultipliersConfig.medium;
 
-    if (wheelPlayers.length === 0) {
-        svg.innerHTML = `<circle cx="100" cy="100" r="90" fill="#1e293b" />`;
+    chickenMultipliers.forEach((mult, index) => {
+        const box = document.createElement("div");
+        box.className = "chicken-step-box" + (index === 0 && chickenState === "playing" ? " active-step" : "");
+        box.id = `chicken-step-${index}`;
+        box.innerHTML = `<span>Шаг ${index + 1}</span><b style="font-size:16px;">${mult}x</b>`;
+        track.appendChild(box);
+    });
+}
+
+function resetChickenGame() {
+    chickenState = "idle";
+    currentStep = 0;
+    buildChickenTrack();
+    $("chicken-track").style.transform = "translateX(0px)";
+    $("chicken-btn").className = "primary green";
+    $("chicken-btn").textContent = "ИГРАТЬ";
+    $("chicken-status").textContent = "Сделайте ставку";
+}
+
+function handleChickenAction() {
+    if (chickenState === "idle") {
+        const bet = readBet("chicken-bet");
+        if (bet === null) return;
+        balance -= bet;
+        updateBalance(true);
+        chickenBet = bet;
+        chickenState = "playing";
+        currentStep = 0;
+
+        buildChickenTrack();
+        $("chicken-btn").className = "primary gold";
+        $("chicken-btn").textContent = "ШАГНУТЬ ВПЕРЕД 🐔";
+        $("chicken-status").textContent = "Шаг 1. Идем дальше!";
+        haptic("medium");
         return;
     }
 
-    let cumulativeAngle = 0;
-    const radius = 90;
-    const center = 100;
+    if (chickenState === "playing") {
+        const diff = $("chicken-difficulty").value;
+        const failChance = diff === "easy" ? 0.15 : (diff === "medium" ? 0.25 : 0.38);
+        const isFailed = Math.random() < failChance;
 
-    wheelPlayers.forEach((p, idx) => {
-        const share = totalPot > 0 ? (p.bet / totalPot) : (1 / wheelPlayers.length);
-        const angle = share * 360;
-        const color = wheelColors[idx % wheelColors.length];
-
-        if (angle >= 359.9) {
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", center);
-            circle.setAttribute("cy", center);
-            circle.setAttribute("r", radius);
-            circle.setAttribute("fill", color);
-            svg.appendChild(circle);
+        if (isFailed) {
+            chickenState = "lost";
+            const stepBox = $(`chicken-step-${currentStep}`);
+            if (stepBox) {
+                stepBox.className = "chicken-step-box burned";
+                stepBox.innerHTML = `<span>🔥 ОГОНЬ!</span>`;
+            }
+            $("chicken-status").textContent = "Курица сгорела! Ставка сгорела.";
+            $("chicken-btn").className = "primary red";
+            $("chicken-btn").textContent = "НОВАЯ ИГРА";
+            notify("error");
         } else {
-            const startAngle = cumulativeAngle;
-            const endAngle = cumulativeAngle + angle;
-            
-            const x1 = center + radius * Math.sin(Math.PI * startAngle / 180);
-            const y1 = center - radius * Math.cos(Math.PI * startAngle / 180);
-            const x2 = center + radius * Math.sin(Math.PI * endAngle / 180);
-            const y2 = center - radius * Math.cos(Math.PI * endAngle / 180);
+            const stepBox = $(`chicken-step-${currentStep}`);
+            if (stepBox) stepBox.className = "chicken-step-box passed";
 
-            const largeArc = angle > 180 ? 1 : 0;
-            const pathData = `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+            const mult = chickenMultipliers[currentStep];
+            const currentWin = money(chickenBet * mult);
 
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", pathData);
-            path.setAttribute("fill", color);
-            svg.appendChild(path);
-        }
-        cumulativeAngle += angle;
-    });
-}
-
-function joinWheelGame() {
-    if (wheelState === "spinning" || wheelState === "finished") return;
-
-    const betVal = Number($("wheel-bet-input").value);
-    if (!Number.isFinite(betVal) || betVal <= 0 || betVal > balance) {
-        alert("Проверьте сумму ставки и ваш баланс!");
-        notify("error");
-        return;
-    }
-
-    balance -= betVal;
-    updateBalance(true);
-
-    let myEntry = wheelPlayers.find(p => p.isMe);
-    if (myEntry) {
-        myEntry.bet += Math.round(betVal * 100) / 100;
-    } else {
-        wheelPlayers.push({
-            name: userName,
-            avatar: userPhoto,
-            bet: Math.round(betVal * 100) / 100,
-            isMe: true
-        });
-    }
-
-    if (wheelState === "waiting") {
-        wheelState = "running";
-        wheelSecondsLeft = 15;
-        startWheelTimer();
-    }
-
-    renderWheelUI();
-    haptic("medium");
-}
-
-function startWheelTimer() {
-    clearInterval(wheelTimer);
-    const badge = $("wheel-timer-badge");
-    const centerSub = $("wheel-center-sub");
-    const btn = $("wheel-action-btn");
-    
-    badge.textContent = wheelSecondsLeft + " сек";
-    btn.textContent = "ДОП. СТАВКА";
-
-    wheelTimer = setInterval(() => {
-        wheelSecondsLeft--;
-        badge.textContent = wheelSecondsLeft + " сек";
-        centerSub.textContent = `Старт через ${wheelSecondsLeft}с`;
-
-        if (wheelSecondsLeft <= 0) {
-            clearInterval(wheelTimer);
-            if (wheelPlayers.length === 0) {
-                // Если никто не сделал ставку, сбрасываем
-                resetWheelGame();
+            currentStep++;
+            if (currentStep >= chickenMultipliers.length) {
+                balance = Math.round((balance + Number(currentWin)) * 100) / 100;
+                updateBalance(true);
+                chickenState = "won";
+                $("chicken-status").textContent = `🎉 ПОБЕДА! Вы забрали $${currentWin}`;
+                $("chicken-btn").className = "primary green";
+                $("chicken-btn").textContent = "ИГРАТЬ СНОВА";
+                notify("success");
             } else {
-                runWheelSpin();
+                const nextStepBox = $(`chicken-step-${currentStep}`);
+                if (nextStepBox) nextStepBox.className = "chicken-step-box active-step";
+
+                const track = $("chicken-track");
+                track.style.transform = `translateX(-${currentStep * 105}px)`;
+
+                $("chicken-status").textContent = `Выигрыш: $${currentWin}. Шагнуть дальше?`;
+                $("chicken-btn").textContent = `ЗАБРАТЬ $${currentWin}`;
+                $("chicken-btn").className = "primary green";
+                haptic();
             }
         }
-    }, 1000);
-}
-
-function runWheelSpin() {
-    wheelState = "spinning";
-    const badge = $("wheel-timer-badge");
-    const centerTitle = $("wheel-center-title");
-    const centerSub = $("wheel-center-sub");
-    const btn = $("wheel-action-btn");
-
-    badge.textContent = "КРУТИМ!";
-    centerTitle.textContent = "КРУТИМ...";
-    centerSub.textContent = "Определяем победителя";
-    btn.disabled = true;
-    btn.textContent = "РОЗЫГРЫШ ИДЁТ";
-    notify("medium");
-
-    // Выбираем победителя честно по весам ставок
-    let totalPot = wheelPlayers.reduce((sum, p) => sum + p.bet, 0);
-    let winningPoint = Math.random() * totalPot;
-    let currentSum = 0;
-    let winnerIdx = 0;
-
-    for (let i = 0; i < wheelPlayers.length; i++) {
-        currentSum += wheelPlayers[i].bet;
-        if (winningPoint <= currentSum) {
-            winnerIdx = i;
-            break;
-        }
+        return;
     }
-    const winner = wheelPlayers[winnerIdx];
 
-    // Рассчитываем точный угол для красивой остановки на секторе победителя
-    let cumulative = 0;
-    for (let i = 0; i < winnerIdx; i++) {
-        cumulative += (wheelPlayers[i].bet / totalPot) * 360;
+    if (chickenState === "won" || chickenState === "lost") {
+        resetChickenGame();
     }
-    const winnerAngleSize = (winner.bet / totalPot) * 360;
-    const targetSectorCenter = cumulative + (winnerAngleSize / 2);
-    
-    // 5 полных оборотов (1800°) + доворот до центра сектора победителя
-    const extraSpins = 360 * 6;
-    const finalRotation = extraSpins + (360 - targetSectorCenter);
-
-    const wheelWrap = $("wheel-svg-wrap");
-    wheelWrap.style.transition = "transform 5s cubic-bezier(0.15, 0.75, 0.05, 1)";
-    wheelWrap.style.transform = `rotate(${finalRotation}deg)`;
-
-    setTimeout(() => {
-        wheelState = "finished";
-        badge.textContent = "ПОБЕДА!";
-        centerTitle.textContent = "ПОБЕДИТЕЛЬ";
-        centerSub.textContent = winner.name;
-        btn.disabled = false;
-        btn.textContent = "НОВЫЙ РАУНД";
-        btn.onclick = resetWheelGame;
-
-        if (winner.isMe) {
-            balance += totalPot;
-            updateBalance(true);
-            notify("success");
-            alert(`🎉 Поздравляем! Вы выиграли в рулетке $${money(totalPot)}!`);
-        } else {
-            notify("error");
-            alert(`😢 Победил игрок ${winner.name} с банком $${money(winner.bet)}. Повезет в следующий раз!`);
-        }
-    }, 5200);
-}
-
-function resetWheelGame() {
-    wheelPlayers = [];
-    wheelState = "waiting";
-    const wheelWrap = $("wheel-svg-wrap");
-    wheelWrap.style.transition = "none";
-    wheelWrap.style.transform = "rotate(0deg)";
-
-    $("wheel-timer-badge").textContent = "Ожидание";
-    $("wheel-center-title").textContent = "РУЛЕТКА";
-    $("wheel-center-sub").textContent = "Ждём ставки";
-
-    const btn = $("wheel-action-btn");
-    btn.textContent = "СДЕЛАТЬ СТАВКУ";
-    btn.onclick = joinWheelGame;
-    renderWheelUI();
 }
 
 
@@ -1866,11 +1724,12 @@ try { tg?.onEvent?.("activated", () => checkPayments(true)); } catch(e) {}
 /* INITIALIZE */
 loadUserData();
 buildMinesGrid();
+buildChickenTrack();
 updateCrashHistoryUI();
 startCrashRound();
 
 const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif"];
-preloadImgs.src = preloadImgs.forEach(src => {
+preloadImgs.forEach(src => {
     const img = new Image();
     img.src = src;
 });
