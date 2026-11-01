@@ -112,23 +112,24 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 .crash-form { margin-top: 16px; }
 
-/* ===== TUCHA ROAD TAB ===== */
+/* ===== TUCHA ROAD TAB (С НОВЫМ ФОНОМ fontu.png) ===== */
 .chicken-arena {
-    position: relative; height: 290px; border-radius: 22px; background: #1e293b;
+    position: relative; height: 320px; border-radius: 22px; 
+    background: url('./fontu.png') no-repeat center center / cover;
     border: 2px solid #334155; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.5); margin-bottom: 16px; width: 100%; padding: 12px 0;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.4); margin-bottom: 16px; width: 100%; padding-bottom: 15px;
 }
 
-/* Сцена персонажа на всю ширину */
+/* Контейнер для персонажа: выровнен по центру над активной карточкой */
 .character-stage {
-    position: relative; width: 100%; height: 130px; display: flex; align-items: flex-end; justify-content: center;
+    position: absolute; top: 15px; left: 0; right: 0; height: 140px;
+    display: flex; align-items: center; justify-content: center; z-index: 10;
 }
 
 #tucharun-avatar {
-    width: 100px; height: 100px; object-fit: contain;
+    width: 105px; height: 105px; object-fit: contain;
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.7));
-    z-index: 10;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.8));
 }
 
 /* Анимация прыжка персонажа */
@@ -137,49 +138,50 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 @keyframes jumpAction {
     0% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-35px) scale(1.1); }
+    50% { transform: translateY(-45px) scale(1.15); }
     100% { transform: translateY(0) scale(1); }
 }
 
-/* Анимация сгорания персонажа */
+/* Анимация сгорания */
 #tucharun-avatar.burning {
     animation: burnEffect 0.6s forwards;
 }
 @keyframes burnEffect {
     0% { transform: scale(1) rotate(0deg); filter: brightness(1) drop-shadow(0 0 10px red); }
-    50% { transform: scale(1.3) rotate(15deg); filter: brightness(2.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 35px orange); }
+    50% { transform: scale(1.35) rotate(20deg); filter: brightness(2.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 40px orange); }
     100% { transform: scale(0) rotate(45deg); opacity: 0; }
 }
 
-/* Эффект огня */
+/* Огонь на платформе при проигрыше */
 .fire-effect {
-    position: absolute; bottom: 10px; font-size: 38px; z-index: 15;
+    position: absolute; bottom: 12px; font-size: 38px; z-index: 15;
     animation: firePulse 0.4s infinite alternate;
     filter: drop-shadow(0 0 15px red);
 }
 @keyframes firePulse {
     from { transform: scale(1); }
-    to { transform: scale(1.2); }
+    to { transform: scale(1.25); }
 }
 
-/* Дорожка из платформ на 100% ширины */
+/* Дорожка из платформ снизу */
 .track-viewport {
     width: 100%; overflow: hidden; position: relative; height: 110px;
 }
 .chicken-track {
-    display: flex; gap: 12px; position: absolute; left: 50%; bottom: 8px;
+    display: flex; gap: 14px; position: absolute; left: 50%; bottom: 0;
     transform: translateX(0); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     will-change: transform;
 }
 .chicken-step-box {
-    flex: 0 0 95px; height: 95px; border-radius: 16px; background: #0f172a;
-    border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 0 0 100px; height: 95px; border-radius: 18px; background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border: 2px solid #475569; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 4px; color: #94a3b8; font-weight: 950; font-size: 13px; position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: all 0.3s;
 }
-.chicken-step-box.active-step { border-color: #2563eb; background: #1e3a8a; color: #fff; box-shadow: 0 0 18px rgba(37,99,235,0.7); transform: translateY(-4px); }
-.chicken-step-box.passed { border-color: #16a34a; background: #064e3b; color: #4ade80; }
-.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; animation: burnShake 0.4s ease; }
+.chicken-step-box.active-step { border-color: #2563eb; background: rgba(30, 58, 138, 0.9); color: #fff; box-shadow: 0 0 20px rgba(37,99,235,0.8); transform: translateY(-4px); }
+.chicken-step-box.passed { border-color: #16a34a; background: rgba(6, 78, 59, 0.9); color: #4ade80; }
+.chicken-step-box.burned { border-color: #dc2626; background: rgba(127, 29, 29, 0.9); color: #f87171; animation: burnShake 0.4s ease; }
 
 @keyframes burnShake {
     0%, 100% { transform: translateX(0); }
@@ -515,12 +517,12 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
         </div>
 
         <div class="chicken-arena">
-            <!-- Сцена персонажа (ровно над платформами) -->
+            <!-- Персонаж ровно по центру над активной карточкой -->
             <div class="character-stage">
                 <img id="tucharun-avatar" src="./tucharun.png" alt="Tucha Road">
             </div>
 
-            <!-- Дорожка с платформами на 100% ширины -->
+            <!-- Дорожка из платформ на всю ширину -->
             <div class="track-viewport">
                 <div id="chicken-track" class="chicken-track">
                     <!-- Платформы генерируются скриптом -->
@@ -1217,7 +1219,7 @@ function buildChickenTrack() {
         track.appendChild(box);
     });
 
-    track.style.transform = `translateX(0px)`;
+    updateTrackPosition(0);
 }
 
 function resetChickenGame() {
@@ -1275,7 +1277,7 @@ function chickenStepForward() {
     const avatar = $("tucharun-avatar");
     if (avatar) {
         avatar.classList.remove("jumping");
-        void avatar.offsetWidth; // перезапуск анимации прыжка
+        void avatar.offsetWidth; 
         avatar.classList.add("jumping");
     }
 
@@ -1855,7 +1857,7 @@ buildChickenTrack();
 updateCrashHistoryUI();
 startCrashRound();
 
-const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif", "./tucharun.png"];
+const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif", "./tucharun.png", "./fontu.png"];
 preloadImgs.forEach(src => {
     const img = new Image();
     img.src = src;
