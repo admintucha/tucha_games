@@ -112,44 +112,52 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 .crash-form { margin-top: 16px; }
 
-/* ===== CHICKEN ROAD TAB ===== */
+/* ===== TUCHARUN (CHICKEN ROAD) TAB ===== */
 .chicken-arena {
-    position: relative; height: 260px; border-radius: 22px; background: #1e293b;
-    border: 2px solid #334155; overflow: hidden; display: flex; align-items: center; padding: 0 20px;
+    position: relative; height: 280px; border-radius: 22px; background: #1e293b;
+    border: 2px solid #334155; overflow: hidden; display: flex; align-items: flex-end; padding: 20px;
     box-shadow: inset 0 0 25px rgba(0,0,0,0.5); margin-bottom: 16px;
 }
-.chicken-track {
-    display: flex; gap: 15px; transition: transform 0.4s ease; will-change: transform; position: relative;
-}
-.chicken-step-box {
-    width: 90px; height: 160px; border-radius: 16px; background: #0f172a;
-    border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 10px; color: #94a3b8; font-weight: 950; font-size: 14px; position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-.chicken-step-box.active-step { border-color: #2563eb; background: #1e3a8a; color: #fff; box-shadow: 0 0 15px rgba(37,99,235,0.5); }
-.chicken-step-box.passed { border-color: #16a34a; background: #064e3b; color: #4ade80; }
-.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; animation: burnShake 0.4s ease; }
 
-@keyframes burnShake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
-}
-
+/* Большой персонаж сверху по центру арены */
 #tucharun-avatar {
-    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-    width: 55px; height: 55px; object-fit: contain; transition: all 0.35s ease;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
-    z-index: 5;
+    position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
+    width: 95px; height: 95px; object-fit: contain; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+    z-index: 10;
 }
 #tucharun-avatar.burning {
     animation: burnEffect 0.6s forwards;
 }
 @keyframes burnEffect {
     0% { transform: translateX(-50%) scale(1) rotate(0deg); filter: brightness(1) drop-shadow(0 0 10px red); }
-    50% { transform: translateX(-50%) scale(1.3) rotate(15deg); filter: brightness(2.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 25px orange); }
+    50% { transform: translateX(-50%) scale(1.3) rotate(20deg); filter: brightness(2.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 30px orange); }
     100% { transform: translateX(-50%) scale(0) rotate(45deg); opacity: 0; }
+}
+
+/* Дорожка из платформ снизу */
+.track-viewport {
+    width: 100%; overflow: hidden; position: relative; height: 110px;
+}
+.chicken-track {
+    display: flex; gap: 12px; position: absolute; left: 50%; bottom: 0;
+    transform: translateX(0); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform; padding-left: 10px;
+}
+.chicken-step-box {
+    flex: 0 0 85px; height: 95px; border-radius: 16px; background: #0f172a;
+    border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; color: #94a3b8; font-weight: 950; font-size: 13px; position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.3s;
+}
+.chicken-step-box.active-step { border-color: #2563eb; background: #1e3a8a; color: #fff; box-shadow: 0 0 15px rgba(37,99,235,0.6); transform: translateY(-4px); }
+.chicken-step-box.passed { border-color: #16a34a; background: #064e3b; color: #4ade80; }
+.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; animation: burnShake 0.4s ease; }
+
+@keyframes burnShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
 }
 
 .preset-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -471,17 +479,23 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
     </div>
 </section>
 
-<!-- CHICKEN ROAD TAB -->
+<!-- TUCHARUN / CHICKEN ROAD TAB -->
 <section id="tab-chicken" class="tab">
     <div class="panel">
         <div class="section-head">
-            <b>🐔 КУРИЦА (CHICKEN ROAD)</b>
+            <b>🏃 TUCHARUN</b>
             <span id="chicken-status" style="color:#64748b; font-size:12px; font-weight:900;">Сделайте ставку</span>
         </div>
 
         <div class="chicken-arena">
-            <div id="chicken-track" class="chicken-track">
-                <img id="tucharun-avatar" src="./tucharun.png" alt="Tucha Run">
+            <!-- Большой персонаж сверху -->
+            <img id="tucharun-avatar" src="./tucharun.png" alt="Tucha Run">
+
+            <!-- Дорожка с платформами снизу -->
+            <div class="track-viewport">
+                <div id="chicken-track" class="chicken-track">
+                    <!-- Платформы генерируются скриптом -->
+                </div>
             </div>
         </div>
 
@@ -703,7 +717,7 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
         <span class="nav-icon">🚀</span> РАКЕТКА
     </button>
     <button data-tab="chicken" onclick="switchTab('chicken')">
-        <span class="nav-icon">🐔</span> КУРИЦА
+        <span class="nav-icon">🏃</span> TUCHARUN
     </button>
     <button data-tab="mines" onclick="switchTab('mines')">
         <span class="nav-icon">💣</span> МИНЫ
@@ -1124,16 +1138,16 @@ function handleCrashAction() {
 
 
 /* =========================================================
-   CHICKEN ROAD / TUCHARUN LOGIC
+   TUCHARUN / CHICKEN ROAD LOGIC
    ======================================================== */
 let chickenState = "idle"; // idle, playing, won, lost
 let chickenBet = 0;
 let currentStep = 0;
 let chickenMultipliers = [];
 const chickenMultipliersConfig = {
-    easy: [1.12, 1.28, 1.48, 1.75, 2.10, 2.60, 3.30, 4.20],
-    medium: [1.18, 1.42, 1.75, 2.20, 2.80, 3.60, 4.80, 6.50],
-    hard: [1.28, 1.65, 2.20, 3.00, 4.20, 6.00, 8.50, 12.00]
+    easy: [1.12, 1.28, 1.48, 1.75, 2.10, 2.60, 3.30, 4.20, 5.50, 7.00],
+    medium: [1.18, 1.42, 1.75, 2.20, 2.80, 3.60, 4.80, 6.50, 8.50, 12.00],
+    hard: [1.28, 1.65, 2.20, 3.00, 4.20, 6.00, 8.50, 12.00, 16.00, 22.00]
 };
 
 function setChickenBet(val) {
@@ -1145,13 +1159,11 @@ function buildChickenTrack() {
     const track = $("chicken-track");
     if (!track) return;
     
-    // Сохраняем аватарку персонажа
-    let avatarEl = $("tucharun-avatar");
     track.innerHTML = "";
-    if (avatarEl) {
-        avatarEl.className = "";
-        avatarEl.style.left = "15px";
-        track.appendChild(avatarEl);
+    const avatar = $("tucharun-avatar");
+    if (avatar) {
+        avatar.className = "";
+        avatar.style.transform = "translateX(-50%) scale(1)";
     }
 
     const diff = $("chicken-difficulty").value;
@@ -1159,18 +1171,19 @@ function buildChickenTrack() {
 
     chickenMultipliers.forEach((mult, index) => {
         const box = document.createElement("div");
-        box.className = "chicken-step-box";
+        box.className = "chicken-step-box" + (index === 0 ? " active-step" : "");
         box.id = `chicken-step-${index}`;
-        box.innerHTML = `<span>Шаг ${index + 1}</span><b style="font-size:16px;">${mult}x</b>`;
+        box.innerHTML = `<span>Шаг ${index + 1}</span><b style="font-size:15px;">${mult}x</b>`;
         track.appendChild(box);
     });
+
+    track.style.transform = `translateX(0px)`;
 }
 
 function resetChickenGame() {
     chickenState = "idle";
     currentStep = 0;
     buildChickenTrack();
-    $("chicken-track").style.transform = "translateX(0px)";
     
     const row = $("chicken-buttons-row");
     row.innerHTML = `<button id="chicken-btn-start" class="primary green" onclick="startChickenGame()" style="flex:1;">ИГРАТЬ</button>`;
@@ -1188,7 +1201,6 @@ function startChickenGame() {
 
     buildChickenTrack();
     
-    // Меняем кнопки на две: "Идти дальше" и "Забрать"
     const row = $("chicken-buttons-row");
     row.innerHTML = `
         <button class="primary gold" onclick="chickenStepForward()" style="flex:1;">🏃 ИДТИ ДАЛЬШЕ</button>
@@ -1196,19 +1208,25 @@ function startChickenGame() {
     `;
     
     $("chicken-status").textContent = "Шаг 1. Идем вперед!";
-    positionAvatar(0);
+    updateTrackPosition(0);
     haptic("medium");
 }
 
-function positionAvatar(stepIdx) {
-    const avatar = $("tucharun-avatar");
+function updateTrackPosition(stepIdx) {
+    const track = $("chicken-track");
     const stepBox = $(`chicken-step-${stepIdx}`);
-    if (avatar && stepBox) {
-        // Вычисляем позицию коробки относительно трека
-        const trackLeft = $("chicken-track").getBoundingClientRect().left;
-        const boxLeft = stepBox.getBoundingClientRect().left;
-        const offset = boxLeft - trackLeft + (stepBox.offsetWidth / 2) - 27;
-        avatar.style.left = offset + "px";
+    
+    document.querySelectorAll(".chicken-step-box").forEach((b, i) => {
+        b.classList.toggle("active-step", i === stepIdx);
+    });
+
+    if (track && stepBox) {
+        // Сдвигаем дорожку так, чтобы активный шаг всегда был по центру арены
+        const boxLeft = stepBox.offsetLeft;
+        const boxWidth = stepBox.offsetWidth;
+        const viewportWidth = track.parentElement.clientWidth;
+        const offset = boxLeft - (viewportWidth / 2) + (boxWidth / 2);
+        track.style.transform = `translateX(-${offset}px)`;
     }
 }
 
@@ -1242,10 +1260,8 @@ function chickenStepForward() {
         if (stepBox) stepBox.className = "chicken-step-box passed";
 
         currentStep++;
-        positionAvatar(currentStep < chickenMultipliers.length ? currentStep : chickenMultipliers.length - 1);
 
         if (currentStep >= chickenMultipliers.length) {
-            // Прошли все шаги до конца!
             const mult = chickenMultipliers[chickenMultipliers.length - 1];
             const totalWin = Math.floor(chickenBet * mult * 100) / 100;
             balance = Math.round((balance + totalWin) * 100) / 100;
@@ -1257,6 +1273,7 @@ function chickenStepForward() {
             row.innerHTML = `<button class="primary green" onclick="resetChickenGame()" style="flex:1;">ИГРАТЬ СНОВА</button>`;
             notify("success");
         } else {
+            updateTrackPosition(currentStep);
             const mult = chickenMultipliers[currentStep - 1];
             const currentWin = money(chickenBet * mult);
             $("chicken-status").textContent = `Шаг пройден! Текущий выигрыш: $${currentWin}`;
