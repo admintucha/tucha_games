@@ -119,7 +119,7 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     box-shadow: inset 0 0 25px rgba(0,0,0,0.5); margin-bottom: 16px;
 }
 .chicken-track {
-    display: flex; gap: 15px; transition: transform 0.4s ease; will-change: transform;
+    display: flex; gap: 15px; transition: transform 0.4s ease; will-change: transform; position: relative;
 }
 .chicken-step-box {
     width: 90px; height: 160px; border-radius: 16px; background: #0f172a;
@@ -129,12 +129,27 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 .chicken-step-box.active-step { border-color: #2563eb; background: #1e3a8a; color: #fff; box-shadow: 0 0 15px rgba(37,99,235,0.5); }
 .chicken-step-box.passed { border-color: #16a34a; background: #064e3b; color: #4ade80; }
-.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; }
+.chicken-step-box.burned { border-color: #dc2626; background: #7f1d1d; color: #f87171; animation: burnShake 0.4s ease; }
 
-.chicken-avatar-pos {
-    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-    font-size: 32px; transition: all 0.3s ease;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+@keyframes burnShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+#tucharun-avatar {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    width: 55px; height: 55px; object-fit: contain; transition: all 0.35s ease;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+    z-index: 5;
+}
+#tucharun-avatar.burning {
+    animation: burnEffect 0.6s forwards;
+}
+@keyframes burnEffect {
+    0% { transform: translateX(-50%) scale(1) rotate(0deg); filter: brightness(1) drop-shadow(0 0 10px red); }
+    50% { transform: translateX(-50%) scale(1.3) rotate(15deg); filter: brightness(2.5) sepia(1) hue-rotate(-50deg) drop-shadow(0 0 25px orange); }
+    100% { transform: translateX(-50%) scale(0) rotate(45deg); opacity: 0; }
 }
 
 .preset-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -466,9 +481,8 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
 
         <div class="chicken-arena">
             <div id="chicken-track" class="chicken-track">
-                <!-- Шаги генерируются скриптом -->
+                <img id="tucharun-avatar" src="./tucharun.png" alt="Tucha Run">
             </div>
-            <div class="chicken-avatar-pos">🐔</div>
         </div>
 
         <label>Сложность</label>
@@ -488,7 +502,9 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
             <button onclick="setChickenBet(5.00)">$5.00</button>
         </div>
 
-        <button id="chicken-btn" class="primary green" onclick="handleChickenAction()">ИГРАТЬ</button>
+        <div id="chicken-buttons-row" style="display: flex; gap: 10px;">
+            <button id="chicken-btn-start" class="primary green" onclick="startChickenGame()" style="flex:1;">ИГРАТЬ</button>
+        </div>
     </div>
 </section>
 
@@ -1108,9 +1124,9 @@ function handleCrashAction() {
 
 
 /* =========================================================
-   CHICKEN ROAD LOGIC (КУРИЦА)
+   CHICKEN ROAD / TUCHARUN LOGIC
    ======================================================== */
-let chickenState = "idle";
+let chickenState = "idle"; // idle, playing, won, lost
 let chickenBet = 0;
 let currentStep = 0;
 let chickenMultipliers = [];
@@ -1128,13 +1144,22 @@ function setChickenBet(val) {
 function buildChickenTrack() {
     const track = $("chicken-track");
     if (!track) return;
+    
+    // Сохраняем аватарку персонажа
+    let avatarEl = $("tucharun-avatar");
     track.innerHTML = "";
+    if (avatarEl) {
+        avatarEl.className = "";
+        avatarEl.style.left = "15px";
+        track.appendChild(avatarEl);
+    }
+
     const diff = $("chicken-difficulty").value;
     chickenMultipliers = chickenMultipliersConfig[diff] || chickenMultipliersConfig.medium;
 
     chickenMultipliers.forEach((mult, index) => {
         const box = document.createElement("div");
-        box.className = "chicken-step-box" + (index === 0 && chickenState === "playing" ? " active-step" : "");
+        box.className = "chicken-step-box";
         box.id = `chicken-step-${index}`;
         box.innerHTML = `<span>Шаг ${index + 1}</span><b style="font-size:16px;">${mult}x</b>`;
         track.appendChild(box);
@@ -1146,80 +1171,113 @@ function resetChickenGame() {
     currentStep = 0;
     buildChickenTrack();
     $("chicken-track").style.transform = "translateX(0px)";
-    $("chicken-btn").className = "primary green";
-    $("chicken-btn").textContent = "ИГРАТЬ";
+    
+    const row = $("chicken-buttons-row");
+    row.innerHTML = `<button id="chicken-btn-start" class="primary green" onclick="startChickenGame()" style="flex:1;">ИГРАТЬ</button>`;
     $("chicken-status").textContent = "Сделайте ставку";
 }
 
-function handleChickenAction() {
-    if (chickenState === "idle") {
-        const bet = readBet("chicken-bet");
-        if (bet === null) return;
-        balance -= bet;
-        updateBalance(true);
-        chickenBet = bet;
-        chickenState = "playing";
-        currentStep = 0;
+function startChickenGame() {
+    const bet = readBet("chicken-bet");
+    if (bet === null) return;
+    balance -= bet;
+    updateBalance(true);
+    chickenBet = bet;
+    chickenState = "playing";
+    currentStep = 0;
 
-        buildChickenTrack();
-        $("chicken-btn").className = "primary gold";
-        $("chicken-btn").textContent = "ШАГНУТЬ ВПЕРЕД 🐔";
-        $("chicken-status").textContent = "Шаг 1. Идем дальше!";
-        haptic("medium");
-        return;
+    buildChickenTrack();
+    
+    // Меняем кнопки на две: "Идти дальше" и "Забрать"
+    const row = $("chicken-buttons-row");
+    row.innerHTML = `
+        <button class="primary gold" onclick="chickenStepForward()" style="flex:1;">🏃 ИДТИ ДАЛЬШЕ</button>
+        <button class="primary green" onclick="chickenCashout()" style="flex:1;">💰 ЗАБРАТЬ</button>
+    `;
+    
+    $("chicken-status").textContent = "Шаг 1. Идем вперед!";
+    positionAvatar(0);
+    haptic("medium");
+}
+
+function positionAvatar(stepIdx) {
+    const avatar = $("tucharun-avatar");
+    const stepBox = $(`chicken-step-${stepIdx}`);
+    if (avatar && stepBox) {
+        // Вычисляем позицию коробки относительно трека
+        const trackLeft = $("chicken-track").getBoundingClientRect().left;
+        const boxLeft = stepBox.getBoundingClientRect().left;
+        const offset = boxLeft - trackLeft + (stepBox.offsetWidth / 2) - 27;
+        avatar.style.left = offset + "px";
     }
+}
 
-    if (chickenState === "playing") {
-        const diff = $("chicken-difficulty").value;
-        const failChance = diff === "easy" ? 0.15 : (diff === "medium" ? 0.25 : 0.38);
-        const isFailed = Math.random() < failChance;
+function chickenStepForward() {
+    if (chickenState !== "playing") return;
 
-        if (isFailed) {
-            chickenState = "lost";
-            const stepBox = $(`chicken-step-${currentStep}`);
-            if (stepBox) {
-                stepBox.className = "chicken-step-box burned";
-                stepBox.innerHTML = `<span>🔥 ОГОНЬ!</span>`;
-            }
-            $("chicken-status").textContent = "Курица сгорела! Ставка сгорела.";
-            $("chicken-btn").className = "primary red";
-            $("chicken-btn").textContent = "НОВАЯ ИГРА";
-            notify("error");
-        } else {
-            const stepBox = $(`chicken-step-${currentStep}`);
-            if (stepBox) stepBox.className = "chicken-step-box passed";
+    const diff = $("chicken-difficulty").value;
+    const failChance = diff === "easy" ? 0.15 : (diff === "medium" ? 0.25 : 0.38);
+    const isFailed = Math.random() < failChance;
 
-            const mult = chickenMultipliers[currentStep];
-            const currentWin = money(chickenBet * mult);
-
-            currentStep++;
-            if (currentStep >= chickenMultipliers.length) {
-                balance = Math.round((balance + Number(currentWin)) * 100) / 100;
-                updateBalance(true);
-                chickenState = "won";
-                $("chicken-status").textContent = `🎉 ПОБЕДА! Вы забрали $${currentWin}`;
-                $("chicken-btn").className = "primary green";
-                $("chicken-btn").textContent = "ИГРАТЬ СНОВА";
-                notify("success");
-            } else {
-                const nextStepBox = $(`chicken-step-${currentStep}`);
-                if (nextStepBox) nextStepBox.className = "chicken-step-box active-step";
-
-                const track = $("chicken-track");
-                track.style.transform = `translateX(-${currentStep * 105}px)`;
-
-                $("chicken-status").textContent = `Выигрыш: $${currentWin}. Шагнуть дальше?`;
-                $("chicken-btn").textContent = `ЗАБРАТЬ $${currentWin}`;
-                $("chicken-btn").className = "primary green";
-                haptic();
-            }
+    if (isFailed) {
+        // Персонаж сгорает!
+        chickenState = "lost";
+        const stepBox = $(`chicken-step-${currentStep}`);
+        if (stepBox) {
+            stepBox.className = "chicken-step-box burned";
+            stepBox.innerHTML = `<span>🔥 ОГОНЬ!</span>`;
         }
-        return;
-    }
+        
+        const avatar = $("tucharun-avatar");
+        if (avatar) avatar.classList.add("burning");
 
-    if (chickenState === "won" || chickenState === "lost") {
-        resetChickenGame();
+        $("chicken-status").textContent = "Персонаж сгорел! Ставка проиграна.";
+        
+        const row = $("chicken-buttons-row");
+        row.innerHTML = `<button class="primary red" onclick="resetChickenGame()" style="flex:1;">НОВАЯ ИГРА</button>`;
+        notify("error");
+    } else {
+        // Успех!
+        const stepBox = $(`chicken-step-${currentStep}`);
+        if (stepBox) stepBox.className = "chicken-step-box passed";
+
+        currentStep++;
+        positionAvatar(currentStep < chickenMultipliers.length ? currentStep : chickenMultipliers.length - 1);
+
+        if (currentStep >= chickenMultipliers.length) {
+            // Прошли все шаги до конца!
+            const mult = chickenMultipliers[chickenMultipliers.length - 1];
+            const totalWin = Math.floor(chickenBet * mult * 100) / 100;
+            balance = Math.round((balance + totalWin) * 100) / 100;
+            updateBalance(true);
+            chickenState = "won";
+
+            $("chicken-status").textContent = `🎉 ПОБЕДА! Вы выиграли $${money(totalWin)}`;
+            const row = $("chicken-buttons-row");
+            row.innerHTML = `<button class="primary green" onclick="resetChickenGame()" style="flex:1;">ИГРАТЬ СНОВА</button>`;
+            notify("success");
+        } else {
+            const mult = chickenMultipliers[currentStep - 1];
+            const currentWin = money(chickenBet * mult);
+            $("chicken-status").textContent = `Шаг пройден! Текущий выигрыш: $${currentWin}`;
+            haptic();
+        }
     }
+}
+
+function chickenCashout() {
+    if (chickenState !== "playing" || currentStep === 0) return;
+
+    const mult = chickenMultipliers[currentStep - 1];
+    const totalWin = Math.floor(chickenBet * mult * 100) / 100;
+    balance = Math.round((balance + totalWin) * 100) / 100;
+    updateBalance(true);
+    chickenState = "won";
+
+    $("chicken-status").textContent = `💰 Вы успешно забрали $${money(totalWin)}!`;
+    const row = $("chicken-buttons-row");
+    row.innerHTML = `<button class="primary green" onclick="resetChickenGame()" style="flex:1;">ИГРАТЬ СНОВА</button>`;
+    notify("success");
 }
 
 
@@ -1728,7 +1786,7 @@ buildChickenTrack();
 updateCrashHistoryUI();
 startCrashRound();
 
-const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif"];
+const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif", "./tucharun.png"];
 preloadImgs.forEach(src => {
     const img = new Image();
     img.src = src;
