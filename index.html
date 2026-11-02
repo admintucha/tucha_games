@@ -255,11 +255,11 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
 .roulette-strip.spinning { transition: transform 6s cubic-bezier(0.15, 0.75, 0.05, 1); }
 .roulette-prize {
     flex: 0 0 80px; height: 74px; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 5px; border-radius: 14px; background: #ffffff;
+    justify-content: center; gap: 4px; border-radius: 14px; background: #ffffff;
     border: 2px solid rgba(59, 130, 246, 0.15); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
 }
-.prize-icon { font-size: 22px; }
-.prize-value { color: #d97706; font-size: 13px; font-weight: 950; }
+.prize-icon-img { width: 34px; height: 34px; object-fit: contain; }
+.prize-value { color: #d97706; font-size: 11px; font-weight: 950; }
 .roulette-fade-left, .roulette-fade-right { position: absolute; z-index: 3; top: 0; bottom: 0; width: 75px; pointer-events: none; }
 .roulette-fade-left { left: 0; background: linear-gradient(90deg, #e0e7ff, transparent); }
 .roulette-fade-right { right: 0; background: linear-gradient(270deg, #ede9fe, transparent); }
@@ -275,13 +275,13 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
 
 /* ===== CASE PRIZES ===== */
 .prizes-title { margin-top: 22px; margin-bottom: 12px; font-size: 15px; font-weight: 950; color: #1e1b4b; }
-.prizes-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.prizes-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
 .prize-small {
-    padding: 12px 6px; text-align: center; border-radius: 14px; background: #f8fafc;
+    padding: 10px 4px; text-align: center; border-radius: 14px; background: #f8fafc;
     border: 2px solid rgba(59, 130, 246, 0.1); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.04);
 }
-.prize-small-icon { font-size: 20px; }
-.prize-small-value { margin-top: 5px; color: #d97706; font-size: 12px; font-weight: 950; }
+.prize-small img { width: 32px; height: 32px; object-fit: contain; margin: 0 auto; display: block; }
+.prize-small-value { margin-top: 4px; color: #d97706; font-size: 11px; font-weight: 950; }
 
 /* ===== CASE RESULT & TIMER ===== */
 .case-result {
@@ -290,6 +290,22 @@ input[type="range"] { width: 100%; accent-color: #2563eb; margin-bottom: 16px; h
 }
 .case-timer { min-height: 20px; margin-top: 10px; color: #64748b; text-align: center; font-size: 12px; font-weight: 900; }
 .case-note { margin-top: 14px; color: #64748b; text-align: center; font-size: 11px; font-weight: 800; line-height: 1.5; }
+
+/* ===== INVENTORY TAB ===== */
+.inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+.inventory-item {
+    background: #f8fafc; border: 2px solid rgba(59, 130, 246, 0.12); border-radius: 18px;
+    padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.06); text-align: center; position: relative;
+}
+.inventory-item img { width: 55px; height: 55px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15)); }
+.inventory-item-name { font-weight: 950; font-size: 13px; color: #0f172a; }
+.inventory-item-price { color: #16a34a; font-weight: 950; font-size: 12px; }
+.sell-btn {
+    width: 100%; padding: 8px; border-radius: 10px; border: none; background: linear-gradient(135deg, #16a34a, #059669);
+    color: white; font-weight: 950; font-size: 12px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); cursor: pointer;
+}
+.sell-btn:active { transform: scale(0.95); }
 
 /* ===== PROFILE ===== */
 .profile { text-align: center; padding-top: 32px; }
@@ -456,42 +472,55 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
     <div id="cases-list">
         <div class="cases-header">
             <div class="cases-title">Кейсы</div>
-            <div class="cases-subtitle">Открывай кейсы и забирай призы</div>
+            <div class="cases-subtitle">Открывай кейсы и забирай призы в инвентарь</div>
         </div>
 
         <div class="case-grid">
-            <div class="case-card available" onclick="openCase('paid_02', 'Mini Case', 0.20, './casecase.png', [0.10, 0.15, 0.25, 0.50, 1.00, 2.00], [45, 28, 15, 7, 3.5, 1.5])">
+            <div class="case-card available" onclick="openCase('paid_02', 'Mini Case', 0.20, './casecase.png', [
+                {name: 'Мишка', price: 0.20, img: './bear.png'},
+                {name: 'Бокс', price: 0.50, img: './box.png'},
+                {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                {name: 'Кубок', price: 1.00, img: './trofei.png'}
+            ], [50, 30, 15, 5])">
                 <img class="case-card-image" src="./casecase.png" alt="Mini Case">
                 <div class="case-card-name">Mini Case</div>
                 <div class="case-card-price">$0.20</div>
                 <div class="case-card-arrow">›</div>
             </div>
 
-            <div class="case-card available" onclick="openCase('paid_05', 'Go Case', 0.50, './casego.png', [0.25, 0.40, 0.60, 1.20, 2.50, 5.00], [42, 30, 15, 8, 4, 2])">
+            <div class="case-card available" onclick="openCase('paid_05', 'Go Case', 0.50, './casego.png', [
+                {name: 'Мишка', price: 0.20, img: './bear.png'},
+                {name: 'Бокс', price: 0.50, img: './box.png'},
+                {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                {name: 'Кубок', price: 1.00, img: './trofei.png'}
+            ], [30, 40, 20, 10])">
                 <img class="case-card-image" src="./casego.png" alt="Go Case">
                 <div class="case-card-name">Go Case</div>
                 <div class="case-card-price">$0.50</div>
                 <div class="case-card-arrow">›</div>
             </div>
 
-            <div class="case-card available" onclick="openCase('paid_10', 'Pro Case', 1.00, './casepro.png', [0.50, 0.80, 1.20, 2.50, 5.00, 10.00], [42, 30, 15, 8, 4, 2])">
+            <div class="case-card available" onclick="openCase('paid_10', 'Pro Case', 1.00, './casepro.png', [
+                {name: 'Мишка', price: 0.20, img: './bear.png'},
+                {name: 'Бокс', price: 0.50, img: './box.png'},
+                {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                {name: 'Кубок', price: 1.00, img: './trofei.png'}
+            ], [15, 25, 35, 25])">
                 <img class="case-card-image" src="./casepro.png" alt="Pro Case">
                 <div class="case-card-name">Pro Case</div>
                 <div class="case-card-price">$1.00</div>
                 <div class="case-card-arrow">›</div>
             </div>
 
-            <div class="case-card available" onclick="openCase('paid_15', 'Rare Case', 1.50, './caser.png', [0.75, 1.20, 1.80, 3.50, 7.50, 15.00], [42, 30, 15, 8, 4, 2])">
+            <div class="case-card available" onclick="openCase('paid_15', 'Rare Case', 1.50, './caser.png', [
+                {name: 'Мишка', price: 0.20, img: './bear.png'},
+                {name: 'Бокс', price: 0.50, img: './box.png'},
+                {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                {name: 'Кубок', price: 1.00, img: './trofei.png'}
+            ], [10, 20, 30, 40])">
                 <img class="case-card-image" src="./caser.png" alt="Rare Case">
                 <div class="case-card-name">Rare Case</div>
                 <div class="case-card-price">$1.50</div>
-                <div class="case-card-arrow">›</div>
-            </div>
-
-            <div class="case-card available" onclick="openCase('paid_20', 'VIP Case', 2.00, './casevip.png', [1.00, 1.60, 2.50, 5.00, 10.00, 25.00], [40, 30, 16, 9, 4.5, 2.5])">
-                <img class="case-card-image" src="./casevip.png" alt="VIP Case">
-                <div class="case-card-name">VIP Case</div>
-                <div class="case-card-price">$2.00</div>
                 <div class="case-card-arrow">›</div>
             </div>
         </div>
@@ -528,8 +557,21 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
             <div id="prizes-grid" class="prizes-grid"></div>
 
             <div id="case-note" class="case-note">
-                Открытие кейса списывает его стоимость с баланса и мгновенно зачисляет выигрыш.
+                Выигранные предметы падают в инвентарь, где их можно продать.
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- INVENTORY TAB -->
+<section id="tab-inventory" class="tab">
+    <div class="panel">
+        <div class="section-head">
+            <b>🎒 Инвентарь</b>
+            <span id="inventory-count" style="color:#64748b; font-size:12px; font-weight:900;">0 предметов</span>
+        </div>
+        <div id="inventory-list" class="inventory-grid">
+            <p style="grid-column: span 2; text-align: center; color: #64748b; font-weight: 800; padding: 20px;">Инвентарь пуст</p>
         </div>
     </div>
 </section>
@@ -619,6 +661,9 @@ nav button.active { color: #2563eb; filter: drop-shadow(0 2px 6px rgba(37, 99, 2
     <button data-tab="cases" onclick="switchTab('cases')">
         <span class="nav-icon">🎁</span> КЕЙСЫ
     </button>
+    <button data-tab="inventory" onclick="switchTab('inventory')">
+        <span class="nav-icon">🎒</span> ИНВЕНТАРЬ
+    </button>
     <button data-tab="profile" onclick="switchTab('profile')">
         <span class="nav-icon">👤</span> ПРОФИЛЬ
     </button>
@@ -656,6 +701,7 @@ const userName = telegramUser?.first_name || "Игрок";
 const userPhoto = telegramUser?.photo_url || null;
 
 let balance = 0.10;
+let inventory = [];
 let bonusCount = 0;
 let userLoaded = false;
 
@@ -669,8 +715,10 @@ function loadUserData() {
         try {
             let saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
             if (Number.isFinite(Number(saved.balance))) balance = Number(saved.balance);
+            if (Array.isArray(saved.inventory)) inventory = saved.inventory;
         } catch(e) {}
         updateBalance(false);
+        renderInventory();
         return;
     }
 
@@ -685,17 +733,18 @@ function loadUserData() {
             bonusCount = parseInt(data.bonuscount) || 0;
             updateBalance(false);
             userLoaded = true;
+            renderInventory();
             const credited = Number(data.credited) || 0;
             if (credited > 0) onDepositCredited(credited);
             checkPayments(true);
         }
-    }).catch(err => { updateBalance(false); });
+    }).catch(err => { updateBalance(false); renderInventory(); });
 }
 
 function saveUserData() {
     if (!isDatabaseConnected()) {
         const storageKey = "tucha-game-" + userId;
-        try { localStorage.setItem(storageKey, JSON.stringify({ balance, bonusCount })); } catch(e) {}
+        try { localStorage.setItem(storageKey, JSON.stringify({ balance, inventory, bonusCount })); } catch(e) {}
         return;
     }
     fetch(SCRIPT_URL, {
@@ -1227,7 +1276,7 @@ if ($("mines-slider")) {
 
 
 /* =========================================================
-   CASES LOGIC
+   CASES LOGIC & INVENTORY
    ======================================================== */
 let currentActiveCase = null;
 let caseOpening = false;
@@ -1242,12 +1291,11 @@ function openCase(id, name, price, image, prizes, weights) {
 
     const prizesGrid = $("prizes-grid");
     prizesGrid.innerHTML = "";
-    prizes.forEach((pVal, idx) => {
-        const isTop = idx === prizes.length - 1;
+    prizes.forEach((p) => {
         prizesGrid.innerHTML += `
             <div class="prize-small">
-                <div class="prize-small-icon">${isTop ? '🏆' : '💵'}</div>
-                <div class="prize-small-value">$${pVal.toFixed(2)}</div>
+                <img src="${p.img}" alt="${p.name}">
+                <div class="prize-small-value">$${p.price.toFixed(2)}</div>
             </div>
         `;
     });
@@ -1304,7 +1352,7 @@ function updateActiveCaseState() {
     timer.textContent = "Стоимость спишется с баланса";
 }
 
-function createRouletteDOM(winner, prizesList, weightsList) {
+function createRouletteDOM(winnerObj, prizesList, weightsList) {
     const wrap = document.createElement("div");
     wrap.className = "roulette-wrap";
     wrap.innerHTML = `
@@ -1317,20 +1365,14 @@ function createRouletteDOM(winner, prizesList, weightsList) {
     const winnerIndex = 28;
     const values = [];
     for (let i = 0; i < 45; i++) {
-        values.push(i === winnerIndex ? winner : chooseWeightedPrize(prizesList, weightsList));
+        values.push(i === winnerIndex ? winnerObj : chooseWeightedPrize(prizesList, weightsList));
     }
-    const maxPrize = Math.max(...prizesList);
-    values.forEach(value => {
-        const isTopPrize = value === maxPrize;
+    values.forEach(prize => {
         const item = document.createElement("div");
         item.className = "roulette-prize";
-        if (isTopPrize) {
-            item.style.background = "linear-gradient(135deg, #fef08a, #f59e0b)";
-            item.style.borderColor = "#d97706";
-        }
         item.innerHTML = `
-            <div class="prize-icon">${isTopPrize ? '🏆' : '💵'}</div>
-            <div class="prize-value" style="${isTopPrize ? 'color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.2)' : ''}">$${Number(value).toFixed(2)}</div>
+            <img class="prize-icon-img" src="${prize.img}" alt="${prize.name}">
+            <div class="prize-value">$${prize.price.toFixed(2)}</div>
         `;
         strip.appendChild(item);
     });
@@ -1396,11 +1438,13 @@ async function openCurrentCase() {
     container.innerHTML = "";
 
     const spinPromises = [];
-    let totalWin = 0;
+    const wonPrizes = [];
 
     for (let i = 0; i < caseQuantity; i++) {
         const winner = chooseWeightedPrize(currentActiveCase.prizes, currentActiveCase.weights);
-        totalWin += winner;
+        wonPrizes.push(winner);
+        inventory.push({ ...winner, id: Date.now() + Math.random() });
+
         const { wrap, strip, winnerIndex } = createRouletteDOM(winner, currentActiveCase.prizes, currentActiveCase.weights);
         container.appendChild(wrap);
         
@@ -1413,17 +1457,54 @@ async function openCurrentCase() {
     }
 
     await Promise.all(spinPromises);
-    balance = Math.round((balance + totalWin) * 100) / 100;
-    updateBalance(true);
+    saveUserData();
+    renderInventory();
 
     image.style.transform = "scale(1)";
     image.style.opacity = "1";
 
-    $("case-result").textContent = `🎉 ТВОЙ ВЫИГРЫШ: $${Number(totalWin).toFixed(2)}`;
+    const totalWonPrice = wonPrizes.reduce((sum, p) => sum + p.price, 0);
+    $("case-result").textContent = `🎉 ВЫИГРАНО ПРЕДМЕТОВ: ${caseQuantity} шт. (пало в инвентарь)`;
     caseOpening = false;
     updateActiveCaseState();
     notify("success");
 }
+
+function renderInventory() {
+    const list = $("inventory-list");
+    const countLabel = $("inventory-count");
+    if (!list) return;
+
+    countLabel.textContent = inventory.length + " предметов";
+    if (inventory.length === 0) {
+        list.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #64748b; font-weight: 800; padding: 20px;">Инвентарь пуст</p>';
+        return;
+    }
+
+    list.innerHTML = "";
+    inventory.forEach((item, index) => {
+        list.innerHTML += `
+            <div class="inventory-item">
+                <img src="${item.img}" alt="${item.name}">
+                <div class="inventory-item-name">${item.name}</div>
+                <div class="inventory-item-price">$${item.price.toFixed(2)}</div>
+                <button class="sell-btn" onclick="sellInventoryItem(${index})">ПРОДАТЬ</button>
+            </div>
+        `;
+    });
+}
+
+function sellInventoryItem(index) {
+    const item = inventory[index];
+    if (!item) return;
+
+    balance = Math.round((balance + item.price) * 100) / 100;
+    inventory.splice(index, 1);
+    updateBalance(true);
+    renderInventory();
+    notify("success");
+}
+
 
 /* =========================================================
    DEPOSIT (CRYPTO BOT)
@@ -1535,7 +1616,7 @@ buildMinesGrid();
 updateCrashHistoryUI();
 startCrashRound();
 
-const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./casevip.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif", "./tucharun.png", "./fontu.png"];
+const preloadImgs = ["./casecase.png", "./casego.png", "./casepro.png", "./caser.png", "./creeper.png", "./ore_emerald.png", "./rocket.gif.gif", "./bear.png", "./box.png", "./trofei.png", "./rocket.png"];
 preloadImgs.forEach(src => {
     const img = new Image();
     img.src = src;
