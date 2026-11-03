@@ -11,7 +11,7 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
     margin: 0; padding: 0; min-height: 100%;
-    background: #ffeb99; /* Желтый фон как на скрине */
+    background: #ffeb99;
     color: #332900;
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
@@ -76,24 +76,27 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 .primary.red { background: linear-gradient(135deg, #dc2626, #e11d48); box-shadow: 0 8px 25px rgba(220, 38, 38, 0.35); }
 .primary:disabled { opacity: .55; cursor: default; box-shadow: none; }
 
-/* ===== GAMES HUB (NEW) ===== */
+/* ===== GAMES HUB (2 В РЯД) ===== */
 .games-header {
     font-size: 27px; font-weight: 950; letter-spacing: -.8px; color: #332900; margin-bottom: 16px;
 }
-.games-grid { display: flex; flex-direction: column; gap: 16px; }
-.game-card {
-    position: relative; border-radius: 24px; overflow: hidden;
-    background: #ffffff; border: 3px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 12px 30px rgba(234, 179, 8, 0.25); cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s; display: flex; flex-direction: column; align-items: center; justify-content: center;
+.games-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 14px; 
 }
-.game-card:active { transform: scale(0.97); }
-.game-card img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 20px; }
-.game-card.large { aspect-ratio: 1 / 1; }
-.game-card.small { aspect-ratio: 2 / 1; }
+.game-card {
+    position: relative; border-radius: 20px; overflow: hidden;
+    background: #ffffff; border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 10px 25px rgba(234, 179, 8, 0.2); cursor: pointer;
+    aspect-ratio: 1 / 1;
+    transition: transform 0.18s, box-shadow 0.18s; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.game-card:active { transform: scale(0.95); }
+.game-card img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 17px; }
 
-
-/* ===== FULLSCREEN GAME SCREENS (RACKET & MINES) ===== */
+/* ===== FULLSCREEN GAME SCREENS ===== */
 .game-screen {
     position: fixed; inset: 0; z-index: 150; display: none; flex-direction: column;
     background: #ffeb99; overflow-y: auto; overflow-x: hidden;
@@ -110,13 +113,12 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     color: #1e1b4b; background: none; border: none; padding: 8px 0;
 }
 
-/* ===== CRASH (RACKET) REDESIGN ===== */
+/* ===== CRASH (RACKET) ===== */
 .crash-sky {
     flex: 1; position: relative; background: linear-gradient(180deg, #71b4f5 0%, #a1d1fa 40%, #ffebb5 100%);
     display: flex; flex-direction: column; justify-content: center; overflow: hidden;
     padding-bottom: 20px;
 }
-/* Clouds via CSS / Emoji */
 .cloud { position: absolute; font-size: 80px; opacity: 0.8; filter: blur(2px); user-select: none; pointer-events: none; }
 .cloud-1 { top: 10%; left: -10%; animation: floatCloud 20s linear infinite; }
 .cloud-2 { top: 30%; right: -20%; animation: floatCloud 25s linear infinite reverse; font-size: 60px; }
@@ -136,7 +138,6 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 }
 .crash-circle-sub { font-size: 13px; font-weight: 950; color: rgba(255,255,255,0.8); letter-spacing: 1px; margin-top: 5px; }
 
-/* History Pills */
 .crash-history-pills {
     display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 20px;
     scrollbar-width: none; align-items: center; z-index: 5;
@@ -146,10 +147,10 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 950; white-space: nowrap;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
-.pill-low { background: #ffe3e3; color: #e11d48; }       /* Pink/Red for low x */
-.pill-mid { background: #dbeafe; color: #2563eb; }       /* Blue for medium x */
-.pill-high { background: #f3e8ff; color: #7c3aed; }      /* Purple for high x */
-.pill-epic { background: #ffedd5; color: #ea580c; }      /* Orange/Yellow for epic x */
+.pill-low { background: #ffe3e3; color: #e11d48; }
+.pill-mid { background: #dbeafe; color: #2563eb; }
+.pill-high { background: #f3e8ff; color: #7c3aed; }
+.pill-epic { background: #ffedd5; color: #ea580c; }
 
 .crash-bottom-ui {
     padding: 0 16px 20px; display: flex; flex-direction: column; gap: 12px; z-index: 5;
@@ -167,8 +168,7 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     background: rgba(255, 255, 255, 0.4); padding: 10px; border-radius: 16px;
 }
 
-
-/* ===== MINES TAB REDESIGN ===== */
+/* ===== MINES REDESIGN (ОБЛАЧКИ) ===== */
 .mines-content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 .grid {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
@@ -179,13 +179,33 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     position: relative; width: 100%; aspect-ratio: 1; border: 0; border-radius: 16px;
     background: linear-gradient(145deg, #ffffff, #fef08a); border-bottom: 5px solid #eab308;
     box-shadow: 0 6px 15px rgba(234, 179, 8, 0.2); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; overflow: hidden; padding: 0; transition: transform 0.15s, filter 0.2s;
+    font-size: 26px; cursor: pointer; overflow: hidden; padding: 0;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, border 0.2s;
 }
-.cell:not(:disabled):active { transform: scale(0.92) translateY(3px); border-bottom-width: 2px; }
-.cell img { width: 100%; height: 100%; object-fit: fill; border-radius: inherit; }
-.cell.safe, .cell.revealed-safe { background: transparent !important; border: none !important; box-shadow: none !important; opacity: 1 !important; }
-.cell.bomb { background: linear-gradient(145deg, #ef4444, #b91c1c); border-bottom: 5px solid #7f1d1d; box-shadow: 0 0 22px rgba(239, 68, 68, 0.5); }
+.cell:not(:disabled):active { transform: scale(0.9) translateY(3px); border-bottom-width: 2px; }
 
+/* Открытые ячейки */
+.cell.revealed-safe {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd) !important;
+    border: 2px solid #38bdf8 !important; border-bottom: 2px solid #0284c7 !important;
+    box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3) !important;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cell.revealed-gold {
+    background: linear-gradient(135deg, #fef08a, #f59e0b) !important;
+    border: 2px solid #facc15 !important; border-bottom: 2px solid #d97706 !important;
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.6) !important;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cell.bomb {
+    background: linear-gradient(145deg, #ef4444, #b91c1c) !important;
+    border-bottom: 5px solid #7f1d1d !important; box-shadow: 0 0 22px rgba(239, 68, 68, 0.5) !important;
+    animation: popIn 0.2s ease-out;
+}
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
 /* ===== INPUTS & RANGES ===== */
 label { font-size: 13px; font-weight: 900; color: #5c4a00; }
@@ -197,7 +217,6 @@ input[type="number"] {
 .range-row { display: flex; justify-content: space-between; margin: 14px 0; color: #5c4a00; font-size: 14px; font-weight: 900; }
 .range-row span:last-child { color: #d97706; font-size: 16px; }
 input[type="range"] { width: 100%; accent-color: #f59e0b; margin-bottom: 16px; height: 8px; background: #fef08a; border-radius: 4px; }
-
 
 /* ===== CASES & INVENTORY ===== */
 .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
@@ -247,8 +266,7 @@ input[type="range"] { width: 100%; accent-color: #f59e0b; margin-bottom: 16px; h
 .inventory-item-name { font-weight: 950; font-size: 13px; margin-top: 8px; color: #332900; }
 .inventory-item-price { color: #16a34a; font-weight: 950; font-size: 12px; margin-bottom: 8px; }
 
-
-/* ===== MODALS (DEPOSIT, ADMIN, BET) ===== */
+/* ===== MODALS ===== */
 .deposit-overlay {
     position: fixed; inset: 0; z-index: 1000; display: none;
     align-items: flex-end; justify-content: center;
@@ -301,16 +319,16 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 <!-- MAIN APP CONTENT -->
 <main id="main-content">
 
-    <!-- GAMES HUB TAB -->
+    <!-- GAMES HUB TAB (2 В РЯД) -->
     <section id="tab-games" class="tab active">
         <div class="games-header">Игры</div>
         <div class="games-grid">
             <!-- РАКЕТКА -->
-            <div class="game-card large" onclick="openGameScreen('crash')">
+            <div class="game-card" onclick="openGameScreen('crash')">
                 <img src="./ikonkaraket.png" alt="Ракетка">
             </div>
             <!-- МИНЫ -->
-            <div class="game-card small" onclick="openGameScreen('mines')">
+            <div class="game-card" onclick="openGameScreen('mines')">
                 <img src="./ikonkamin.png" alt="Мины">
             </div>
         </div>
@@ -320,7 +338,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     <section id="tab-cases" class="tab">
         <div id="cases-list">
             <div class="games-header" style="margin-bottom:5px;">Кейсы</div>
-            <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай призы в инвентарь</div>
+            <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!</div>
             
             <div class="case-grid">
                 <!-- Mini Case ($0.20) -->
@@ -331,7 +349,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Бокс', price: 0.50, img: './box.png'},
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'}
-                ], [30, 18, 25, 17, 7, 3])">
+                ], [15, 20, 30, 20, 10, 5])">
                     <img class="case-card-image" src="./casecase.png" alt="Mini Case">
                     <div class="case-card-name">Mini Case</div>
                     <div class="case-card-price">$0.20</div>
@@ -345,10 +363,55 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Бокс', price: 0.50, img: './box.png'},
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'}
-                ], [25, 18, 15, 24, 12, 6])">
+                ], [10, 15, 10, 35, 20, 10])">
                     <img class="case-card-image" src="./casego.png" alt="Go Case">
                     <div class="case-card-name">Go Case</div>
                     <div class="case-card-price">$0.50</div>
+                </div>
+
+                <!-- Pro Case ($1.00) -->
+                <div class="case-card available" onclick="openCase('paid_10', 'Pro Case', 1.00, './casepro.png', [
+                    {name: '$0.50', price: 0.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: '$0.80', price: 0.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: 'Мишка', price: 0.20, img: './bear.png'},
+                    {name: 'Бокс', price: 0.50, img: './box.png'},
+                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'}
+                ], [10, 15, 5, 20, 25, 18, 7])">
+                    <img class="case-card-image" src="./casepro.png" alt="Pro Case">
+                    <div class="case-card-name">Pro Case</div>
+                    <div class="case-card-price">$1.00</div>
+                </div>
+
+                <!-- Rare Case ($1.50) -->
+                <div class="case-card available" onclick="openCase('paid_15', 'Rare Case', 1.50, './caser.png', [
+                    {name: '$0.75', price: 0.75, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: '$1.20', price: 1.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: 'Мишка', price: 0.20, img: './bear.png'},
+                    {name: 'Бокс', price: 0.50, img: './box.png'},
+                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'Супер приз', price: 7.50, img: './caser.png'}
+                ], [10, 15, 2, 10, 25, 26, 12])">
+                    <img class="case-card-image" src="./caser.png" alt="Rare Case">
+                    <div class="case-card-name">Rare Case</div>
+                    <div class="case-card-price">$1.50</div>
+                </div>
+
+                <!-- VIP Case ($2.00) -->
+                <div class="case-card available" onclick="openCase('paid_20', 'VIP Case', 2.00, './casevip.png', [
+                    {name: '$1.00', price: 1.00, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: '$1.60', price: 1.60, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: 'Мишка', price: 0.20, img: './bear.png'},
+                    {name: 'Бокс', price: 0.50, img: './box.png'},
+                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'VIP Джекпот', price: 15.00, img: './casevip.png'}
+                ], [10, 15, 2, 8, 20, 30, 15])">
+                    <img class="case-card-image" src="./casevip.png" alt="VIP Case">
+                    <div class="case-card-name">VIP Case</div>
+                    <div class="case-card-price">$2.00</div>
                 </div>
             </div>
         </div>
@@ -425,10 +488,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     </button>
 </nav>
 
-
-<!-- ========================================== -->
-<!-- FULLSCREEN GAMES OVERLAYS                  -->
-<!-- ========================================== -->
+<!-- FULLSCREEN GAMES OVERLAYS -->
 
 <!-- RACKET (CRASH) GAME SCREEN -->
 <div id="screen-crash" class="game-screen">
@@ -450,9 +510,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         </div>
     </div>
 
-    <div class="crash-history-pills" id="crash-history">
-        <!-- JS fills this -->
-    </div>
+    <div class="crash-history-pills" id="crash-history"></div>
 
     <div class="crash-bottom-ui">
         <button id="btn-crash-action" class="btn-crash-blue" onclick="handleCrashAction()">Сделать ставку 🚀</button>
@@ -491,15 +549,12 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
             
             <button id="mines-button" class="primary gold" onclick="handleMinesAction()">СТАРТ</button>
-            <div style="margin-top:12px; color:#9c841a; text-align:center; font-size:11px; font-weight:800;">В каждой игре есть 1 Изумруд (даёт x3!).</div>
+            <div style="margin-top:12px; color:#9c841a; text-align:center; font-size:11px; font-weight:800;">Найди Золотую Тучку ☁️✨ (даёт мгновенно x3)!</div>
         </div>
     </div>
 </div>
 
-
-<!-- ========================================== -->
-<!-- MODALS                                     -->
-<!-- ========================================== -->
+<!-- MODALS -->
 
 <!-- BET MODAL FOR CRASH -->
 <div id="bet-modal-crash" class="deposit-overlay" onclick="if(event.target===this) this.classList.remove('active')">
@@ -569,6 +624,26 @@ let balance = 0.10;
 let inventory = [];
 let userLoaded = false;
 
+/* LOCAL STORAGE BACKUP FOR PERSISTENCE */
+const LOCAL_KEY = "tucha_user_data_" + userId;
+
+function saveLocal() {
+    try {
+        localStorage.setItem(LOCAL_KEY, JSON.stringify({ balance, inventory }));
+    } catch(e) {}
+}
+
+function loadLocal() {
+    try {
+        let raw = localStorage.getItem(LOCAL_KEY);
+        if (raw) {
+            let data = JSON.parse(raw);
+            if (isFinite(data.balance)) balance = Number(data.balance);
+            if (Array.isArray(data.inventory)) inventory = data.inventory;
+        }
+    } catch(e) {}
+}
+
 /* TABS & GAMES NAVIGATION */
 function switchTab(name) {
     document.querySelectorAll(".tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + name));
@@ -596,29 +671,54 @@ function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
 function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
 
 function loadUserData() {
-    if (!isDBConnected()) {
-        try { let saved = JSON.parse(localStorage.getItem("tucha-"+userId) || "{}");
-              if (isFinite(saved.balance)) balance = Number(saved.balance);
-              if (Array.isArray(saved.inventory)) inventory = saved.inventory;
-        } catch(e) {}
-        updateBalanceUI(); renderInventory(); return;
-    }
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: 0.10}) })
+    loadLocal();
+    updateBalanceUI(); 
+    renderInventory();
+
+    if (!isDBConnected()) return;
+
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
-            if (data.inventory) { try { inventory = typeof data.inventory==='string'?JSON.parse(data.inventory):data.inventory; } catch(e){} }
-            updateBalanceUI(); userLoaded = true; renderInventory();
+            if (data.inventory) { 
+                try { 
+                    let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory; 
+                    if (Array.isArray(parsed) && parsed.length >= inventory.length) {
+                        inventory = parsed;
+                    }
+                } catch(e){} 
+            }
+            saveLocal();
+            updateBalanceUI(); 
+            userLoaded = true; 
+            renderInventory();
             if (Number(data.credited) > 0) onDepositCredited(Number(data.credited));
             checkPayments(true);
         }
     }).catch(()=>{ updateBalanceUI(); renderInventory(); });
 }
+
 function saveUserData() {
-    if (!isDBConnected()) { try{ localStorage.setItem("tucha-"+userId, JSON.stringify({balance, inventory})); }catch(e){} return; }
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory) }) })
+    saveLocal();
+    if (!isDBConnected()) return;
+    fetch(SCRIPT_URL, { 
+        method: "POST", 
+        body: JSON.stringify({ 
+            action: "update", 
+            userid: userId, 
+            username: userName, 
+            balance: balance, 
+            inventory: JSON.stringify(inventory) 
+        }) 
+    })
     .then(res => res.json()).then(data => {
-        if (Number(data.credited) > 0) { balance += Number(data.credited); updateBalanceUI(); onDepositCredited(Number(data.credited)); saveUserData(); }
+        if (Number(data.credited) > 0) { 
+            balance += Number(data.credited); 
+            updateBalanceUI(); 
+            onDepositCredited(Number(data.credited)); 
+            saveUserData(); 
+        }
     }).catch(()=>{});
 }
 
@@ -627,10 +727,7 @@ if (telegramUser) {
     if (telegramUser.photo_url) $("avatar").innerHTML = `<img src="${telegramUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
 }
 
-
-/* =========================================================
-   CRASH (RACKET) REDESIGN LOGIC
-   ======================================================== */
+/* CRASH (RACKET) LOGIC - ПЛАВНЫЙ РОСТ */
 let crashState = "waiting", crashBet = 0, inCrash = false, crashMultiplier = 1, crashTarget = 2;
 let crashTimer = null, crashTick = null, crashHistoryList = [91.9, 86.8, 2.47, 9.75, 1.07];
 
@@ -687,8 +784,9 @@ function runCrash() {
     $("crash-sub").textContent = "ПОЛЁТ";
     $("btn-crash-action").disabled = !inCrash;
     
+    // Плавное увеличение икса (каждые 80мс на +0.01)
     crashTick = setInterval(() => {
-        crashMultiplier += 0.03;
+        crashMultiplier += 0.01;
         $("crash-val").textContent = crashMultiplier.toFixed(2) + "x";
         $("crash-val").style.color = "#ffffff";
         
@@ -697,7 +795,7 @@ function runCrash() {
             $("btn-crash-action").style.background = "linear-gradient(135deg, #16a34a, #059669)";
         }
         if (crashMultiplier >= crashTarget) crashEnd();
-    }, 60);
+    }, 80);
 }
 
 function crashEnd() {
@@ -741,12 +839,8 @@ function confirmCrashBet() {
     haptic("medium");
 }
 
-
-/* =========================================================
-   MINES LOGIC
-   ======================================================== */
+/* MINES LOGIC - ОБЛАЧКИ И ЗОЛОТАЯ ТУЧКА */
 let minesState="idle", minePos=[], mineBet=0, mineMult=1, safeOpen=0, bombCnt=3, emeraldApplied=false;
-const regOres=["./ore_coal.png","./ore_iron.png","./ore_gold.png","./ore_redstone.png","./ore_diamond.png"];
 
 function buildMines() {
     $("mines-grid").innerHTML = "";
@@ -782,33 +876,53 @@ function startMines() {
     [...$("mines-grid").children].forEach(c => { c.disabled=false; c.onclick=()=>clickMine(Number(c.dataset.i), c); });
     haptic("medium");
 }
+
 function clickMine(i, c) {
     if(minesState!=="playing"||c.disabled) return;
     if(minePos.includes(i)) {
         revealMines(); finishMines("ПРОИГРЫШ −$"+money(mineBet), "red"); notify("error"); return;
     }
     const isEm = c.dataset.em==="true";
-    c.className="cell revealed-safe"; c.innerHTML=`<img src="${isEm?'./ore_emerald.png':regOres[Math.floor(Math.random()*regOres.length)]}">`;
-    c.disabled=true; safeOpen++;
+    if (isEm) {
+        c.className = "cell revealed-gold";
+        c.textContent = "☁️✨";
+    } else {
+        c.className = "cell revealed-safe";
+        c.textContent = "☁️";
+    }
+    c.disabled = true; safeOpen++;
     
-    let prob=1; for(let j=0;j<safeOpen;j++) prob*=(25-bombCnt-j)/(25-j);
-    let step = 0.95/prob;
+    // Сбалансированная математика мин (RTP ~88%)
+    let prob = 1; 
+    for(let j=0; j<safeOpen; j++) prob *= (25-bombCnt-j)/(25-j);
+    let step = 0.88 / prob;
+    
     if(isEm) emeraldApplied = true;
-    mineMult = emeraldApplied ? step*3 : step;
+    mineMult = emeraldApplied ? step * 3 : step;
     
     $("mine-mult").textContent = mineMult.toFixed(2);
-    $("mines-button").disabled=false; $("mines-button").className="primary green";
-    $("mines-button").textContent="ЗАБРАТЬ $"+money(mineBet*mineMult);
-    if(isEm) haptic("heavy"); else haptic();
+    $("mines-button").disabled = false; 
+    $("mines-button").className = "primary green";
+    $("mines-button").textContent = "ЗАБРАТЬ $" + money(mineBet * mineMult);
     
-    if(safeOpen===25-bombCnt) handleMinesAction();
+    if(isEm) haptic("heavy"); else haptic();
+    if(safeOpen === 25 - bombCnt) handleMinesAction();
 }
+
 function revealMines() {
     [...$("mines-grid").children].forEach((c,i)=>{
-        if(minePos.includes(i)){ c.className="cell bomb"; c.innerHTML=`<img src="./creeper.png">`; c.disabled=true; }
-        else if(!c.classList.contains("revealed-safe")) { c.className="cell safe"; c.innerHTML=`<img src="${c.dataset.em==='true'?'./ore_emerald.png':regOres[0]}">`; c.disabled=true; }
+        if(minePos.includes(i)){ 
+            c.className="cell bomb"; 
+            c.textContent="💣"; 
+            c.disabled=true; 
+        } else if(!c.classList.contains("revealed-safe") && !c.classList.contains("revealed-gold")) { 
+            c.className = c.dataset.em === 'true' ? "cell revealed-gold" : "cell revealed-safe"; 
+            c.textContent = c.dataset.em === 'true' ? "☁️✨" : "☁️"; 
+            c.disabled = true; 
+        }
     });
 }
+
 function finishMines(msg, col) {
     minesState="finished"; $("mines-state-label").textContent=msg;
     $("mines-slider").disabled=false; $("mines-button").disabled=false;
@@ -816,11 +930,9 @@ function finishMines(msg, col) {
 }
 if($("mines-slider")) $("mines-slider").addEventListener("input",()=>$("mines-count").textContent=$("mines-slider").value);
 
-
-/* =========================================================
-   CASES & INVENTORY LOGIC
-   ======================================================== */
+/* CASES & INVENTORY LOGIC */
 let curCase=null, opening=false, caseQty=1;
+
 function openCase(id,name,pr,img,prizes,weights) {
     curCase={id,name,pr,img,prizes,weights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
@@ -828,7 +940,9 @@ function openCase(id,name,pr,img,prizes,weights) {
     $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}"><div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
     setCaseQuantity(1); window.scrollTo(0,0); haptic();
 }
+
 function closeCaseDetail() { if(opening)return; $("case-detail").classList.remove("active"); $("cases-list").style.display="block"; haptic(); }
+
 function setCaseQuantity(q) {
     if(opening)return; caseQty=q;
     document.querySelectorAll('.qty-btn').forEach(b=>{ b.classList.remove('active'); if(parseInt(b.textContent)===q) b.classList.add('active'); });
@@ -837,7 +951,9 @@ function setCaseQuantity(q) {
     $("roulettes-container").innerHTML = Array(q).fill().map(()=>`<div class="roulette-wrap"><div class="roulette-strip"></div><div class="roulette-marker"></div></div>`).join('');
     haptic("light");
 }
+
 function choosePrize(pr, w) { let t=w.reduce((a,b)=>a+b,0), r=Math.random()*t; for(let i=0;i<pr.length;i++){ r-=w[i]; if(r<=0)return pr[i]; } return pr[0]; }
+
 async function openCurrentCase() {
     if(!curCase||opening)return; const cost = curCase.pr*caseQty;
     if(balance<cost) { alert("Недостаточно средств!"); notify("error"); return; }
@@ -867,14 +983,21 @@ async function openCurrentCase() {
         }));
     }
     await Promise.all(proms);
-    saveUserData(); renderInventory();
+    
+    // Мгновенное сохранение во избежание потери выигрыша
+    saveUserData(); 
+    renderInventory();
+    
     $("case-result").textContent = `🎉 ВЫИГРАНО: ${caseQty} шт. (упало в инвентарь)`;
     opening=false; setCaseQuantity(caseQty); $("case-button").disabled=false; notify("success");
 }
 
 function renderInventory() {
     $("inventory-count").textContent = inventory.length + " предметов";
-    if(inventory.length===0) { $("inventory-list").innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">Инвентарь пуст</p>'; return; }
+    if(inventory.length===0) { 
+        $("inventory-list").innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">Инвентарь пуст</p>'; 
+        return; 
+    }
     $("inventory-list").innerHTML = inventory.map((it,i)=>`
         <div class="inventory-item">
             <img src="${it.img}">
@@ -884,14 +1007,20 @@ function renderInventory() {
         </div>
     `).join('');
 }
-function sellItem(i) { balance+=inventory[i].price; inventory.splice(i,1); updateBalanceUI(); saveUserData(); renderInventory(); notify("success"); }
 
+function sellItem(i) { 
+    balance += inventory[i].price; 
+    inventory.splice(i,1); 
+    updateBalanceUI(); 
+    saveUserData(); 
+    renderInventory(); 
+    notify("success"); 
+}
 
-/* =========================================================
-   DEPOSIT & ADMIN
-   ======================================================== */
+/* DEPOSIT & ADMIN */
 function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
 function closeDeposit() { $("deposit-modal").classList.remove("active"); }
+
 function createDeposit() {
     const a = Number($("deposit-amount").value); if(a<1)return;
     if(!isDBConnected()){ $("deposit-status").textContent="База не подключена"; return; }
@@ -901,16 +1030,19 @@ function createDeposit() {
         if(d.status==="success"){ $("deposit-status").textContent="Оплатите в Crypto Bot"; window.open(d.pay_url,"_blank"); setInterval(()=>checkPayments(true),10000); }
     }).finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT"; });
 }
+
 function checkPayments(sil) {
     if(!isDBConnected()||!userLoaded)return;
     fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
     .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) saveUserData(); });
 }
+
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
 
 function openAdminPanel() {
     if(prompt("Пароль:")===ADMIN_PASSWORD){ $("admin-modal").style.display="flex"; fetchAllPlayers(); } else alert("Неверно!");
 }
+
 function fetchAllPlayers() {
     if(!isDBConnected())return;
     fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify({action:"get_all"})}).then(r=>r.json()).then(d=>{
@@ -922,6 +1054,7 @@ function fetchAllPlayers() {
         `).join('');
     });
 }
+
 function adminEditBalance(id, nm, b) {
     let nb=prompt("Новый баланс:", b); if(nb!==null && !isNaN(nb)){
         fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify({action:"update",userid:id,username:nm,balance:parseFloat(nb),inventory:JSON.stringify([])})}).then(()=>{ alert("Обновлено!"); fetchAllPlayers(); if(id===userId){ balance=parseFloat(nb); updateBalanceUI(); } });
