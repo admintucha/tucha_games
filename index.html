@@ -80,17 +80,17 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 .games-header {
     font-size: 27px; font-weight: 950; letter-spacing: -.8px; color: #332900; margin-bottom: 16px;
 }
-.games-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+.games-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 14px; 
 }
 .game-card {
     position: relative; border-radius: 20px; overflow: hidden;
     background: #ffffff; border: 3px solid rgba(255, 255, 255, 0.8);
     box-shadow: 0 10px 25px rgba(234, 179, 8, 0.2); cursor: pointer;
     aspect-ratio: 1 / 1;
-    transition: transform 0.18s, box-shadow 0.18s;
+    transition: transform 0.18s, box-shadow 0.18s; 
     display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 .game-card:active { transform: scale(0.95); }
@@ -137,9 +137,9 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     font-size: 52px; font-weight: 950; color: #ffffff; text-shadow: 0 4px 18px rgba(0,0,0,0.25);
     line-height: 1; text-align: center; margin-top: 15px;
 }
-.crash-circle-sub {
-    font-size: 14px; font-weight: 950; color: rgba(255,255,255,0.95);
-    letter-spacing: 1.2px; margin-top: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.crash-circle-sub { 
+    font-size: 14px; font-weight: 950; color: rgba(255,255,255,0.95); 
+    letter-spacing: 1.2px; margin-top: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2); 
 }
 
 .crash-history-pills {
@@ -365,6 +365,39 @@ nav button {
 nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119, 6, 0.3)); }
 .nav-icon { height: 26px; font-size: 22px; }
 
+
+
+
+/* ===== UPGRADE: GIFT BETTING & LARGE AMOUNT FIELD ===== */
+.upgrade-bet-input { width: 0 !important; min-width: 54px; flex: 1 1 0; min-height: 40px; text-align: center; font-size: 25px !important; line-height: 1; }
+.upgrade-value-row { min-height: 40px; }
+.upgrade-mode-switch { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:5px; border-radius:16px; background:rgba(255,255,255,.78); border:2px solid rgba(255,215,0,.32); }
+.upgrade-mode-btn { min-height:43px; padding:9px 5px; border:0; border-radius:12px; background:transparent; color:#806f35; font-size:12px; font-weight:950; }
+.upgrade-mode-btn.active { color:#fff; background:linear-gradient(135deg,#38bdf8,#258fd8); box-shadow:0 5px 13px rgba(37,153,220,.22); }
+.upgrade-gift-panel { padding:13px; border-radius:19px; background:rgba(255,255,255,.88); border:2px solid rgba(56,189,248,.3); box-shadow:0 6px 18px rgba(14,165,233,.08); }
+.upgrade-gift-heading { color:#26364a; font-size:14px; font-weight:1000; }
+.upgrade-gift-hint { margin-top:4px; color:#8294a4; font-size:11px; line-height:1.4; font-weight:750; }
+.upgrade-gift-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin-top:12px; }
+.upgrade-gift-choice { min-width:0; padding:8px 4px; border:2px solid #dceef7; border-radius:13px; background:linear-gradient(145deg,#fff,#f0faff); color:#304256; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+.upgrade-gift-choice.selected { border-color:#28aee8; background:linear-gradient(145deg,#eaf9ff,#d5f2ff); box-shadow:0 0 0 2px rgba(56,189,248,.13); }
+.upgrade-gift-choice img { width:43px; height:43px; object-fit:contain; }
+.upgrade-gift-choice-name { font-size:10px; font-weight:950; line-height:1.1; text-align:center; }
+.upgrade-gift-choice-price { font-size:10px; color:#159edc; font-weight:950; }
+.upgrade-gift-empty { grid-column:1/-1; padding:16px 8px; color:#8294a4; font-size:12px; text-align:center; font-weight:800; }
+.upgrade-gift-target { display:flex; align-items:center; justify-content:center; gap:9px; margin-top:12px; min-height:55px; padding:9px; border-radius:13px; background:#eefaff; border:1px solid #c8eefe; color:#2d607c; font-size:12px; text-align:center; font-weight:900; }
+.upgrade-gift-target img { width:42px; height:42px; object-fit:contain; }
+.upgrade-gift-target strong { color:#108fc8; }
+.upgrade-range-label { display:flex; justify-content:space-between; color:#668197; font-size:11px; font-weight:850; margin-bottom:8px; }
+.upgrade-range-label b { color:#159edc; }
+.upgrade-gift-lock-hint { margin-top:7px; color:#159edc; font-size:10px; text-align:center; font-weight:850; }
+.upgrade-control-card.controls-locked { opacity:.72; }
+@media (max-width:360px) {
+  .upgrade-gift-list { gap:5px; }
+  .upgrade-gift-choice img { width:36px; height:36px; }
+  .upgrade-gift-choice-name,.upgrade-gift-choice-price { font-size:9px; }
+  .upgrade-bet-input { font-size:26px !important; }
+}
+
 /* ===== UPGRADE GAME ===== */
 .upgrade-content { padding: 16px; display: flex; flex-direction: column; gap: 13px; }
 .upgrade-wheel-stage {
@@ -412,7 +445,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 .upgrade-wheel-ring.spinning { will-change: transform; }
 .upgrade-wheel-ring.won { box-shadow: 0 0 0 5px rgba(34,197,94,.18), 0 8px 25px rgba(34,197,94,.22); }
 .upgrade-wheel-ring.lost { box-shadow: 0 0 0 5px rgba(239,68,68,.12), 0 8px 22px rgba(14,165,233,.18); }
-.upgrade-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.upgrade-controls-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .upgrade-control-card {
     min-width: 0; padding: 11px; border-radius: 19px;
     background: rgba(255,255,255,.82); border: 2px solid rgba(255,215,0,.34);
@@ -474,6 +507,18 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     .upgrade-bet-input, .upgrade-chance-number { font-size: 19px !important; }
 }
 
+
+/* Final overrides: readable bet input on narrow Telegram screens */
+#upgrade-bet.upgrade-bet-input {
+    width: 0 !important; min-width: 0 !important; width: 100% !important; flex: 1 1 auto !important;
+    min-height: 48px !important; padding: 2px 3px !important; margin: 0 !important;
+    border: 0 !important; border-radius: 8px !important; background: transparent !important;
+    box-shadow: none !important; color: #26364a !important; text-align: center !important;
+    font-size: 30px !important; font-weight: 1000 !important; line-height: 1.1 !important;
+}
+#upgrade-stake-card .upgrade-value-row { min-width: 0; gap: 8px; }
+#upgrade-stake-card .upgrade-step-btn { flex: 0 0 40px; width: 40px; height: 42px; }
+
 </style>
 </head>
 
@@ -524,7 +569,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         <div id="cases-list">
             <div class="games-header" style="margin-bottom:5px;">Кейсы</div>
             <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!</div>
-
+            
             <div class="case-grid">
                 <!-- Mini Case ($0.20) -->
                 <div class="case-card available" onclick="openCase('paid_02', 'Mini Case', 0.20, './casecase.png', [
@@ -645,7 +690,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         <div class="panel" style="text-align:center; padding-top:32px;">
             <div id="avatar" style="width:90px; height:90px; margin:0 auto 14px; border-radius:50%; background:linear-gradient(135deg, #f59e0b, #ea580c); font-size:45px; display:flex; align-items:center; justify-content:center; border:3px solid #fff;">👤</div>
             <h2 id="username" style="margin:0; font-size:23px; font-weight:950; color:#332900;">Игрок</h2>
-
+            
             <div class="balance" style="display:inline-flex; margin:16px 0 20px;">
                 <span class="balance-icon">$</span>
                 <span class="global-balance">0.10</span>
@@ -683,12 +728,12 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <span class="balance-icon">$</span><span class="global-balance">0.10</span>
         </div>
     </div>
-
+    
     <div class="crash-sky">
         <div class="cloud cloud-1">☁️</div>
         <div class="cloud cloud-2">☁️</div>
         <div class="cloud cloud-3">☁️</div>
-
+        
         <div class="crash-area">
             <img id="crash-rocket-img" class="crash-rocket-img" src="./rocket.png" alt="Ракетка">
             <div id="crash-val" class="crash-circle-val">1.00x</div>
@@ -712,7 +757,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <span class="balance-icon">$</span><span class="global-balance">0.10</span>
         </div>
     </div>
-
+    
     <div class="mines-content">
         <div class="panel">
             <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:950;">
@@ -720,20 +765,20 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                 <span id="mines-state-label" style="color:#d97706;">Новая игра</span>
             </div>
             <div id="mines-grid" class="grid"></div>
-
+            
             <label style="margin-top:16px; display:block;">Сумма ставки ($)</label>
             <input id="mines-bet" type="number" min="0.01" step="0.01" value="0.10">
-
+            
             <div class="range-row">
                 <span>Количество мин</span>
                 <span id="mines-count">3</span>
             </div>
             <input id="mines-slider" type="range" min="1" max="24" value="3">
-
+            
             <div id="mines-multiplier" style="display:none; text-align:center; color:#16a34a; font-size:20px; font-weight:950; margin-bottom:14px;">
                 Коэффициент: <span id="mine-mult">1.00</span>x
             </div>
-
+            
             <button id="mines-button" class="primary gold" onclick="handleMinesAction()">СТАРТ</button>
             <div style="margin-top:12px; color:#9c841a; text-align:center; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:4px;">
                 Найди Золотую Тучку ✨ (даёт мгновенно x3)!
@@ -750,7 +795,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <span class="balance-icon">$</span><span class="global-balance">0.10</span>
         </div>
     </div>
-
+    
     <div class="dice-content">
         <div class="dice-result-wrapper">
             <div id="dice-result" class="dice-result-val">50.00</div>
@@ -759,11 +804,11 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 
         <div class="panel">
             <div style="font-weight:950; margin-bottom:10px;">Настройте шанс:</div>
-
+            
             <div class="dice-slider-wrap">
                 <input id="dice-slider" type="range" min="1" max="95" value="50" oninput="updateDiceUI()">
             </div>
-
+            
             <div class="dice-info-row">
                 <div class="dice-info-box">
                     <div class="dice-info-label">Шанс победы</div>
@@ -777,7 +822,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 
             <label style="display:block; margin-bottom: 5px;">Сумма ставки ($)</label>
             <input id="dice-bet" type="number" min="0.01" step="0.01" value="0.10">
-
+            
             <button id="btn-dice-action" class="primary gold" onclick="playDice()">СДЕЛАТЬ СТАВКУ</button>
         </div>
     </div>
@@ -791,19 +836,19 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <span class="balance-icon">$</span><span class="global-balance">0.10</span>
         </div>
     </div>
-
+    
     <div class="tower-content">
         <div class="panel">
             <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:950;">
                 <b>🏰 БАШНЯ</b>
                 <span id="tower-state-label" style="color:#d97706;">Новая игра</span>
             </div>
-
+            
             <div id="tower-container" class="tower-container"></div>
-
+            
             <label style="margin-top:16px; display:block;">Сумма ставки ($)</label>
             <input id="tower-bet" type="number" min="0.01" step="0.01" value="0.10">
-
+            
             <button id="tower-button" class="primary gold" onclick="handleTowerAction()">СТАРТ БАШНИ</button>
         </div>
     </div>
@@ -832,9 +877,21 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
         </div>
 
+        <div class="upgrade-mode-switch">
+            <button id="upgrade-mode-money" class="upgrade-mode-btn active" type="button" onclick="setUpgradeMode('money')">💵 Ставка балансом</button>
+            <button id="upgrade-mode-gift" class="upgrade-mode-btn" type="button" onclick="setUpgradeMode('gift')">🎁 Ставка подарком</button>
+        </div>
+
+        <div id="upgrade-gift-panel" class="upgrade-gift-panel" style="display:none;">
+            <div class="upgrade-gift-heading">Выбери подарок из инвентаря</div>
+            <div class="upgrade-gift-hint">При победе подарок перейдёт на следующий уровень. Последний подарок можно обменять на баланс.</div>
+            <div id="upgrade-gift-list" class="upgrade-gift-list"></div>
+            <div id="upgrade-gift-target" class="upgrade-gift-target">Выбери подарок, чтобы увидеть следующий уровень</div>
+        </div>
+
         <div class="upgrade-controls-grid">
-            <div class="upgrade-control-card">
-                <div class="upgrade-control-label">Ставка</div>
+            <div id="upgrade-stake-card" class="upgrade-control-card">
+                <div class="upgrade-control-label">Ставка ($)</div>
                 <div class="upgrade-value-row">
                     <button class="upgrade-step-btn" type="button" onclick="changeUpgradeBet(-0.01)" aria-label="Уменьшить ставку">−</button>
                     <input id="upgrade-bet" class="upgrade-bet-input" type="number" min="0.01" step="0.01" value="0.10" oninput="updateUpgradeUI()">
@@ -847,8 +904,8 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                 </div>
             </div>
 
-            <div class="upgrade-control-card">
-                <div class="upgrade-control-label">Шанс</div>
+            <div id="upgrade-chance-card" class="upgrade-control-card">
+                <div class="upgrade-control-label">Шанс победы</div>
                 <div class="upgrade-value-row">
                     <button class="upgrade-step-btn" type="button" onclick="changeUpgradeChance(-1)" aria-label="Уменьшить шанс">−</button>
                     <div id="upgrade-chance-value" class="upgrade-chance-number">47%</div>
@@ -863,7 +920,9 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         </div>
 
         <div class="upgrade-range-card">
-            <input id="upgrade-slider" type="range" min="1" max="95" value="47" oninput="setUpgradeChance(this.value)">
+            <div class="upgrade-range-label">Шанс: <b id="upgrade-range-label">47%</b></div>
+            <input id="upgrade-slider" type="range" min="1" max="95" value="47" step="1" oninput="setUpgradeChance(this.value)">
+            <div id="upgrade-gift-lock-hint" class="upgrade-gift-lock-hint" style="display:none;">Шанс рассчитан автоматически по стоимости следующего подарка</div>
         </div>
 
         <div class="upgrade-stats">
@@ -1016,15 +1075,15 @@ function loadUserData() {
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
-            if (data.inventory) {
-                try {
-                    let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory;
+            if (data.inventory) { 
+                try { 
+                    let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory; 
                     if (Array.isArray(parsed) && parsed.length >= inventory.length) inventory = parsed;
-                } catch(e){}
+                } catch(e){} 
             }
             saveLocal();
-            updateBalanceUI();
-            userLoaded = true;
+            updateBalanceUI(); 
+            userLoaded = true; 
             renderInventory();
             if (Number(data.credited) > 0) onDepositCredited(Number(data.credited));
             checkPayments(true);
@@ -1208,9 +1267,9 @@ function clickMine(i, c) {
 function revealMines() {
     [...$("mines-grid").children].forEach((c,i)=>{
         if(minePos.includes(i)){ c.className="cell bomb"; c.innerHTML=ICON_BOMB; c.disabled=true; }
-        else if(!c.classList.contains("revealed-safe") && !c.classList.contains("revealed-gold")) {
-            c.className = c.dataset.em === 'true' ? "cell revealed-gold" : "cell revealed-safe";
-            c.innerHTML = c.dataset.em === 'true' ? ICON_GOLD_CLOUD : ICON_CLOUD; c.disabled = true;
+        else if(!c.classList.contains("revealed-safe") && !c.classList.contains("revealed-gold")) { 
+            c.className = c.dataset.em === 'true' ? "cell revealed-gold" : "cell revealed-safe"; 
+            c.innerHTML = c.dataset.em === 'true' ? ICON_GOLD_CLOUD : ICON_CLOUD; c.disabled = true; 
         }
     });
 }
@@ -1280,7 +1339,7 @@ function buildTower() {
         let row = document.createElement("div");
         row.className = "tower-row" + (idx === 0 ? " active-row" : "");
         row.id = "tower-row-" + idx;
-
+        
         let cellsDiv = document.createElement("div");
         cellsDiv.className = "tower-cells";
         for (let c = 0; c < lvl.cells; c++) {
@@ -1292,11 +1351,11 @@ function buildTower() {
             btn.onclick = () => clickTowerCell(idx, c);
             cellsDiv.appendChild(btn);
         }
-
+        
         let multDiv = document.createElement("div");
         multDiv.className = "tower-mult";
         multDiv.textContent = "x" + lvl.mult.toFixed(2);
-
+        
         row.appendChild(cellsDiv);
         row.appendChild(multDiv);
         cont.appendChild(row);
@@ -1317,7 +1376,7 @@ function handleTowerAction() {
 
 function clickTowerCell(rowIdx, cellIdx) {
     if (towerState !== "playing" || rowIdx !== currentLevel) return;
-
+    
     let lvl = towerLevels[rowIdx];
     let bombIndices = [];
     while(bombIndices.length < lvl.bombs) {
@@ -1326,7 +1385,7 @@ function clickTowerCell(rowIdx, cellIdx) {
             bombIndices.push(r);
         }
     }
-
+    
     let rowEl = $("tower-row-" + rowIdx);
     let cellButtons = rowEl.querySelectorAll(".tower-cell");
     cellButtons.forEach((b, idx) => {
@@ -1339,7 +1398,7 @@ function clickTowerCell(rowIdx, cellIdx) {
             b.innerHTML = "✨";
         }
     });
-
+    
     if (bombIndices.includes(cellIdx)) {
         towerState = "finished";
         $("tower-state-label").textContent = "ПРОИГРЫШ −$" + money(towerBet);
@@ -1352,13 +1411,13 @@ function clickTowerCell(rowIdx, cellIdx) {
         haptic("success");
         rowEl.classList.remove("active-row");
         rowEl.classList.add("passed-row");
-
+        
         currentLevel++;
         if (currentLevel < towerLevels.length) {
             let nextRow = $("tower-row-" + currentLevel);
             nextRow.classList.add("active-row");
             nextRow.querySelectorAll(".tower-cell").forEach(b => b.disabled = false);
-
+            
             let currentWin = towerBet * towerLevels[currentLevel - 1].mult;
             $("tower-state-label").textContent = `Выигрыш: $${money(currentWin)}. Забрать или дальше?`;
             $("tower-button").disabled = false;
@@ -1392,37 +1451,173 @@ function cashOutTower() {
     notify("success");
 }
 
-/* UPGRADE LOGIC */
+/* UPGRADE LOGIC: BALANCE OR GIFT */
 let upgradeState = "idle";
 let upgradeChance = 47;
 let upgradeBusy = false;
-const UPGRADE_RTP = 94.5; // 47% даёт коэффициент около x2.01, как на примере.
+let upgradeMode = "money";
+let upgradeGiftIndex = null;
+let upgradePendingGift = null;
+const UPGRADE_RTP = 94.5;
+
+// Четыре подарка из существующих кейсов. Их стоимость используется для расчёта следующего уровня.
+const UPGRADE_GIFTS = [
+    { name: "Мишка", price: 0.20, img: "./bear.png" },
+    { name: "Бокс", price: 0.50, img: "./box.png" },
+    { name: "Ракетка", price: 0.75, img: "./rocket.png" },
+    { name: "Кубок", price: 1.00, img: "./trofei.png" }
+];
+const UPGRADE_TOP_GIFT_BALANCE = 1.50;
 
 function getUpgradeBet() {
     const value = Number($("upgrade-bet").value);
     return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
+function upgradeGiftLevel(item) {
+    if (!item) return -1;
+    const name = String(item.name || "").trim().toLocaleLowerCase("ru");
+    const img = String(item.img || "").toLowerCase();
+    return UPGRADE_GIFTS.findIndex(g => g.name.toLocaleLowerCase("ru") === name || img.endsWith(g.img.replace("./", "").toLowerCase()));
+}
+
+function getSelectedUpgradeGift() {
+    if (upgradeGiftIndex === null || upgradeGiftIndex < 0 || upgradeGiftIndex >= inventory.length) return null;
+    const item = inventory[upgradeGiftIndex];
+    return upgradeGiftLevel(item) >= 0 ? item : null;
+}
+
+function getUpgradeGiftTarget(item) {
+    const level = upgradeGiftLevel(item);
+    if (level < 0) return null;
+    if (level < UPGRADE_GIFTS.length - 1) {
+        const target = UPGRADE_GIFTS[level + 1];
+        return { type: "gift", ...target };
+    }
+    return { type: "balance", name: "На баланс", price: UPGRADE_TOP_GIFT_BALANCE, img: "" };
+}
+
+function renderUpgradeGiftList() {
+    const list = $("upgrade-gift-list");
+    if (!list) return;
+    const available = inventory.map((item, index) => ({ item, index, level: upgradeGiftLevel(item) })).filter(x => x.level >= 0);
+    if (!available.some(x => x.index === upgradeGiftIndex)) upgradeGiftIndex = available.length ? available[0].index : null;
+    if (!available.length) {
+        list.innerHTML = '<div class="upgrade-gift-empty">В инвентаре пока нет подарков. Открой кейс и получи Мишку, Бокс, Ракетку или Кубок.</div>';
+        $("upgrade-gift-target").textContent = "Сначала получи подарок в кейсе";
+        if ($("upgrade-button")) $("upgrade-button").disabled = upgradeBusy || upgradeMode === "gift";
+        return;
+    }
+    list.innerHTML = available.map(({ item, index, level }) => {
+        const gift = UPGRADE_GIFTS[level];
+        return `<button type="button" class="upgrade-gift-choice ${index === upgradeGiftIndex ? "selected" : ""}" onclick="selectUpgradeGift(${index})">
+            <img src="${gift.img}" alt="${gift.name}">
+            <span class="upgrade-gift-choice-name">${gift.name}</span>
+            <span class="upgrade-gift-choice-price">$${money(gift.price)}</span>
+        </button>`;
+    }).join("");
+    updateUpgradeGiftTarget();
+    if ($("upgrade-button")) $("upgrade-button").disabled = upgradeBusy || (upgradeMode === "gift" && !getSelectedUpgradeGift());
+}
+
+function updateUpgradeGiftTarget() {
+    const item = getSelectedUpgradeGift();
+    const targetBox = $("upgrade-gift-target");
+    if (!targetBox) return;
+    if (!item) {
+        targetBox.textContent = "Выбери подарок из инвентаря";
+        return;
+    }
+    const level = upgradeGiftLevel(item);
+    const target = getUpgradeGiftTarget(item);
+    if (target.type === "gift") {
+        targetBox.innerHTML = `<img src="${target.img}" alt="${target.name}"><span>При победе: <strong>${target.name}</strong><br>Стоимость $${money(target.price)}</span>`;
+    } else {
+        targetBox.innerHTML = `<span style="font-size:25px;">💵</span><span>Максимальный подарок — <strong>Кубок</strong><br>При победе: <strong>$${money(target.price)} на баланс</strong></span>`;
+    }
+    const selectedButtons = $("upgrade-gift-list").querySelectorAll(".upgrade-gift-choice");
+    selectedButtons.forEach(btn => btn.classList.remove("selected"));
+    const available = inventory.map((x,i)=>({x,i})).filter(({x})=>upgradeGiftLevel(x)>=0);
+    const selectedPosition = available.findIndex(x => x.i === upgradeGiftIndex);
+    if (selectedPosition >= 0 && selectedButtons[selectedPosition]) selectedButtons[selectedPosition].classList.add("selected");
+}
+
+function selectUpgradeGift(index) {
+    if (upgradeBusy) return;
+    const item = inventory[index];
+    if (!item || upgradeGiftLevel(item) < 0) return;
+    upgradeGiftIndex = index;
+    updateUpgradeUI();
+    haptic("light");
+}
+
+function setUpgradeMode(mode) {
+    if (upgradeBusy) return;
+    upgradeMode = mode === "gift" ? "gift" : "money";
+    $("upgrade-mode-money").classList.toggle("active", upgradeMode === "money");
+    $("upgrade-mode-gift").classList.toggle("active", upgradeMode === "gift");
+    $("upgrade-gift-panel").style.display = upgradeMode === "gift" ? "block" : "none";
+    $("upgrade-stake-card").style.display = upgradeMode === "money" ? "block" : "none";
+    $("upgrade-bet").disabled = upgradeMode !== "money";
+    $("upgrade-chance-card").classList.toggle("controls-locked", upgradeMode === "gift");
+    $("upgrade-slider").disabled = upgradeMode === "gift";
+    $("upgrade-chance-card").querySelectorAll("button").forEach(b => b.disabled = upgradeMode === "gift");
+    $("upgrade-gift-lock-hint").style.display = upgradeMode === "gift" ? "block" : "none";
+    if (upgradeMode === "gift") renderUpgradeGiftList();
+    $("upgrade-result").className = "upgrade-result";
+    $("upgrade-result").textContent = upgradeMode === "gift" ? "Выбери подарок и попробуй улучшить его" : "Настрой ставку и шанс, затем нажми «АПГРЕЙД»";
+    $("upgrade-wheel-caption").textContent = "ШАНС ПОБЕДЫ";
+    $("upgrade-wheel-ring").classList.remove("won", "lost");
+    updateUpgradeUI();
+    haptic("light");
+}
+
 function updateUpgradeUI() {
     const bet = getUpgradeBet();
-    const chance = Math.min(95, Math.max(1, Number($("upgrade-slider").value) || upgradeChance));
-    upgradeChance = chance;
-    const multiplier = UPGRADE_RTP / upgradeChance;
-    const payout = Math.floor((Math.max(0, bet) * multiplier + Number.EPSILON) * 100) / 100;
+    let chance = upgradeChance;
+    let multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
+    let payout = Math.floor((Math.max(0, bet) * multiplier + Number.EPSILON) * 100) / 100;
 
-    $("upgrade-chance-value").textContent = upgradeChance + "%";
-    $("upgrade-wheel-chance").textContent = upgradeChance + "%";
+    if (upgradeMode === "gift") {
+        const item = getSelectedUpgradeGift();
+        const target = getUpgradeGiftTarget(item);
+        if (item && target) {
+            const level = upgradeGiftLevel(item);
+            const sourcePrice = UPGRADE_GIFTS[level].price;
+            multiplier = target.price / sourcePrice;
+            chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
+            payout = target.price;
+            $("upgrade-payout").innerHTML = target.type === "gift"
+                ? `<span style="font-size:17px;">🎁 ${target.name}</span><br><small style="font-size:11px;">$${money(target.price)}</small>`
+                : `<span style="font-size:19px;">$${money(target.price)}</span><br><small style="font-size:10px;">на баланс</small>`;
+        } else {
+            chance = upgradeChance;
+            multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
+            $("upgrade-payout").textContent = "—";
+        }
+    } else {
+        $("upgrade-payout").textContent = "$" + money(payout);
+    }
+
+    $("upgrade-chance-value").textContent = (upgradeMode === "gift" ? chance.toFixed(1).replace(/\.0$/, "") : Math.round(chance)) + "%";
+    $("upgrade-range-label").textContent = (upgradeMode === "gift" ? chance.toFixed(1).replace(/\.0$/, "") : Math.round(chance)) + "%";
+    $("upgrade-wheel-chance").textContent = (upgradeMode === "gift" ? chance.toFixed(1).replace(/\.0$/, "") : Math.round(chance)) + "%";
     $("upgrade-wheel-mult").textContent = "x" + multiplier.toFixed(2);
     $("upgrade-multiplier").textContent = multiplier.toFixed(2) + "x";
-    $("upgrade-payout").textContent = "$" + money(payout);
-    $("upgrade-wheel-ring").style.setProperty("--upgrade-chance", upgradeChance + "%");
-    $("upgrade-slider").value = upgradeChance;
-    $("upgrade-slider").style.background = `linear-gradient(90deg,#37bdf2 ${upgradeChance}%,#e7f4fb ${upgradeChance}%)`;
-    $("upgrade-bet").max = Math.max(0, balance).toFixed(2);
+    $("upgrade-wheel-ring").style.setProperty("--upgrade-chance", chance + "%");
+    if (upgradeMode === "money") {
+        $("upgrade-slider").value = upgradeChance;
+        $("upgrade-slider").style.background = `linear-gradient(90deg,#37bdf2 ${upgradeChance}%,#e7f4fb ${upgradeChance}%)`;
+        $("upgrade-bet").max = Math.max(0, balance).toFixed(2);
+    } else {
+        $("upgrade-slider").value = chance;
+        $("upgrade-slider").style.background = `linear-gradient(90deg,#37bdf2 ${chance}%,#e7f4fb ${chance}%)`;
+        renderUpgradeGiftList();
+    }
 }
 
 function setUpgradeChance(value) {
-    if (upgradeBusy) return;
+    if (upgradeBusy || upgradeMode === "gift") return;
     upgradeChance = Math.min(95, Math.max(1, Math.round(Number(value) || 1)));
     $("upgrade-slider").value = upgradeChance;
     updateUpgradeUI();
@@ -1430,11 +1625,12 @@ function setUpgradeChance(value) {
 }
 
 function changeUpgradeChance(delta) {
+    if (upgradeMode === "gift") return;
     setUpgradeChance(upgradeChance + Number(delta));
 }
 
 function changeUpgradeBet(delta, mode) {
-    if (upgradeBusy) return;
+    if (upgradeBusy || upgradeMode !== "money") return;
     let current = getUpgradeBet();
     if (mode === "half") current = Math.floor(current * 50) / 100;
     else if (mode === "double") current = Math.round(current * 2 * 100) / 100;
@@ -1447,28 +1643,62 @@ function changeUpgradeBet(delta, mode) {
 }
 
 function setUpgradeControlsDisabled(disabled) {
-    ["upgrade-bet", "upgrade-slider", "upgrade-button"].forEach(id => { $(id).disabled = disabled; });
-    document.querySelectorAll("#screen-upgrade .upgrade-step-btn, #screen-upgrade .upgrade-mini-btn").forEach(btn => { btn.disabled = disabled; });
+    $("upgrade-bet").disabled = disabled || upgradeMode !== "money";
+    $("upgrade-slider").disabled = disabled || upgradeMode === "gift";
+    $("upgrade-button").disabled = disabled || (upgradeMode === "gift" && !getSelectedUpgradeGift());
+    document.querySelectorAll("#screen-upgrade .upgrade-mode-btn, #screen-upgrade .upgrade-gift-choice").forEach(btn => { btn.disabled = disabled; });
+    document.querySelectorAll("#screen-upgrade .upgrade-step-btn, #screen-upgrade .upgrade-mini-btn").forEach(btn => {
+        btn.disabled = disabled || (upgradeMode === "gift" && !!btn.closest("#upgrade-chance-card"));
+    });
 }
 
 function playUpgrade() {
     if (upgradeBusy || upgradeState === "spinning") return;
-    const bet = getUpgradeBet();
-    if (!Number.isFinite(bet) || bet < 0.01) {
-        alert("Минимальная ставка — $0.01"); notify("error"); return;
-    }
-    if (bet > balance) {
-        alert("Недостаточно средств!"); notify("error"); return;
+
+    let bet = 0;
+    let chance = upgradeChance;
+    let multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
+    let payout = 0;
+    let stakeGift = null;
+    let target = null;
+    let stakeGiftIndex = null;
+
+    if (upgradeMode === "gift") {
+        stakeGiftIndex = upgradeGiftIndex;
+        stakeGift = getSelectedUpgradeGift();
+        if (!stakeGift) {
+            alert("Сначала выбери подарок из инвентаря!"); notify("error"); return;
+        }
+        target = getUpgradeGiftTarget(stakeGift);
+        if (!target) { alert("Не удалось определить следующий уровень подарка."); return; }
+        const sourcePrice = UPGRADE_GIFTS[upgradeGiftLevel(stakeGift)].price;
+        multiplier = target.price / sourcePrice;
+        chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
+        payout = target.price;
+    } else {
+        bet = getUpgradeBet();
+        if (!Number.isFinite(bet) || bet < 0.01) {
+            alert("Минимальная ставка — $0.01"); notify("error"); return;
+        }
+        if (bet > balance) {
+            alert("Недостаточно средств!"); notify("error"); return;
+        }
+        payout = Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100;
     }
 
     upgradeBusy = true;
     upgradeState = "spinning";
-    const multiplier = UPGRADE_RTP / upgradeChance;
     const randomRoll = Math.random() * 100;
-    const isWin = randomRoll < upgradeChance;
-    const payout = isWin ? Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100 : 0;
+    const isWin = randomRoll < chance;
+    const moneyPayout = upgradeMode === "money" ? payout : (target.type === "balance" ? payout : 0);
 
-    balance = Math.max(0, Math.round((balance - bet + Number.EPSILON) * 100) / 100);
+    if (upgradeMode === "money") {
+        balance = Math.max(0, Math.round((balance - bet + Number.EPSILON) * 100) / 100);
+    } else {
+        inventory.splice(stakeGiftIndex, 1);
+        upgradeGiftIndex = null;
+        renderInventory();
+    }
     updateBalanceUI();
     saveUserData();
     setUpgradeControlsDisabled(true);
@@ -1494,15 +1724,28 @@ function playUpgrade() {
         ring.classList.remove("spinning");
         ring.classList.add(isWin ? "won" : "lost");
         if (isWin) {
-            balance = Math.round((balance + payout + Number.EPSILON) * 100) / 100;
+            if (upgradeMode === "money") {
+                balance = Math.round((balance + moneyPayout + Number.EPSILON) * 100) / 100;
+                $("upgrade-result").textContent = `ПОБЕДА! ВЫИГРЫШ +$${money(moneyPayout)}`;
+            } else if (target.type === "gift") {
+                const newGift = { name: target.name, price: target.price, img: target.img, id: Date.now() + Math.random() };
+                inventory.push(newGift);
+                upgradeGiftIndex = inventory.length - 1;
+                $("upgrade-result").textContent = `🎉 ПОДАРОК УЛУЧШЕН: ${target.name}`;
+                renderInventory();
+            } else {
+                balance = Math.round((balance + moneyPayout + Number.EPSILON) * 100) / 100;
+                $("upgrade-result").textContent = `🎉 КУБОК ОБМЕНЯН НА $${money(moneyPayout)} НА БАЛАНС`;
+            }
             $("upgrade-result").className = "upgrade-result win";
-            $("upgrade-result").textContent = `ПОБЕДА! ВЫИГРЫШ +$${money(payout)}`;
             $("upgrade-wheel-caption").textContent = "УСПЕШНО!";
             $("upgrade-button").textContent = "АПГРЕЙДИТЬ ЕЩЁ РАЗ";
             notify("success");
         } else {
             $("upgrade-result").className = "upgrade-result lose";
-            $("upgrade-result").textContent = `НЕ ПОВЕЗЛО. ПОТЕРЯНО $${money(bet)}`;
+            $("upgrade-result").textContent = upgradeMode === "money"
+                ? `НЕ ПОВЕЗЛО. ПОТЕРЯНО $${money(bet)}`
+                : `НЕ ПОВЕЗЛО. ПОДАРОК ${stakeGift.name} ПОТЕРЯН`;
             $("upgrade-wheel-caption").textContent = "НЕУДАЧА";
             $("upgrade-button").textContent = "ПОПРОБОВАТЬ ЕЩЁ";
             notify("error");
@@ -1511,6 +1754,7 @@ function playUpgrade() {
         upgradeBusy = false;
         updateBalanceUI();
         saveUserData();
+        renderInventory();
         updateUpgradeUI();
         setUpgradeControlsDisabled(false);
         haptic("light");
@@ -1573,9 +1817,10 @@ async function openCurrentCase() {
 
 function renderInventory() {
     $("inventory-count").textContent = inventory.length + " предметов";
-    if(inventory.length===0) {
-        $("inventory-list").innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">Инвентарь пуст</p>';
-        return;
+    if(inventory.length===0) { 
+        $("inventory-list").innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">Инвентарь пуст</p>'; 
+        if (typeof renderUpgradeGiftList === "function") renderUpgradeGiftList();
+        return; 
     }
     $("inventory-list").innerHTML = inventory.map((it,i)=>`
         <div class="inventory-item">
@@ -1585,6 +1830,7 @@ function renderInventory() {
             <button class="primary green" style="padding:8px;font-size:12px;border-radius:10px;" onclick="sellItem(${i})">ПРОДАТЬ</button>
         </div>
     `).join('');
+    if (typeof renderUpgradeGiftList === "function") renderUpgradeGiftList();
 }
 
 function sellItem(i) { balance += inventory[i].price; inventory.splice(i,1); updateBalanceUI(); saveUserData(); renderInventory(); notify("success"); }
@@ -1668,7 +1914,7 @@ function adminViewInventory(targetUserId) {
 }
 
 function adminEditBalance(id, nm, b) {
-    let nb = prompt("Новый баланс:", b);
+    let nb = prompt("Новый баланс:", b); 
     if (nb !== null && !isNaN(nb)) {
         fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) }) })
         .then(() => { alert("Обновлено!"); fetchAllPlayers(); if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } });
