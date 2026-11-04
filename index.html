@@ -673,8 +673,9 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Бокс', price: 0.50, img: './box.png'},
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'}
-                ], [10, 15, 5, 20, 25, 18, 7])">
+                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
+                    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'}
+                ], [10, 15, 5, 20, 25, 12, 5, 3])">
                     <img class="case-card-image" src="./casepro.png" alt="Pro Case">
                     <div class="case-card-name">Pro Case</div>
                     <div class="case-card-price">$1.00</div>
@@ -688,8 +689,9 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Бокс', price: 0.50, img: './box.png'},
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Супер приз', price: 7.50, img: './caser.png'}
-                ], [10, 15, 2, 10, 25, 26, 12])">
+                    {name: 'Супер приз', price: 7.50, img: './caser.png'},
+                    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'}
+                ], [10, 15, 2, 10, 20, 20, 15, 8])">
                     <img class="case-card-image" src="./caser.png" alt="Rare Case">
                     <div class="case-card-name">Rare Case</div>
                     <div class="case-card-price">$1.50</div>
@@ -703,11 +705,44 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Бокс', price: 0.50, img: './box.png'},
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'},
+                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'},
                     {name: 'VIP Джекпот', price: 15.00, img: './casevip.png'}
-                ], [10, 15, 2, 8, 20, 30, 15])">
+                ], [10, 15, 2, 8, 15, 20, 15, 10, 5])">
                     <img class="case-card-image" src="./casevip.png" alt="VIP Case">
                     <div class="case-card-name">VIP Case</div>
                     <div class="case-card-price">$2.00</div>
+                </div>
+
+                <!-- Prem Case ($3.00) [NEW] -->
+                <div class="case-card available" onclick="openCase('paid_30', 'Prem Case', 3.00, './prem.png', [
+                    {name: '$1.50', price: 1.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: '$2.20', price: 2.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: 'Мишка', price: 0.20, img: './bear.png'},
+                    {name: 'Бокс', price: 0.50, img: './box.png'},
+                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'},
+                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
+                ], [25, 25, 15, 15, 10, 7, 2, 1])">
+                    <img class="case-card-image" src="./prem.png" alt="Prem Case">
+                    <div class="case-card-name">Prem Case</div>
+                    <div class="case-card-price">$3.00</div>
+                </div>
+
+                <!-- Telegram Case ($5.00) [NEW] -->
+                <div class="case-card available" onclick="openCase('paid_50', 'Telegram Case', 5.00, './talagram.png', [
+                    {name: '$2.50', price: 2.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: '$3.80', price: 3.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
+                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
+                    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'},
+                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
+                ], [25, 25, 20, 15, 10, 3, 2])">
+                    <img class="case-card-image" src="./talagram.png" alt="Telegram Case">
+                    <div class="case-card-name">Telegram Case</div>
+                    <div class="case-card-price">$5.00</div>
                 </div>
             </div>
         </div>
@@ -1049,6 +1084,22 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 
 <!-- MODALS -->
 
+<!-- WIN WITH CHOICE MODAL (CRASH / MINES) [NEW] -->
+<div id="win-choice-modal" class="deposit-overlay" onclick="if(event.target===this)">
+    <div class="deposit-sheet" style="text-align:center;">
+        <div class="deposit-head">
+            <span>🎉 Выигрыш!</span>
+            <button class="deposit-close" onclick="closeWinChoiceModal()">✕</button>
+        </div>
+        <div id="win-choice-amount" style="font-size:24px; font-weight:950; color:#16a34a; margin:15px 0;">$0.00</div>
+        <div style="font-size:13px; font-weight:800; color:#5c4a00; margin-bottom:20px;">Выберите, в чем хотите забрать выигрыш:</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button class="primary green" onclick="claimWinAsMoney()">💵 Деньгами ($)</button>
+            <button class="primary gold" onclick="claimWinAsGifts()">🎁 Подарками</button>
+        </div>
+    </div>
+</div>
+
 <!-- BET MODAL FOR CRASH -->
 <div id="bet-modal-crash" class="deposit-overlay" onclick="if(event.target===this) this.classList.remove('active')">
     <div class="deposit-sheet">
@@ -1122,6 +1173,70 @@ function notify(type = "success") { try { tg?.HapticFeedback?.notificationOccurr
 
 const ADMIN_PASSWORD = "tucha2026";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAuc6L9YHv-IT77kz6sWEJEYyvKURRojhb8SjjBOS4ViCnK_af/exec";
+
+/* ВСЕ ДОСТУПНЫЕ ПОДАРКИ ДЛЯ КОНВЕРТАЦИИ ВЫИГРЫШЕЙ */
+const ALL_PRIZES_CATALOG = [
+    {name: 'Мишка', price: 0.20, img: './bear.png'},
+    {name: 'Бокс', price: 0.50, img: './box.png'},
+    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
+    {name: 'Кубок', price: 1.00, img: './trofei.png'},
+    {name: 'Fake Inft', price: 6.00, img: './fakeInft.png'},
+    {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
+];
+
+function giveGiftsForAmount(amount) {
+    let remaining = amount;
+    let sorted = [...ALL_PRIZES_CATALOG].sort((a,b)=>b.price - a.price);
+    let granted = [];
+    for (let gift of sorted) {
+        while (remaining >= gift.price && granted.length < 10) {
+            granted.push({ ...gift, id: Date.now() + Math.random() });
+            remaining -= gift.price;
+        }
+    }
+    if (granted.length === 0 && amount > 0) {
+        let cheapest = sorted[sorted.length - 1];
+        granted.push({ ...cheapest, id: Date.now() + Math.random() });
+        remaining = Math.max(0, remaining - cheapest.price);
+    }
+    inventory.push(...granted);
+    renderInventory();
+    saveUserData();
+    return granted;
+}
+
+let pendingWinAmount = 0;
+let pendingWinCallback = null;
+
+function showWinChoiceModal(amount, callback) {
+    pendingWinAmount = amount;
+    pendingWinCallback = callback;
+    $("win-choice-amount").textContent = "$" + money(amount);
+    $("win-choice-modal").classList.add("active");
+    haptic("medium");
+}
+
+function closeWinChoiceModal() {
+    $("win-choice-modal").classList.remove("active");
+}
+
+function claimWinAsMoney() {
+    closeWinChoiceModal();
+    balance += pendingWinAmount;
+    updateBalanceUI();
+    saveUserData();
+    if (pendingWinCallback) pendingWinCallback('money', pendingWinAmount);
+    notify("success");
+}
+
+function claimWinAsGifts() {
+    closeWinChoiceModal();
+    let given = giveGiftsForAmount(pendingWinAmount);
+    let names = given.map(g => g.name).join(', ');
+    if (pendingWinCallback) pendingWinCallback('gifts', pendingWinAmount);
+    notify("success");
+    try { tg?.showAlert("🎁 Вы получили подарки: " + names); } catch(e) { alert("🎁 Вы получили подарки: " + names); }
+}
 
 /* ВЕКТОРНЫЕ ИКОНКИ ДЛЯ ИГРЫ МИНЫ */
 const ICON_CLOUD = `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 3px 5px rgba(2,132,199,0.25));"><path d="M17.5 18C19.985 18 22 15.985 22 13.5C22 11.156 20.206 9.231 17.9 9.024C17.434 5.587 14.484 3 10.9 3C7.034 3 3.9 6.134 3.9 10C3.9 10.238 3.912 10.474 3.935 10.706C2.236 11.355 1 12.988 1 14.9C1 17.164 2.836 19 5.1 19H17.5Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
@@ -1297,10 +1412,11 @@ function handleCrashAction() {
     if (crashState === "waiting") { $("bet-modal-crash").classList.add("active"); haptic(); return; }
     if (crashState === "flying" && inCrash) {
         const win = Math.floor(crashBet * crashMultiplier * 100) / 100;
-        balance += win; inCrash = false; updateBalanceUI(); saveUserData();
-        $("btn-crash-action").disabled = true;
-        $("btn-crash-action").textContent = "ВЫИГРЫШ $" + money(win);
-        notify("success");
+        inCrash = false;
+        showWinChoiceModal(win, (type, amount) => {
+            $("btn-crash-action").disabled = true;
+            $("btn-crash-action").textContent = type === 'money' ? "ВЫИГРЫШ $" + money(amount) : "ЗАБРАНО ПОДАРКАМИ";
+        });
     }
 }
 
@@ -1330,8 +1446,11 @@ function handleMinesAction() {
     if(minesState==="idle"||minesState==="finished") { startMines(); return; }
     if(minesState==="playing") {
         const win = Math.floor(mineBet*mineMult*100)/100;
-        balance+=win; updateBalanceUI(); saveUserData();
-        revealMines(); finishMines("ВЫИГРЫШ $"+money(win), "green"); notify("success");
+        revealMines();
+        finishMines("ОЖИДАНИЕ ВЫБОРА", "green");
+        showWinChoiceModal(win, (type, amount) => {
+            finishMines("ВЫИГРЫШ $"+money(amount), "green");
+        });
     }
 }
 function startMines() {
@@ -1570,9 +1689,11 @@ const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
     { name: "Бокс", price: 0.50, img: "./box.png" },
     { name: "Ракетка", price: 0.75, img: "./rocket.png" },
-    { name: "Кубок", price: 1.00, img: "./trofei.png" }
+    { name: "Кубок", price: 1.00, img: "./trofei.png" },
+    { name: "Fake Inft", price: 6.00, img: "./fakeInft.png" },
+    { name: "Ndtice", price: 7.50, img: "./ndtice.png" }
 ];
-const UPGRADE_TOP_GIFT_BALANCE = 1.50;
+const UPGRADE_TOP_GIFT_BALANCE = 10.00;
 
 function getUpgradeBet() {
     const value = Number($("upgrade-bet").value);
@@ -1608,7 +1729,7 @@ function renderUpgradeGiftList() {
     const available = inventory.map((item, index) => ({ item, index, level: upgradeGiftLevel(item) })).filter(x => x.level >= 0);
     if (!available.some(x => x.index === upgradeGiftIndex)) upgradeGiftIndex = available.length ? available[0].index : null;
     if (!available.length) {
-        list.innerHTML = '<div class="upgrade-gift-empty">В инвентаре пока нет подарков. Открой кейс и получи Мишку, Бокс, Ракетку или Кубок.</div>';
+        list.innerHTML = '<div class="upgrade-gift-empty">В инвентаре пока нет подарков. Открой кейс и получи призы.</div>';
         $("upgrade-gift-target").textContent = "Сначала получи подарок в кейсе";
         if ($("upgrade-button")) $("upgrade-button").disabled = upgradeBusy || upgradeMode === "gift";
         return;
@@ -1637,7 +1758,7 @@ function updateUpgradeGiftTarget() {
     if (target.type === "gift") {
         targetBox.innerHTML = `<img src="${target.img}" alt="${target.name}"><span>При победе: <strong>${target.name}</strong><br>Стоимость $${money(target.price)}</span>`;
     } else {
-        targetBox.innerHTML = `<span style="font-size:25px;">💵</span><span>Максимальный подарок — <strong>Кубок</strong><br>При победе: <strong>$${money(target.price)} на баланс</strong></span>`;
+        targetBox.innerHTML = `<span style="font-size:25px;">💵</span><span>Максимальный подарок — <strong>Ndtice</strong><br>При победе: <strong>$${money(target.price)} на баланс</strong></span>`;
     }
     const selectedButtons = $("upgrade-gift-list").querySelectorAll(".upgrade-gift-choice");
     selectedButtons.forEach(btn => btn.classList.remove("selected"));
@@ -1959,11 +2080,11 @@ function renderRouletteOptions() {
         rouletteSelectedOption = "red";
         cont.innerHTML = `
             <div class="roulette-options-grid">
-                <button class="roulette-opt-btn red-opt selected" onclick="selectRouletteOpt('red', this)">
+                <button class="roulette-opt-btn red-opt ${rouletteSelectedOption === 'red' ? 'selected' : ''}" onclick="selectRouletteOpt('red', this)">
                     <span style="font-size:16px; font-weight:950;">КРАСНОЕ</span>
                     <span style="font-size:12px; font-weight:900; opacity:0.9;">x2.00</span>
                 </button>
-                <button class="roulette-opt-btn black-opt" onclick="selectRouletteOpt('black', this)">
+                <button class="roulette-opt-btn black-opt ${rouletteSelectedOption === 'black' ? 'selected' : ''}" onclick="selectRouletteOpt('black', this)">
                     <span style="font-size:16px; font-weight:950;">ЧЕРНОЕ</span>
                     <span style="font-size:12px; font-weight:900; opacity:0.9;">x2.00</span>
                 </button>
@@ -2073,7 +2194,6 @@ function spinRoulette() {
     const totalSlices = ROULETTE_NUMBERS.length;
     const sliceDeg = 360 / totalSlices;
 
-    // Target position for winning slice under pointer at top
     const targetSliceCenterDeg = winningIdx * sliceDeg + sliceDeg / 2;
     const extraTurns = 5 * 360; 
     const finalRotation = rouletteCurrentRotation + extraTurns + (360 - (rouletteCurrentRotation % 360)) + (360 - targetSliceCenterDeg);
@@ -2088,7 +2208,6 @@ function spinRoulette() {
         $("btn-roulette-action").disabled = false;
         $("btn-roulette-action").textContent = "СДЕЛАТЬ СТАВКУ";
 
-        // Check Win
         let isWin = false;
         let mult = 0;
         const color = getNumColor(winningNum);
