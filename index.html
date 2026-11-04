@@ -582,6 +582,191 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 #upgrade-stake-card .upgrade-value-row { min-width: 0; gap: 8px; }
 #upgrade-stake-card .upgrade-step-btn { flex: 0 0 40px; width: 40px; height: 42px; }
 
+
+
+/* ===== UPDATE: 3D ROULETTE + ANIMATED TOWER ===== */
+.roulette-stage {
+    perspective: 1100px;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 28%, #fffdf2 0%, #fff0b8 58%, #f4ce61 100%);
+    border-color: rgba(191, 125, 18, .48);
+    box-shadow: 0 14px 30px rgba(155, 95, 8, .2), inset 0 2px 0 rgba(255,255,255,.9);
+}
+.roulette-wheel-wrapper {
+    width: 290px;
+    height: 290px;
+    margin-top: 8px;
+    isolation: isolate;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 17px 13px rgba(68, 39, 4, .27));
+}
+.roulette-wheel-wrapper::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: -7px;
+    border-radius: 50%;
+    background: conic-gradient(from 20deg, #fff0a1, #a85a0d, #ffe68a, #d28a20, #fff3ad, #8d4b0b, #ffe28a);
+    box-shadow: inset 0 3px 5px rgba(255,255,255,.9), inset 0 -7px 9px rgba(92,48,0,.46), 0 0 0 3px #fff4c7;
+}
+.roulette-wheel-wrapper::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    inset: 3px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,246,192,.72);
+    box-shadow: inset 0 0 0 2px rgba(83,45,5,.2);
+    pointer-events: none;
+}
+#roulette-canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin: 10px;
+    width: 270px;
+    height: 270px;
+    border: 6px solid #d59a2b;
+    border-radius: 50%;
+    box-shadow: inset 0 5px 8px rgba(255,255,255,.22), inset 0 -8px 12px rgba(0,0,0,.24), 0 7px 0 #78420c, 0 12px 20px rgba(47,26,3,.25);
+    transition: transform 5.25s cubic-bezier(.13,.76,.12,1);
+    transform: translateZ(12px) rotate(0deg);
+    will-change: transform;
+}
+.roulette-pointer {
+    top: -2px;
+    z-index: 30;
+    border-left-width: 13px;
+    border-right-width: 13px;
+    border-top-width: 25px;
+    border-top-color: #f7bd35;
+    filter: drop-shadow(0 3px 2px rgba(76,39,0,.55));
+}
+.roulette-stage.spinning .roulette-pointer { animation: roulettePointerTap .16s ease-in-out infinite alternate; }
+@keyframes roulettePointerTap { from { transform: translateX(-50%) rotate(-2deg) translateY(0); } to { transform: translateX(-50%) rotate(2deg) translateY(3px); } }
+.roulette-opt-btn { box-shadow: 0 7px 0 rgba(130,91,17,.13), 0 10px 18px rgba(128,86,9,.09); transform: translateZ(0); }
+.roulette-opt-btn.selected { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(130,91,17,.12), 0 0 0 2px rgba(245,158,11,.14), 0 12px 20px rgba(128,86,9,.15) !important; }
+.roulette-num-btn { box-shadow: inset 0 2px 0 rgba(255,255,255,.18), 0 3px 0 rgba(0,0,0,.16); }
+.roulette-num-btn.selected { transform: translateY(-2px) scale(1.06); }
+.roulette-odds-info {
+    padding: 11px 13px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(255,247,215,.95));
+    border: 1.5px solid rgba(217,151,35,.32);
+    color: #78602b;
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.45;
+    text-align: center;
+    box-shadow: inset 0 1px 0 #fff, 0 5px 13px rgba(153,102,16,.08);
+}
+.roulette-odds-info strong { color: #a35d08; font-size: 13px; }
+
+.tower-content { background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.4), transparent 65%); }
+.tower-hero {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 2px 0 13px;
+    padding: 12px 13px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, #fff8d8, #ffe38a 58%, #ffd15b);
+    border: 1.5px solid rgba(206,139,22,.35);
+    box-shadow: 0 7px 17px rgba(166,111,15,.12), inset 0 1px 0 #fff;
+}
+.tower-hero-badge {
+    width: 43px; height: 43px; flex: 0 0 43px;
+    display: grid; place-items: center;
+    border-radius: 13px;
+    font-size: 25px;
+    background: linear-gradient(145deg, #fff, #f8c64a);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,.95), 0 4px 0 #c58b20, 0 7px 11px rgba(126,77,5,.15);
+}
+.tower-hero strong { display:block; color:#76500b; font-size:13px; font-weight:1000; letter-spacing:.5px; }
+.tower-hero span { display:block; color:#98783a; font-size:10px; font-weight:800; margin-top:3px; }
+.tower-progress { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin:0 0 12px; }
+.tower-step {
+    height:8px; border-radius:20px;
+    background:linear-gradient(180deg,#f8e7af,#e6d49c);
+    box-shadow:inset 0 1px 2px rgba(105,77,16,.14);
+    transition:background .25s, box-shadow .25s, transform .25s;
+}
+.tower-step.current { background:linear-gradient(90deg,#facc15,#f59e0b); box-shadow:0 0 12px rgba(245,158,11,.65); transform:scaleY(1.35); }
+.tower-step.passed { background:linear-gradient(90deg,#86efac,#16a34a); box-shadow:0 0 9px rgba(22,163,74,.35); }
+.tower-container {
+    gap: 9px;
+    padding: 14px 10px;
+    border: 2px solid rgba(191,139,31,.42);
+    background: radial-gradient(ellipse at 50% 0%, #fff8da 0%, #f9e8ad 55%, #edd18b 100%);
+    box-shadow: inset 0 5px 13px rgba(155,105,17,.12), 0 10px 18px rgba(126,81,9,.1);
+    perspective: 850px;
+}
+.tower-row {
+    min-height: 66px;
+    padding: 8px 9px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #fffdf1 0%, #f6e4b2 100%);
+    border: 1.5px solid rgba(174,128,37,.27);
+    border-bottom: 4px solid #c99b43;
+    box-shadow: 0 4px 0 rgba(124,83,13,.1), inset 0 1px 0 #fff;
+    transform: rotateX(2deg);
+}
+.tower-row.active-row {
+    border-color: #e2a321;
+    border-bottom-color: #b87912;
+    background: linear-gradient(145deg, #fff9d9, #ffedaa);
+    box-shadow: 0 0 0 2px rgba(245,158,11,.13), 0 8px 17px rgba(181,121,15,.2), inset 0 1px 0 #fff;
+    transform: translateZ(7px) scale(1.015);
+}
+.tower-row.passed-row { opacity:1; background:linear-gradient(145deg,#f0fff1,#d9f5d7); border-color:#8bcf91; border-bottom-color:#439951; }
+.tower-floor-tag { width:39px; flex:0 0 39px; color:#9a7427; font-size:9px; font-weight:1000; text-align:center; line-height:1.15; }
+.tower-floor-tag small { display:block; font-size:8px; color:#b39a65; margin-top:3px; }
+.tower-cells { gap:7px; }
+.tower-cell {
+    position:relative;
+    max-width:54px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.9);
+    border-bottom:5px solid #ba8523;
+    background:linear-gradient(145deg,#fffef2 0%,#ffe99a 58%,#edbd4c 100%);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.95), inset 0 -3px 5px rgba(144,91,5,.12), 0 5px 0 rgba(144,91,5,.13), 0 8px 12px rgba(133,91,18,.12);
+    overflow:visible;
+    transform:translateY(0) translateZ(0);
+}
+.tower-cell::before {
+    content:""; position:absolute; left:7px; right:7px; top:5px; height:3px; border-radius:8px;
+    background:rgba(255,255,255,.8); pointer-events:none;
+}
+.tower-cell:not(:disabled):hover { transform:translateY(-3px) rotateX(5deg); filter:brightness(1.04); }
+.tower-cell:not(:disabled):active { transform:translateY(3px) scale(.94); border-bottom-width:2px; }
+.tower-cell-question { color:#b27b13; font-size:22px; line-height:1; font-weight:1000; text-shadow:0 2px 0 rgba(255,255,255,.8); }
+.tower-cell.reveal-safe {
+    background:radial-gradient(circle at 50% 20%,#fffde7 0%,#ffef9a 55%,#f4c04c 100%) !important;
+    border:1.5px solid #fff3b1 !important; border-bottom:5px solid #c68a12 !important;
+    box-shadow:0 0 0 2px rgba(245,158,11,.15),0 0 23px rgba(255,196,40,.58),0 6px 0 rgba(143,91,5,.12) !important;
+    animation:towerSafeReveal .52s cubic-bezier(.2,1.5,.4,1) both;
+}
+.tower-cell.reveal-bomb {
+    background:radial-gradient(circle at 50% 20%,#fff0e9 0%,#fecaca 54%,#ef4444 100%) !important;
+    border:1.5px solid #ffe0d6 !important; border-bottom:5px solid #a91f1f !important;
+    box-shadow:0 0 18px rgba(220,38,38,.3),0 6px 0 rgba(110,25,25,.12) !important;
+    animation:towerBombReveal .42s cubic-bezier(.2,1.3,.4,1) both;
+}
+.tower-cell.picked { z-index:2; transform:translateY(-5px) scale(1.08); }
+.tower-cell-art { display:grid; place-items:center; width:100%; height:100%; min-height:30px; pointer-events:none; }
+.tower-cell-art svg { display:block; width:38px; height:38px; overflow:visible; filter:drop-shadow(0 4px 4px rgba(105,66,4,.25)); }
+.tower-cell.reveal-bomb .tower-cell-art svg { filter:drop-shadow(0 4px 4px rgba(120,0,0,.28)); }
+@keyframes towerSafeReveal { 0% { opacity:0; transform:rotateY(90deg) scale(.55); } 65% { transform:rotateY(-8deg) scale(1.12); } 100% { opacity:1; transform:rotateY(0) scale(1); } }
+@keyframes towerBombReveal { 0% { opacity:0; transform:rotateX(80deg) scale(.5); } 65% { transform:rotateX(-10deg) scale(1.12); } 100% { opacity:1; transform:rotateX(0) scale(1); } }
+.tower-mult { width:48px; padding:6px 4px; border-radius:9px; color:#9c650b; background:linear-gradient(145deg,#fff9dc,#f2d68d); border:1px solid rgba(177,125,26,.2); box-shadow:inset 0 1px 0 #fff; }
+.prize-small-name { margin-top:4px; color:#80631f; font-size:9px; font-weight:900; line-height:1.15; overflow-wrap:anywhere; }
+@media (max-width:360px) {
+    .roulette-wheel-wrapper { width:270px; height:270px; }
+    #roulette-canvas { width:250px; height:250px; }
+    .tower-row { padding:7px 6px; gap:6px; }
+    .tower-cell-art svg { width:33px; height:33px; }
+}
+
 </style>
 </head>
 
@@ -672,7 +857,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
                     {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                    {name: 'Fakel Inft', price: 6.00, img: './fakelInft.png'}
+                    {name: 'Torch', price: 6.00, img: './fakelInft.png'}
                 ], [15, 25, 25, 20, 10, 5])">
                     <img class="case-card-image" src="./casepro.png" alt="Pro Case">
                     <div class="case-card-name">Pro Case</div>
@@ -685,7 +870,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.20', price: 1.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
                     {name: 'Супер приз', price: 7.50, img: './caser.png'},
-                    {name: 'Fakel Inft', price: 6.00, img: './fakelInft.png'}
+                    {name: 'Torch', price: 6.00, img: './fakelInft.png'}
                 ], [20, 30, 25, 15, 10])">
                     <img class="case-card-image" src="./caser.png" alt="Rare Case">
                     <div class="case-card-name">Rare Case</div>
@@ -697,7 +882,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.00', price: 1.00, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$1.60', price: 1.60, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Fakel Inft', price: 6.00, img: './fakelInft.png'},
+                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'},
                     {name: 'VIP Джекпот', price: 15.00, img: './casevip.png'}
                 ], [20, 30, 20, 15, 10, 5])">
@@ -711,7 +896,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.50', price: 1.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$2.20', price: 2.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Fakel Inft', price: 6.00, img: './fakelInft.png'},
+                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
                 ], [35, 35, 18, 8, 4])">
                     <img class="case-card-image" src="./prem.png" alt="Prem Case">
@@ -724,7 +909,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$2.50', price: 2.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$3.80', price: 3.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                    {name: 'Fakel Inft', price: 6.00, img: './fakelInft.png'},
+                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
                 ], [35, 35, 20, 6, 4])">
                     <img class="case-card-image" src="./talagram.png" alt="Telegram Case">
@@ -932,6 +1117,11 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                 <span id="tower-state-label" style="color:#d97706;">Новая игра</span>
             </div>
             
+            <div class="tower-hero">
+                <div class="tower-hero-badge">🏰</div>
+                <div><strong>ПОДНИМАЙСЯ ВЫШЕ</strong><span>На каждом этаже выбери безопасный блок</span></div>
+            </div>
+            <div id="tower-progress" class="tower-progress" aria-label="Прогресс башни"></div>
             <div id="tower-container" class="tower-container"></div>
             
             <label style="margin-top:16px; display:block;">Сумма ставки ($)</label>
@@ -1039,7 +1229,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     </div>
 
     <div class="roulette-content">
-        <div class="roulette-stage">
+        <div class="roulette-stage" id="roulette-stage">
             <div class="roulette-wheel-wrapper">
                 <div class="roulette-pointer"></div>
                 <canvas id="roulette-canvas" width="270" height="270"></canvas>
@@ -1059,6 +1249,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 
         <!-- BET OPTIONS PANEL -->
         <div id="roulette-options-container" class="roulette-options-container"></div>
+        <div id="roulette-odds-info" class="roulette-odds-info">Вероятность и коэффициент рассчитываются по 38 секторам</div>
 
         <!-- STAKE INPUT & BUTTON -->
         <div class="panel" style="padding: 14px;">
@@ -1141,6 +1332,29 @@ const $ = id => document.getElementById(id);
 function money(number) { return (Math.round((Number(number) + Number.EPSILON) * 100) / 100).toFixed(2); }
 function haptic(type = "light") { try { tg?.HapticFeedback?.impactOccurred(type); } catch(e) {} }
 function notify(type = "success") { try { tg?.HapticFeedback?.notificationOccurred(type); } catch(e) {} }
+
+// Равномерный криптографический выбор без смещения по модулю.
+function secureRandomInt(max) {
+    if (!Number.isInteger(max) || max < 1) throw new Error("Некорректный диапазон случайного числа");
+    if (window.crypto && window.crypto.getRandomValues) {
+        const range = 0x100000000;
+        const limit = Math.floor(range / max) * max;
+        const data = new Uint32Array(1);
+        let value;
+        do { window.crypto.getRandomValues(data); value = data[0]; } while (value >= limit);
+        return value % max;
+    }
+    return Math.floor(Math.random() * max);
+}
+
+// Старые записи в инвентаре автоматически показываются с английскими названиями.
+function displayGiftName(value, imagePath = "") {
+    const original = String(value || "").trim();
+    const normalized = `${original} ${String(imagePath || "")}`.toLocaleLowerCase("ru").replace(/[._-]+/g, " ").replace(/\s+/g, " ");
+    if (/морожен|ice\s*cream|icecream/.test(normalized)) return "Ice Cream";
+    if (/факел|fakel|torch/.test(normalized)) return "Torch";
+    return original;
+}
 
 const ADMIN_PASSWORD = "tucha2026";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAuc6L9YHv-IT77kz6sWEJEYyvKURRojhb8SjjBOS4ViCnK_af/exec";
@@ -1457,8 +1671,9 @@ function playDice() {
     }, 50);
 }
 
-/* TOWER LOGIC */
+/* TOWER LOGIC — 3D BLOCKS + FIXED FLOOR LAYOUT */
 let towerState = "idle", towerBet = 0, currentLevel = 0;
+let towerLayout = [];
 const towerLevels = [
     { cells: 5, bombs: 1, mult: 1.25 },
     { cells: 4, bombs: 1, mult: 1.65 },
@@ -1467,122 +1682,189 @@ const towerLevels = [
     { cells: 2, bombs: 1, mult: 8.50 }
 ];
 
+const TOWER_GEM_ART = `<svg viewBox="0 0 64 64" role="img" aria-label="Золотой кристалл">
+ <defs>
+  <linearGradient id="towerGemGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbd0"/><stop offset=".38" stop-color="#ffe45d"/><stop offset=".72" stop-color="#f5a900"/><stop offset="1" stop-color="#bd6500"/></linearGradient>
+  <linearGradient id="towerGemLight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="towerGemGlow"><stop stop-color="#fff7a8" stop-opacity=".85"/><stop offset="1" stop-color="#ffc928" stop-opacity="0"/></radialGradient>
+ </defs>
+ <circle cx="32" cy="34" r="28" fill="url(#towerGemGlow)"/>
+ <path d="M32 5 51 22 46 48 32 59 18 48 13 22Z" fill="url(#towerGemGold)" stroke="#fff4aa" stroke-width="2"/>
+ <path d="M32 5 32 59 18 48 13 22Z" fill="#f9b817" opacity=".9"/>
+ <path d="M32 5 51 22 46 48 32 59Z" fill="#ffd83d" opacity=".74"/>
+ <path d="M13 22 32 26 51 22 32 5Z" fill="#fff2a0" opacity=".95"/>
+ <path d="M18 48 32 26 46 48 32 59Z" fill="#e58a08" opacity=".58"/>
+ <path d="M23 19 31 12 28 24Z" fill="url(#towerGemLight)"/>
+ <path d="m51 10 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#fff6b0"/>
+ <path d="m10 35 1.5 3.5L15 40l-3.5 1.5L10 45l-1.5-3.5L5 40l3.5-1.5Z" fill="#fff"/>
+</svg>`;
+const TOWER_BOMB_ART = `<svg viewBox="0 0 64 64" role="img" aria-label="Бомба">
+ <defs>
+  <radialGradient id="towerBombBody" cx="30%" cy="22%"><stop stop-color="#fff1ee"/><stop offset=".35" stop-color="#ff7979"/><stop offset=".78" stop-color="#dc2626"/><stop offset="1" stop-color="#7f1d1d"/></radialGradient>
+  <linearGradient id="towerBombFuse" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff3a6"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+ </defs>
+ <path d="M39 13 47 5 54 12 47 20Z" fill="#78350f"/><path d="M44 13 51 6" stroke="url(#towerBombFuse)" stroke-width="5" stroke-linecap="round"/>
+ <path d="m54 5 2-4 2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3Z" fill="#fbbf24"/>
+ <circle cx="31" cy="36" r="23" fill="url(#towerBombBody)" stroke="#7f1d1d" stroke-width="2"/>
+ <ellipse cx="23" cy="25" rx="8" ry="5" fill="#fff" opacity=".38" transform="rotate(-30 23 25)"/>
+ <path d="M22 42 29 49 42 31" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+</svg>`;
+
+function updateTowerProgress() {
+    const progress = $("tower-progress");
+    if (!progress) return;
+    progress.innerHTML = towerLevels.map((_, idx) => {
+        const passed = idx < currentLevel;
+        const current = (towerState === "playing" && idx === currentLevel) || (towerState === "idle" && idx === 0);
+        return `<span class="tower-step ${passed ? "passed" : current ? "current" : ""}" title="Этаж ${idx + 1}"></span>`;
+    }).join("");
+}
+
 function buildTower() {
     const cont = $("tower-container");
     cont.innerHTML = "";
     towerLevels.forEach((lvl, idx) => {
-        let row = document.createElement("div");
+        const row = document.createElement("div");
         row.className = "tower-row" + (idx === 0 ? " active-row" : "");
         row.id = "tower-row-" + idx;
-        
-        let cellsDiv = document.createElement("div");
+
+        const floorTag = document.createElement("div");
+        floorTag.className = "tower-floor-tag";
+        floorTag.innerHTML = `${String(idx + 1).padStart(2, "0")}<small>ЭТАЖ</small>`;
+
+        const cellsDiv = document.createElement("div");
         cellsDiv.className = "tower-cells";
         for (let c = 0; c < lvl.cells; c++) {
-            let btn = document.createElement("button");
+            const btn = document.createElement("button");
+            btn.type = "button";
             btn.className = "tower-cell";
-            btn.disabled = (idx !== 0);
+            btn.disabled = idx !== 0;
             btn.dataset.row = idx;
             btn.dataset.cell = c;
+            btn.setAttribute("aria-label", `Этаж ${idx + 1}, блок ${c + 1}`);
+            btn.innerHTML = `<span class="tower-cell-question">?</span>`;
             btn.onclick = () => clickTowerCell(idx, c);
             cellsDiv.appendChild(btn);
         }
-        
-        let multDiv = document.createElement("div");
+
+        const multDiv = document.createElement("div");
         multDiv.className = "tower-mult";
         multDiv.textContent = "x" + lvl.mult.toFixed(2);
-        
+
+        row.appendChild(floorTag);
         row.appendChild(cellsDiv);
         row.appendChild(multDiv);
         cont.appendChild(row);
+    });
+    updateTowerProgress();
+}
+
+function createTowerLayout() {
+    towerLayout = towerLevels.map(level => {
+        const bombs = [];
+        while (bombs.length < level.bombs) {
+            const position = secureRandomInt(level.cells);
+            if (!bombs.includes(position)) bombs.push(position);
+        }
+        return bombs;
     });
 }
 
 function handleTowerAction() {
     const b = Number($("tower-bet").value);
-    if (b <= 0 || b > balance) { alert("Недостаточно средств!"); return; }
-    balance -= b; updateBalanceUI(); towerBet = b; currentLevel = 0;
+    if (!Number.isFinite(b) || b < 0.01 || b > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
+    balance = Math.round((balance - b + Number.EPSILON) * 100) / 100;
+    updateBalanceUI();
+    towerBet = b;
+    currentLevel = 0;
+    createTowerLayout();
     towerState = "playing";
-    $("tower-state-label").textContent = "Поднимаемся по башне...";
+    $("tower-state-label").textContent = "ЭТАЖ 1 ИЗ 5 — ВЫБЕРИ БЛОК";
     $("tower-button").disabled = true;
-    $("tower-button").textContent = "ИГРАЕТ БАШНЯ";
+    $("tower-button").textContent = "ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ";
+    $("tower-button").className = "primary gold";
+    $("tower-button").onclick = handleTowerAction;
     buildTower();
+    saveUserData();
     haptic("medium");
 }
 
 function clickTowerCell(rowIdx, cellIdx) {
     if (towerState !== "playing" || rowIdx !== currentLevel) return;
-    
-    let lvl = towerLevels[rowIdx];
-    let bombIndices = [];
-    while(bombIndices.length < lvl.bombs) {
-        let r = Math.floor(Math.random() * lvl.cells);
-        if (!bombIndices.includes(r)) {
-            bombIndices.push(r);
-        }
-    }
-    
-    let rowEl = $("tower-row-" + rowIdx);
-    let cellButtons = rowEl.querySelectorAll(".tower-cell");
-    cellButtons.forEach((b, idx) => {
-        b.disabled = true;
-        if (bombIndices.includes(idx)) {
-            b.className = "tower-cell bomb";
-            b.innerHTML = "💣";
-        } else {
-            b.className = "tower-cell safe";
-            b.innerHTML = "✨";
-        }
+
+    const bombIndices = towerLayout[rowIdx] || [];
+    const isBomb = bombIndices.includes(cellIdx);
+    const rowEl = $("tower-row-" + rowIdx);
+    const cellButtons = rowEl.querySelectorAll(".tower-cell");
+
+    cellButtons.forEach((button, idx) => {
+        button.disabled = true;
+        const hit = bombIndices.includes(idx);
+        button.classList.remove("safe", "bomb");
+        button.classList.add(hit ? "reveal-bomb" : "reveal-safe");
+        if (idx === cellIdx) button.classList.add("picked");
+        button.innerHTML = `<span class="tower-cell-art">${hit ? TOWER_BOMB_ART : TOWER_GEM_ART}</span>`;
+        button.setAttribute("aria-label", hit ? "Бомба" : "Золотой кристалл");
+        button.style.animationDelay = `${idx * 55}ms`;
     });
-    
-    if (bombIndices.includes(cellIdx)) {
+
+    if (isBomb) {
         towerState = "finished";
-        $("tower-state-label").textContent = "ПРОИГРЫШ −$" + money(towerBet);
+        $("tower-state-label").textContent = "💥 БАШНЯ ОБРУШИЛАСЬ — ПОПРОБУЙ ЕЩЁ РАЗ";
         $("tower-button").disabled = false;
         $("tower-button").textContent = "ИГРАТЬ СНОВА";
         $("tower-button").className = "primary red";
         $("tower-button").onclick = handleTowerAction;
+        updateTowerProgress();
+        saveUserData();
         notify("error");
+        return;
+    }
+
+    haptic("success");
+    rowEl.classList.remove("active-row");
+    rowEl.classList.add("passed-row");
+    currentLevel++;
+    updateTowerProgress();
+
+    if (currentLevel < towerLevels.length) {
+        const nextRow = $("tower-row-" + currentLevel);
+        nextRow.classList.add("active-row");
+        nextRow.querySelectorAll(".tower-cell").forEach(button => { button.disabled = false; });
+        const currentWin = towerBet * towerLevels[currentLevel - 1].mult;
+        $("tower-state-label").textContent = `✅ ЭТАЖ ПРОЙДЕН! МОЖНО ЗАБРАТЬ $${money(currentWin)} ИЛИ ИДТИ ВЫШЕ`;
+        $("tower-button").disabled = false;
+        $("tower-button").className = "primary green";
+        $("tower-button").textContent = `ЗАБРАТЬ $${money(currentWin)}`;
+        $("tower-button").onclick = cashOutTower;
     } else {
-        haptic("success");
-        rowEl.classList.remove("active-row");
-        rowEl.classList.add("passed-row");
-        
-        currentLevel++;
-        if (currentLevel < towerLevels.length) {
-            let nextRow = $("tower-row-" + currentLevel);
-            nextRow.classList.add("active-row");
-            nextRow.querySelectorAll(".tower-cell").forEach(b => b.disabled = false);
-            
-            let currentWin = towerBet * towerLevels[currentLevel - 1].mult;
-            $("tower-state-label").textContent = `Выигрыш: $${money(currentWin)}. Забрать или дальше?`;
-            $("tower-button").disabled = false;
-            $("tower-button").className = "primary green";
-            $("tower-button").textContent = `ЗАБРАТЬ $${money(currentWin)}`;
-            $("tower-button").onclick = cashOutTower;
-        } else {
-            let finalWin = towerBet * towerLevels[towerLevels.length - 1].mult;
-            balance += finalWin; updateBalanceUI(); saveUserData();
-            towerState = "finished";
-            $("tower-state-label").textContent = `🎉 ПОБЕДА! ВЫИГРЫШ $${money(finalWin)}`;
-            $("tower-button").disabled = false;
-            $("tower-button").className = "primary green";
-            $("tower-button").textContent = "ИГРАТЬ СНОВА";
-            $("tower-button").onclick = handleTowerAction;
-            notify("success");
-        }
+        const finalWin = towerBet * towerLevels[towerLevels.length - 1].mult;
+        balance = Math.round((balance + finalWin + Number.EPSILON) * 100) / 100;
+        updateBalanceUI();
+        saveUserData();
+        towerState = "finished";
+        $("tower-state-label").textContent = `🏆 БАШНЯ ПРОЙДЕНА! ВЫИГРЫШ $${money(finalWin)}`;
+        $("tower-button").disabled = false;
+        $("tower-button").className = "primary green";
+        $("tower-button").textContent = "ИГРАТЬ СНОВА";
+        $("tower-button").onclick = handleTowerAction;
+        notify("success");
     }
 }
 
 function cashOutTower() {
     if (towerState !== "playing" || currentLevel === 0) return;
-    let win = towerBet * towerLevels[currentLevel - 1].mult;
-    balance += win; updateBalanceUI(); saveUserData();
+    const win = towerBet * towerLevels[currentLevel - 1].mult;
+    balance = Math.round((balance + win + Number.EPSILON) * 100) / 100;
+    updateBalanceUI();
+    saveUserData();
     towerState = "finished";
-    $("tower-state-label").textContent = `ЗАБРАНО: $${money(win)}`;
+    $("tower-state-label").textContent = `💰 ЗАБРАНО: $${money(win)}`;
     $("tower-button").disabled = false;
     $("tower-button").className = "primary green";
     $("tower-button").textContent = "ИГРАТЬ СНОВА";
     $("tower-button").onclick = handleTowerAction;
+    updateTowerProgress();
     notify("success");
 }
 
@@ -1599,7 +1881,7 @@ const UPGRADE_GIFTS = [
     { name: "Бокс", price: 0.50, img: "./box.png" },
     { name: "Ракетка", price: 0.75, img: "./rocket.png" },
     { name: "Кубок", price: 1.00, img: "./trofei.png" },
-    { name: "Fakel Inft", price: 6.00, img: "./fakelInft.png" },
+    { name: "Torch", price: 6.00, img: "./fakelInft.png" },
     { name: "Ndtice", price: 7.50, img: "./ndtice.png" }
 ];
 const UPGRADE_TOP_GIFT_BALANCE = 10.00;
@@ -1665,7 +1947,7 @@ function updateUpgradeGiftTarget() {
     }
     const target = getUpgradeGiftTarget(item);
     if (target.type === "gift") {
-        targetBox.innerHTML = `<img src="${target.img}" alt="${target.name}"><span>При победе: <strong>${target.name}</strong><br>Стоимость $${money(target.price)}</span>`;
+        targetBox.innerHTML = `<img src="${target.img}" alt="${target.name}"><span>При победе: <strong>${displayGiftName(target.name, target.img)}</strong><br>Стоимость $${money(target.price)}</span>`;
     } else {
         targetBox.innerHTML = `<span style="font-size:25px;">💵</span><span>Максимальный подарок — <strong>Ndtice</strong><br>При победе: <strong>$${money(target.price)} на баланс</strong></span>`;
     }
@@ -1722,7 +2004,7 @@ function updateUpgradeUI() {
             chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
             payout = target.price;
             $("upgrade-payout").innerHTML = target.type === "gift"
-                ? `<span style="font-size:17px;">🎁 ${target.name}</span><br><small style="font-size:11px;">$${money(target.price)}</small>`
+                ? `<span style="font-size:17px;">🎁 ${displayGiftName(target.name, target.img)}</span><br><small style="font-size:11px;">$${money(target.price)}</small>`
                 : `<span style="font-size:19px;">$${money(target.price)}</span><br><small style="font-size:10px;">на баланс</small>`;
         } else {
             chance = upgradeChance;
@@ -1865,7 +2147,7 @@ function playUpgrade() {
                 const newGift = { name: target.name, price: target.price, img: target.img, id: Date.now() + Math.random() };
                 inventory.push(newGift);
                 upgradeGiftIndex = inventory.length - 1;
-                $("upgrade-result").textContent = `🎉 ПОДАРОК УЛУЧШЕН: ${target.name}`;
+                $("upgrade-result").textContent = `🎉 ПОДАРОК УЛУЧШЕН: ${displayGiftName(target.name, target.img)}`;
                 renderInventory();
             } else {
                 balance = Math.round((balance + moneyPayout + Number.EPSILON) * 100) / 100;
@@ -1879,7 +2161,7 @@ function playUpgrade() {
             $("upgrade-result").className = "upgrade-result lose";
             $("upgrade-result").textContent = upgradeMode === "money"
                 ? `НЕ ПОВЕЗЛО. ПОТЕРЯНО $${money(bet)}`
-                : `НЕ ПОВЕЗЛО. ПОДАРОК ${stakeGift.name} ПОТЕРЯН`;
+                : `НЕ ПОВЕЗЛО. ПОДАРОК ${displayGiftName(stakeGift.name, stakeGift.img)} ПОТЕРЯН`;
             $("upgrade-wheel-caption").textContent = "НЕУДАЧА";
             $("upgrade-button").textContent = "ПОПРОБОВАТЬ ЕЩЁ";
             notify("error");
@@ -1895,9 +2177,10 @@ function playUpgrade() {
     }, 3900);
 }
 
-/* ROULETTE LOGIC */
+/* ROULETTE LOGIC — 38 SECTORS, UNBIASED OUTCOMES, CORRECT PAYOUTS */
 const ROULETTE_NUMBERS = [0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, "00", 27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2];
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+const ROULETTE_RTP_FACTOR = 36; // 38 секторов, выплата 36 к 1 для одного сектора: RTP 36/38.
 
 let rouletteCategory = "colors";
 let rouletteSelectedOption = "red";
@@ -1909,6 +2192,45 @@ function getNumColor(n) {
     return RED_NUMBERS.includes(Number(n)) ? "#ef4444" : "#1e293b";
 }
 
+function getRouletteWinningNumbers() {
+    return ROULETTE_NUMBERS.filter(n => {
+        const value = Number(n);
+        if (rouletteCategory === "colors") {
+            return rouletteSelectedOption === "red" ? getNumColor(n) === "#ef4444" : getNumColor(n) === "#1e293b";
+        }
+        if (rouletteCategory === "zero") return String(n) === String(rouletteSelectedOption);
+        if (rouletteCategory === "even_odd") {
+            if (n === 0 || n === "00") return false;
+            return rouletteSelectedOption === "even" ? value % 2 === 0 : value % 2 !== 0;
+        }
+        if (rouletteCategory === "range") {
+            if (n === 0 || n === "00") return false;
+            const [min, max] = String(rouletteSelectedOption).split("-").map(Number);
+            return value >= min && value <= max;
+        }
+        if (rouletteCategory === "dozen") {
+            if (n === 0 || n === "00") return false;
+            const [min, max] = String(rouletteSelectedOption).split("-").map(Number);
+            return value >= min && value <= max;
+        }
+        if (rouletteCategory === "number") return String(n) === String(rouletteSelectedOption);
+        return false;
+    });
+}
+
+function updateRouletteOdds() {
+    const oddsBox = $("roulette-odds-info");
+    if (!oddsBox) return;
+    const winners = getRouletteWinningNumbers().length;
+    if (!winners) {
+        oddsBox.textContent = "Выбери ставку, чтобы увидеть вероятность и коэффициент";
+        return;
+    }
+    const chance = winners / ROULETTE_NUMBERS.length * 100;
+    const multiplier = ROULETTE_RTP_FACTOR / winners;
+    oddsBox.innerHTML = `Шанс выигрыша: <strong>${chance.toFixed(2)}%</strong> · ${winners} из 38 секторов · выплата <strong>x${multiplier.toFixed(2)}</strong><br><span style="font-weight:750;color:#9b8a62;">0 и 00 не считаются чётными/нечётными, красными/чёрными или диапазонами</span>`;
+}
+
 function drawRouletteWheel() {
     const cvs = $("roulette-canvas");
     if (!cvs) return;
@@ -1916,62 +2238,58 @@ function drawRouletteWheel() {
     const cx = 135, cy = 135, radius = 130;
     const total = ROULETTE_NUMBERS.length;
     const arc = (Math.PI * 2) / total;
-
     ctx.clearRect(0, 0, 270, 270);
 
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fillStyle = "#2a1f02";
-    ctx.fill();
+    const outer = ctx.createRadialGradient(cx - 30, cy - 34, 18, cx, cy, radius + 4);
+    outer.addColorStop(0, "#fff1a8");
+    outer.addColorStop(.72, "#d99522");
+    outer.addColorStop(1, "#6c3908");
+    ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.fillStyle = outer; ctx.fill();
 
     for (let i = 0; i < total; i++) {
         const angle = i * arc - Math.PI / 2;
         const num = ROULETTE_NUMBERS[i];
-        
         ctx.beginPath();
         ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, radius - 6, angle, angle + arc);
-        ctx.fillStyle = getNumColor(num);
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.15)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.arc(cx, cy, radius - 7, angle, angle + arc);
+        ctx.closePath();
+        const color = getNumColor(num);
+        const shade = ctx.createLinearGradient(cx - 60, cy - 95, cx + 45, cy + 100);
+        if (color === "#10b981") { shade.addColorStop(0, "#34d399"); shade.addColorStop(1, "#047857"); }
+        else if (color === "#ef4444") { shade.addColorStop(0, "#fb7777"); shade.addColorStop(1, "#991b1b"); }
+        else { shade.addColorStop(0, "#475569"); shade.addColorStop(1, "#080f1d"); }
+        ctx.fillStyle = shade; ctx.fill();
+        ctx.strokeStyle = "rgba(255,225,151,.55)"; ctx.lineWidth = 1.15; ctx.stroke();
 
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillStyle = "rgba(0,0,0,.45)";
+        ctx.font = "900 10px Inter, sans-serif";
+        ctx.fillText(num, radius - 20, 1.5);
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 9px Inter, sans-serif";
         ctx.fillText(num, radius - 20, 0);
         ctx.restore();
     }
 
-    ctx.beginPath();
-    ctx.arc(cx, cy, 46, 0, Math.PI * 2);
-    ctx.fillStyle = "radial-gradient(circle, #f59e0b, #d97706)";
-    ctx.fill();
-    ctx.strokeStyle = "#fef08a";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, 22, 0, Math.PI * 2);
-    ctx.fillStyle = "#b45309";
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-    ctx.fillStyle = "#fef08a";
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, 49, 0, Math.PI * 2);
+    const hub = ctx.createRadialGradient(cx - 12, cy - 15, 2, cx, cy, 50);
+    hub.addColorStop(0, "#fff9cb"); hub.addColorStop(.36, "#facc42"); hub.addColorStop(.78, "#c77a0b"); hub.addColorStop(1, "#713a08");
+    ctx.fillStyle = hub; ctx.fill();
+    ctx.strokeStyle = "#fff0a6"; ctx.lineWidth = 4; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 27, 0, Math.PI * 2);
+    ctx.fillStyle = "#9a520b"; ctx.fill();
+    ctx.strokeStyle = "rgba(255,241,177,.7)"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fillStyle = "#fff2a5"; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx - 2, cy - 3, 3, 0, Math.PI * 2); ctx.fillStyle = "#ffffff"; ctx.fill();
 }
 
 function setRouletteCategory(cat) {
     if (rouletteIsSpinning) return;
     rouletteCategory = cat;
-    document.querySelectorAll(".roulette-tab-btn").forEach(b => {
-        b.classList.toggle("active", b.getAttribute("onclick").includes(`'${cat}'`));
+    document.querySelectorAll(".roulette-tab-btn").forEach(button => {
+        button.classList.toggle("active", button.getAttribute("onclick").includes(`'${cat}'`));
     });
     renderRouletteOptions();
     haptic("light");
@@ -1985,169 +2303,113 @@ function renderRouletteOptions() {
         rouletteSelectedOption = "red";
         cont.innerHTML = `
             <div class="roulette-options-grid">
-                <button class="roulette-opt-btn red-opt ${rouletteSelectedOption === 'red' ? 'selected' : ''}" onclick="selectRouletteOpt('red', this)">
-                    <span style="font-size:16px; font-weight:950;">КРАСНОЕ</span>
-                    <span style="font-size:12px; font-weight:900; opacity:0.9;">x2.00</span>
-                </button>
-                <button class="roulette-opt-btn black-opt ${rouletteSelectedOption === 'black' ? 'selected' : ''}" onclick="selectRouletteOpt('black', this)">
-                    <span style="font-size:16px; font-weight:950;">ЧЕРНОЕ</span>
-                    <span style="font-size:12px; font-weight:900; opacity:0.9;">x2.00</span>
-                </button>
-            </div>
-        `;
+                <button class="roulette-opt-btn red-opt selected" onclick="selectRouletteOpt('red', this)"><span style="font-size:16px;font-weight:950;">КРАСНОЕ</span><span style="font-size:12px;font-weight:900;opacity:.9;">x2.00</span></button>
+                <button class="roulette-opt-btn black-opt" onclick="selectRouletteOpt('black', this)"><span style="font-size:16px;font-weight:950;">ЧЁРНОЕ</span><span style="font-size:12px;font-weight:900;opacity:.9;">x2.00</span></button>
+            </div>`;
     } else if (rouletteCategory === "zero") {
         rouletteSelectedOption = "0";
         cont.innerHTML = `
             <div class="roulette-options-grid">
-                <button class="roulette-opt-btn green-opt selected" onclick="selectRouletteOpt('0', this)">
-                    <span style="font-size:18px; font-weight:950;">ЗЕРО (0)</span>
-                    <span style="font-size:12px; font-weight:900; opacity:0.9;">x18.00</span>
-                </button>
-                <button class="roulette-opt-btn green-opt" onclick="selectRouletteOpt('00', this)">
-                    <span style="font-size:18px; font-weight:950;">ЗЕРО (00)</span>
-                    <span style="font-size:12px; font-weight:900; opacity:0.9;">x18.00</span>
-                </button>
-            </div>
-        `;
+                <button class="roulette-opt-btn green-opt selected" onclick="selectRouletteOpt('0', this)"><span style="font-size:18px;font-weight:950;">ЗЕРО (0)</span><span style="font-size:12px;font-weight:900;opacity:.9;">x36.00</span></button>
+                <button class="roulette-opt-btn green-opt" onclick="selectRouletteOpt('00', this)"><span style="font-size:18px;font-weight:950;">ЗЕРО (00)</span><span style="font-size:12px;font-weight:900;opacity:.9;">x36.00</span></button>
+            </div>`;
     } else if (rouletteCategory === "even_odd") {
         rouletteSelectedOption = "even";
         cont.innerHTML = `
             <div class="roulette-options-grid">
-                <button class="roulette-opt-btn selected" style="color:#332900;" onclick="selectRouletteOpt('even', this)">
-                    <span style="font-size:16px; font-weight:950;">ЧЕТНОЕ</span>
-                    <span style="font-size:12px; font-weight:900; color:#d97706;">x2.00</span>
-                </button>
-                <button class="roulette-opt-btn" style="color:#332900;" onclick="selectRouletteOpt('odd', this)">
-                    <span style="font-size:16px; font-weight:950;">НЕЧЕТНОЕ</span>
-                    <span style="font-size:12px; font-weight:900; color:#d97706;">x2.00</span>
-                </button>
-            </div>
-        `;
+                <button class="roulette-opt-btn selected" style="color:#332900;" onclick="selectRouletteOpt('even', this)"><span style="font-size:16px;font-weight:950;">ЧЁТНОЕ</span><span style="font-size:12px;font-weight:900;color:#d97706;">x2.00</span></button>
+                <button class="roulette-opt-btn" style="color:#332900;" onclick="selectRouletteOpt('odd', this)"><span style="font-size:16px;font-weight:950;">НЕЧЁТНОЕ</span><span style="font-size:12px;font-weight:900;color:#d97706;">x2.00</span></button>
+            </div>`;
     } else if (rouletteCategory === "range") {
         rouletteSelectedOption = "1-18";
         cont.innerHTML = `
             <div class="roulette-options-grid">
-                <button class="roulette-opt-btn selected" style="color:#332900;" onclick="selectRouletteOpt('1-18', this)">
-                    <span style="font-size:16px; font-weight:950;">1 — 18</span>
-                    <span style="font-size:12px; font-weight:900; color:#d97706;">x2.00</span>
-                </button>
-                <button class="roulette-opt-btn" style="color:#332900;" onclick="selectRouletteOpt('19-36', this)">
-                    <span style="font-size:16px; font-weight:950;">19 — 36</span>
-                    <span style="font-size:12px; font-weight:900; color:#d97706;">x2.00</span>
-                </button>
-            </div>
-        `;
+                <button class="roulette-opt-btn selected" style="color:#332900;" onclick="selectRouletteOpt('1-18', this)"><span style="font-size:16px;font-weight:950;">1 — 18</span><span style="font-size:12px;font-weight:900;color:#d97706;">x2.00</span></button>
+                <button class="roulette-opt-btn" style="color:#332900;" onclick="selectRouletteOpt('19-36', this)"><span style="font-size:16px;font-weight:950;">19 — 36</span><span style="font-size:12px;font-weight:900;color:#d97706;">x2.00</span></button>
+            </div>`;
     } else if (rouletteCategory === "dozen") {
         rouletteSelectedOption = "1-12";
         cont.innerHTML = `
-            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-                <button class="roulette-opt-btn selected" style="color:#332900; padding:12px 4px;" onclick="selectRouletteOpt('1-12', this)">
-                    <span style="font-size:14px; font-weight:950;">1 - 12</span>
-                    <span style="font-size:11px; font-weight:900; color:#d97706;">x3.00</span>
-                </button>
-                <button class="roulette-opt-btn" style="color:#332900; padding:12px 4px;" onclick="selectRouletteOpt('13-24', this)">
-                    <span style="font-size:14px; font-weight:950;">13 - 24</span>
-                    <span style="font-size:11px; font-weight:900; color:#d97706;">x3.00</span>
-                </button>
-                <button class="roulette-opt-btn" style="color:#332900; padding:12px 4px;" onclick="selectRouletteOpt('25-36', this)">
-                    <span style="font-size:14px; font-weight:950;">25 - 36</span>
-                    <span style="font-size:11px; font-weight:900; color:#d97706;">x3.00</span>
-                </button>
-            </div>
-        `;
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                <button class="roulette-opt-btn selected" style="color:#332900;padding:12px 4px;" onclick="selectRouletteOpt('1-12', this)"><span style="font-size:14px;font-weight:950;">1 - 12</span><span style="font-size:11px;font-weight:900;color:#d97706;">x3.00</span></button>
+                <button class="roulette-opt-btn" style="color:#332900;padding:12px 4px;" onclick="selectRouletteOpt('13-24', this)"><span style="font-size:14px;font-weight:950;">13 - 24</span><span style="font-size:11px;font-weight:900;color:#d97706;">x3.00</span></button>
+                <button class="roulette-opt-btn" style="color:#332900;padding:12px 4px;" onclick="selectRouletteOpt('25-36', this)"><span style="font-size:14px;font-weight:950;">25 - 36</span><span style="font-size:11px;font-weight:900;color:#d97706;">x3.00</span></button>
+            </div>`;
     } else if (rouletteCategory === "number") {
         rouletteSelectedOption = 0;
-        let btnsHtml = ROULETTE_NUMBERS.map(n => {
-            const c = getNumColor(n) === "#ef4444" ? "red" : (getNumColor(n) === "#10b981" ? "green" : "black");
-            return `<button class="roulette-num-btn ${c} ${n === 0 ? "selected" : ""}" onclick="selectRouletteNum('${n}', this)">${n}</button>`;
+        const buttons = ROULETTE_NUMBERS.map(n => {
+            const colorClass = getNumColor(n) === "#ef4444" ? "red" : (getNumColor(n) === "#10b981" ? "green" : "black");
+            return `<button class="roulette-num-btn ${colorClass} ${n === 0 ? "selected" : ""}" onclick="selectRouletteNum('${n}', this)">${n}</button>`;
         }).join("");
-        cont.innerHTML = `<div class="roulette-num-grid">${btnsHtml}</div>`;
+        cont.innerHTML = `<div class="roulette-num-grid">${buttons}</div>`;
     }
+    updateRouletteOdds();
 }
 
-function selectRouletteOpt(val, btn) {
+function selectRouletteOpt(value, button) {
     if (rouletteIsSpinning) return;
-    rouletteSelectedOption = val;
-    const parent = btn.parentElement;
-    parent.querySelectorAll(".roulette-opt-btn").forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
+    rouletteSelectedOption = value;
+    button.parentElement.querySelectorAll(".roulette-opt-btn").forEach(item => item.classList.remove("selected"));
+    button.classList.add("selected");
+    updateRouletteOdds();
     haptic("light");
 }
 
-function selectRouletteNum(val, btn) {
+function selectRouletteNum(value, button) {
     if (rouletteIsSpinning) return;
-    rouletteSelectedOption = val;
-    const parent = btn.parentElement;
-    parent.querySelectorAll(".roulette-num-btn").forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
+    rouletteSelectedOption = value;
+    button.parentElement.querySelectorAll(".roulette-num-btn").forEach(item => item.classList.remove("selected"));
+    button.classList.add("selected");
+    updateRouletteOdds();
     haptic("light");
 }
 
 function spinRoulette() {
     if (rouletteIsSpinning) return;
     const bet = Number($("roulette-bet").value);
-    if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств!"); notify("error"); return; }
+    if (!Number.isFinite(bet) || bet < 0.01 || bet > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
 
-    balance -= bet; updateBalanceUI(); rouletteIsSpinning = true;
+    const winningOptions = getRouletteWinningNumbers();
+    if (!winningOptions.length) { alert("Выбери ставку перед вращением."); return; }
+    const winningIdx = secureRandomInt(ROULETTE_NUMBERS.length);
+    const winningNum = ROULETTE_NUMBERS[winningIdx];
+    const isWin = winningOptions.some(value => String(value) === String(winningNum));
+    const multiplier = ROULETTE_RTP_FACTOR / winningOptions.length;
+
+    balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
+    updateBalanceUI();
+    saveUserData();
+    rouletteIsSpinning = true;
     $("btn-roulette-action").disabled = true;
     $("btn-roulette-action").textContent = "ВРАЩЕНИЕ...";
-    $("roulette-status").textContent = "Рулетка крутится...";
+    $("roulette-status").textContent = "Шарик вращается...";
     $("roulette-status").style.color = "#332900";
+    $("roulette-stage")?.classList.add("spinning");
 
-    const winningIdx = Math.floor(Math.random() * ROULETTE_NUMBERS.length);
-    const winningNum = ROULETTE_NUMBERS[winningIdx];
-    const totalSlices = ROULETTE_NUMBERS.length;
-    const sliceDeg = 360 / totalSlices;
-
+    const sliceDeg = 360 / ROULETTE_NUMBERS.length;
     const targetSliceCenterDeg = winningIdx * sliceDeg + sliceDeg / 2;
-    const extraTurns = 5 * 360; 
-    const finalRotation = rouletteCurrentRotation + extraTurns + (360 - (rouletteCurrentRotation % 360)) + (360 - targetSliceCenterDeg);
+    const currentMod = ((rouletteCurrentRotation % 360) + 360) % 360;
+    const alignment = (360 - targetSliceCenterDeg - currentMod + 720) % 360;
+    const finalRotation = rouletteCurrentRotation + 7 * 360 + alignment;
     rouletteCurrentRotation = finalRotation;
 
-    const cvs = $("roulette-canvas");
-    cvs.style.transform = `rotate(${finalRotation}deg)`;
+    const canvas = $("roulette-canvas");
+    canvas.style.transition = "none";
+    canvas.style.transform = `translateZ(12px) rotate(${finalRotation - 7 * 360 - alignment}deg)`;
+    void canvas.offsetWidth;
+    canvas.style.transition = "transform 5.25s cubic-bezier(.13,.76,.12,1)";
+    requestAnimationFrame(() => { canvas.style.transform = `translateZ(12px) rotate(${finalRotation}deg)`; });
     haptic("medium");
 
     setTimeout(() => {
         rouletteIsSpinning = false;
+        $("roulette-stage")?.classList.remove("spinning");
         $("btn-roulette-action").disabled = false;
         $("btn-roulette-action").textContent = "СДЕЛАТЬ СТАВКУ";
 
-        let isWin = false;
-        let mult = 0;
-        const color = getNumColor(winningNum);
-
-        if (rouletteCategory === "colors") {
-            if (rouletteSelectedOption === "red" && color === "#ef4444") { isWin = true; mult = 2; }
-            if (rouletteSelectedOption === "black" && color === "#1e293b") { isWin = true; mult = 2; }
-        } else if (rouletteCategory === "zero") {
-            if (String(rouletteSelectedOption) === String(winningNum)) { isWin = true; mult = 18; }
-        } else if (rouletteCategory === "even_odd") {
-            if (winningNum !== 0 && winningNum !== "00") {
-                const numVal = Number(winningNum);
-                if (rouletteSelectedOption === "even" && numVal % 2 === 0) { isWin = true; mult = 2; }
-                if (rouletteSelectedOption === "odd" && numVal % 2 !== 0) { isWin = true; mult = 2; }
-            }
-        } else if (rouletteCategory === "range") {
-            if (winningNum !== 0 && winningNum !== "00") {
-                const numVal = Number(winningNum);
-                if (rouletteSelectedOption === "1-18" && numVal >= 1 && numVal <= 18) { isWin = true; mult = 2; }
-                if (rouletteSelectedOption === "19-36" && numVal >= 19 && numVal <= 36) { isWin = true; mult = 2; }
-            }
-        } else if (rouletteCategory === "dozen") {
-            if (winningNum !== 0 && winningNum !== "00") {
-                const numVal = Number(winningNum);
-                if (rouletteSelectedOption === "1-12" && numVal >= 1 && numVal <= 12) { isWin = true; mult = 3; }
-                if (rouletteSelectedOption === "13-24" && numVal >= 13 && numVal <= 24) { isWin = true; mult = 3; }
-                if (rouletteSelectedOption === "25-36" && numVal >= 25 && numVal <= 36) { isWin = true; mult = 3; }
-            }
-        } else if (rouletteCategory === "number") {
-            if (String(rouletteSelectedOption) === String(winningNum)) { isWin = true; mult = 36; }
-        }
-
         if (isWin) {
-            const winAmount = Math.floor(bet * mult * 100) / 100;
-            balance += winAmount;
+            const winAmount = Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100;
+            balance = Math.round((balance + winAmount + Number.EPSILON) * 100) / 100;
             $("roulette-status").textContent = `🎉 ВЫПАЛО ${winningNum}! ВЫИГРЫШ +$${money(winAmount)}`;
             $("roulette-status").style.color = "#16a34a";
             notify("success");
@@ -2156,10 +2418,9 @@ function spinRoulette() {
             $("roulette-status").style.color = "#dc2626";
             notify("error");
         }
-
         updateBalanceUI();
         saveUserData();
-    }, 3900);
+    }, 5350);
 }
 
 /* CASES & INVENTORY LOGIC */
@@ -2168,7 +2429,7 @@ function openCase(id,name,pr,img,prizes,weights) {
     curCase={id,name,pr,img,prizes,weights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
     $("detail-case-title").textContent=name; $("case-big-image").src=img;
-    $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}"><div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
+    $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}" alt="${displayGiftName(p.name, p.img)}">${p.name ? `<div class="prize-small-name">${displayGiftName(p.name, p.img)}</div>` : ""}<div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
     setCaseQuantity(1); window.scrollTo(0,0); haptic();
 }
 
@@ -2197,7 +2458,7 @@ async function openCurrentCase() {
         inventory.push({...win, id:Date.now()+Math.random()});
         let strip = wraps[i].querySelector(".roulette-strip");
         let vals=[]; for(let k=0;k<45;k++) vals.push(k===28?win:choosePrize(curCase.prizes, curCase.weights));
-        strip.innerHTML = vals.map(v=>`<div class="roulette-prize"><img style="width:34px;height:34px;object-fit:contain;" src="${v.img}"><div style="color:#d97706;font-size:11px;font-weight:950;">$${v.price.toFixed(2)}</div></div>`).join('');
+        strip.innerHTML = vals.map(v=>`<div class="roulette-prize"><img style="width:34px;height:34px;object-fit:contain;" src="${v.img}" alt="${displayGiftName(v.name, v.img)}">${v.name ? `<div class="prize-small-name">${displayGiftName(v.name, v.img)}</div>` : ""}<div style="color:#d97706;font-size:11px;font-weight:950;">$${v.price.toFixed(2)}</div></div>`).join('');
         proms.push(new Promise(res=>{
             setTimeout(()=>{
                 strip.style.transition="none"; strip.style.transform="translateX(0)";
@@ -2226,7 +2487,7 @@ function renderInventory() {
     $("inventory-list").innerHTML = inventory.map((it,i)=>`
         <div class="inventory-item">
             <img src="${it.img}">
-            <div class="inventory-item-name">${it.name}</div>
+            <div class="inventory-item-name">${displayGiftName(it.name, it.img)}</div>
             <div class="inventory-item-price">$${it.price.toFixed(2)}</div>
             <button class="primary green" style="padding:8px;font-size:12px;border-radius:10px;" onclick="sellItem(${i})">ПРОДАТЬ</button>
         </div>
@@ -2305,7 +2566,7 @@ function adminViewInventory(targetUserId) {
         listCont.innerHTML = items.map(it => `
             <div class="inventory-item" style="padding:10px;">
                 <img src="${it.img}" style="width:45px; height:45px;">
-                <div class="inventory-item-name" style="font-size:12px;">${it.name}</div>
+                <div class="inventory-item-name" style="font-size:12px;">${displayGiftName(it.name, it.img)}</div>
                 <div class="inventory-item-price" style="font-size:11px;">$${Number(it.price).toFixed(2)}</div>
             </div>
         `).join('');
@@ -2332,6 +2593,7 @@ updateDiceUI();
 updateUpgradeUI();
 renderRouletteOptions();
 drawRouletteWheel();
+updateTowerProgress();
 </script>
 </body>
 </html>
