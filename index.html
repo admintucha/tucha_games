@@ -642,8 +642,6 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     border-top-color: #f7bd35;
     filter: drop-shadow(0 3px 2px rgba(76,39,0,.55));
 }
-.roulette-stage.spinning .roulette-pointer { animation: roulettePointerTap .16s ease-in-out infinite alternate; }
-@keyframes roulettePointerTap { from { transform: translateX(-50%) rotate(-2deg) translateY(0); } to { transform: translateX(-50%) rotate(2deg) translateY(3px); } }
 .roulette-opt-btn { box-shadow: 0 7px 0 rgba(130,91,17,.13), 0 10px 18px rgba(128,86,9,.09); transform: translateZ(0); }
 .roulette-opt-btn.selected { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(130,91,17,.12), 0 0 0 2px rgba(245,158,11,.14), 0 12px 20px rgba(128,86,9,.15) !important; }
 .roulette-num-btn { box-shadow: inset 0 2px 0 rgba(255,255,255,.18), 0 3px 0 rgba(0,0,0,.16); }
@@ -767,6 +765,153 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     .tower-cell-art svg { width:33px; height:33px; }
 }
 
+
+
+/* ===== FINAL POLISH: CLOUD BRAND, FIXED POINTER, 3D CASES ===== */
+.logo-icon {
+    width: 48px;
+    height: 44px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: initial;
+    perspective: 180px;
+    animation: logoCloudFloat 3.4s ease-in-out infinite;
+}
+.logo-cloud-art {
+    display: block;
+    width: 53px;
+    height: 47px;
+    overflow: visible;
+    filter: drop-shadow(0 5px 3px rgba(38, 117, 177, .25)) drop-shadow(0 2px 7px rgba(245, 158, 11, .22));
+    transform-style: preserve-3d;
+}
+@keyframes logoCloudFloat {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+/* Стрелка закреплена по центру; вращается только колесо. */
+.roulette-pointer {
+    position: absolute !important;
+    left: 50% !important;
+    top: -2px !important;
+    transform: translateX(-50%) !important;
+    transform-origin: 50% 0 !important;
+    animation: none !important;
+    transition: none !important;
+    z-index: 40 !important;
+    border-left: 13px solid transparent !important;
+    border-right: 13px solid transparent !important;
+    border-top: 25px solid #f7bd35 !important;
+    filter: drop-shadow(0 3px 2px rgba(76,39,0,.55)) drop-shadow(0 0 4px rgba(255,255,255,.65));
+    pointer-events: none;
+}
+.roulette-stage.spinning .roulette-pointer {
+    animation: none !important;
+    transform: translateX(-50%) !important;
+}
+
+/* Объёмная подача карточек и открытия кейсов. */
+.case-card {
+    transform-style: preserve-3d;
+    perspective: 900px;
+    box-shadow: 0 13px 22px rgba(160, 105, 8, .16), inset 0 1px 0 rgba(255,255,255,.95);
+}
+.case-card::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -55%;
+    left: -75%;
+    width: 55%;
+    height: 210%;
+    pointer-events: none;
+    opacity: 0;
+    transform: rotate(24deg) translateX(-40%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent);
+}
+.case-card:hover::before { opacity: 1; animation: caseCardShine .85s ease-out; }
+.case-card-image {
+    position: relative;
+    z-index: 1;
+    transform: translateZ(18px);
+    animation: caseImageFloat 3.2s ease-in-out infinite;
+}
+.case-card-name, .case-card-price { position: relative; z-index: 3; transform: translateZ(10px); }
+@keyframes caseCardShine {
+    from { transform: rotate(24deg) translateX(-40%); }
+    to { transform: rotate(24deg) translateX(390%); }
+}
+@keyframes caseImageFloat {
+    0%,100% { transform: translateY(0) translateZ(18px) rotate(-1deg); }
+    50% { transform: translateY(-5px) translateZ(24px) rotate(1deg); }
+}
+.case-detail-card {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1100px;
+    animation: caseDetailEnter .48s cubic-bezier(.2,.85,.25,1) both;
+}
+.case-detail-card::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 12%, rgba(255,218,91,.22), transparent 42%);
+}
+.case-detail-card > * { position: relative; z-index: 1; }
+@keyframes caseDetailEnter {
+    0% { opacity: 0; transform: perspective(1100px) rotateX(9deg) translateY(12px) scale(.97); }
+    100% { opacity: 1; transform: perspective(1100px) rotateX(0) translateY(0) scale(1); }
+}
+.case-big-image {
+    transform-style: preserve-3d;
+    transform: translateZ(25px);
+    animation: casePrizeFloat 3.4s ease-in-out infinite;
+}
+@keyframes casePrizeFloat {
+    0%,100% { transform: translateY(0) translateZ(25px) rotateY(-2deg) scale(1); }
+    50% { transform: translateY(-7px) translateZ(36px) rotateY(2deg) scale(1.025); }
+}
+.case-detail-card.opening {
+    border-color: rgba(245,158,11,.85);
+    box-shadow: 0 18px 45px rgba(234,150,8,.3), inset 0 0 0 2px rgba(255,255,255,.55);
+}
+.case-detail-card.opening .case-big-image {
+    animation: caseChestShake .42s ease-in-out infinite alternate;
+    filter: drop-shadow(0 18px 28px rgba(245,158,11,.45));
+}
+@keyframes caseChestShake {
+    from { transform: translateY(0) translateZ(30px) rotateY(-4deg) rotateZ(-1deg) scale(1); }
+    to { transform: translateY(-5px) translateZ(45px) rotateY(4deg) rotateZ(1deg) scale(1.045); }
+}
+.case-detail-card.opening .roulette-wrap {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245,158,11,.14), 0 0 22px rgba(245,158,11,.32), inset 0 1px 0 #fff;
+    animation: caseReelGlow .7s ease-in-out infinite alternate;
+}
+@keyframes caseReelGlow {
+    from { box-shadow: 0 0 8px rgba(245,158,11,.16), inset 0 1px 0 #fff; }
+    to { box-shadow: 0 0 24px rgba(245,158,11,.42), inset 0 1px 0 #fff; }
+}
+.roulette-prize {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 5px 9px rgba(143,94,12,.12);
+    transform: perspective(600px) translateZ(8px);
+}
+@media (prefers-reduced-motion: reduce) {
+    .logo-icon, .case-card-image, .case-big-image, .case-detail-card,
+    .case-detail-card.opening .roulette-wrap { animation: none !important; }
+}
+
 </style>
 </head>
 
@@ -775,7 +920,36 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 <!-- GLOBAL HEADER -->
 <header id="main-header">
     <div class="logo">
-        <div class="logo-icon">🦆</div>
+        <div class="logo-icon" aria-label="Тучка Tucha Games">
+            <svg class="logo-cloud-art" viewBox="0 0 80 64" role="img" aria-hidden="true">
+                <defs>
+                    <linearGradient id="tuchaCloudFill" x1="0" y1="0" x2="0.15" y2="1">
+                        <stop offset="0" stop-color="#ffffff"/>
+                        <stop offset=".42" stop-color="#dff7ff"/>
+                        <stop offset="1" stop-color="#6fc9f5"/>
+                    </linearGradient>
+                    <linearGradient id="tuchaCloudSide" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#a6e5ff"/>
+                        <stop offset="1" stop-color="#399bdc"/>
+                    </linearGradient>
+                    <linearGradient id="tuchaCrown" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#fff6a6"/>
+                        <stop offset="1" stop-color="#f59e0b"/>
+                    </linearGradient>
+                </defs>
+                <path d="M23 49C12 49 7 42 8 33c1-8 8-13 16-13 3-10 12-15 22-12 8 2 13 8 14 16 8 0 13 6 13 13 0 8-6 13-15 13H23Z" fill="url(#tuchaCloudSide)" stroke="#248ecb" stroke-width="2"/>
+                <path d="M22 45C13 45 10 39 12 32c2-6 7-9 14-8 2-8 10-13 18-10 7 2 11 7 12 15 7-1 12 4 12 10 0 7-5 11-13 11H22Z" fill="url(#tuchaCloudFill)" stroke="#ffffff" stroke-width="2.4"/>
+                <ellipse cx="30" cy="19" rx="14" ry="5" fill="#ffffff" opacity=".52" transform="rotate(-18 30 19)"/>
+                <ellipse cx="28" cy="35" rx="2.5" ry="4" fill="#173b69"/>
+                <ellipse cx="48" cy="35" rx="2.5" ry="4" fill="#173b69"/>
+                <path d="M34 41Q39 46 44 41" fill="none" stroke="#2674a8" stroke-width="2.5" stroke-linecap="round"/>
+                <ellipse cx="21" cy="40" rx="4" ry="2" fill="#ff9aa7" opacity=".65"/>
+                <ellipse cx="55" cy="40" rx="4" ry="2" fill="#ff9aa7" opacity=".65"/>
+                <path d="M34 8 38 2 43 8 49 5 47 14 34 14Z" fill="url(#tuchaCrown)" stroke="#d58a08" stroke-width="1.4" stroke-linejoin="round"/>
+                <circle cx="38" cy="4" r="1.7" fill="#fff8c8"/>
+                <path d="M69 14l2.2 4.3 4.8 1-4.8 1.2-2.2 4.2-1.2-4.2-4.3-1.2 4.3-1Z" fill="#ffd44d" stroke="#efa600" stroke-width=".8"/>
+            </svg>
+        </div>
         <div class="logo-text">
             TUCHA
             <small>GAMES</small>
@@ -857,8 +1031,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: 'Ракетка', price: 0.75, img: './rocket.png'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
                     {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                    {name: 'Torch', price: 6.00, img: './fakelInft.png'}
-                ], [15, 25, 25, 20, 10, 5])">
+                ], [15, 25, 25, 20, 10])">
                     <img class="case-card-image" src="./casepro.png" alt="Pro Case">
                     <div class="case-card-name">Pro Case</div>
                     <div class="case-card-price">$1.00</div>
@@ -870,8 +1043,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.20', price: 1.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
                     {name: 'Супер приз', price: 7.50, img: './caser.png'},
-                    {name: 'Torch', price: 6.00, img: './fakelInft.png'}
-                ], [20, 30, 25, 15, 10])">
+                ], [20, 30, 25, 15])">
                     <img class="case-card-image" src="./caser.png" alt="Rare Case">
                     <div class="case-card-name">Rare Case</div>
                     <div class="case-card-price">$1.50</div>
@@ -882,10 +1054,9 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.00', price: 1.00, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$1.60', price: 1.60, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'},
                     {name: 'VIP Джекпот', price: 15.00, img: './casevip.png'}
-                ], [20, 30, 20, 15, 10, 5])">
+                ], [20, 30, 20, 10, 5])">
                     <img class="case-card-image" src="./casevip.png" alt="VIP Case">
                     <div class="case-card-name">VIP Case</div>
                     <div class="case-card-price">$2.00</div>
@@ -896,9 +1067,8 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$1.50', price: 1.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$2.20', price: 2.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
-                ], [35, 35, 18, 8, 4])">
+                ], [35, 35, 18, 4])">
                     <img class="case-card-image" src="./prem.png" alt="Prem Case">
                     <div class="case-card-name">Prem Case</div>
                     <div class="case-card-price">$3.00</div>
@@ -909,9 +1079,8 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                     {name: '$2.50', price: 2.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: '$3.80', price: 3.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
                     {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                    {name: 'Torch', price: 6.00, img: './fakelInft.png'},
                     {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
-                ], [35, 35, 20, 6, 4])">
+                ], [35, 35, 20, 4])">
                     <img class="case-card-image" src="./talagram.png" alt="Telegram Case">
                     <div class="case-card-name">Telegram Case</div>
                     <div class="case-card-price">$5.00</div>
@@ -1054,7 +1223,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             
             <button id="mines-button" class="primary gold" onclick="handleMinesAction()">СТАРТ</button>
             <div style="margin-top:12px; color:#9c841a; text-align:center; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:4px;">
-                Найди Золотую Тучку ✨ (даёт мгновенно x3)!
+                Найди Золотую Тучку ✨ (даёт мгновенно x2)!
             </div>
         </div>
     </div>
@@ -1352,7 +1521,6 @@ function displayGiftName(value, imagePath = "") {
     const original = String(value || "").trim();
     const normalized = `${original} ${String(imagePath || "")}`.toLocaleLowerCase("ru").replace(/[._-]+/g, " ").replace(/\s+/g, " ");
     if (/морожен|ice\s*cream|icecream/.test(normalized)) return "Ice Cream";
-    if (/факел|fakel|torch/.test(normalized)) return "Torch";
     return original;
 }
 
@@ -1367,6 +1535,16 @@ let userLoaded = false;
 let adminPlayersData = [];
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
+
+// Удаляем устаревший удалённый NFT из сохранённых инвентарей.
+function removeTorchNFT(items) {
+    if (!Array.isArray(items)) return [];
+    return items.filter(item => {
+        const name = String(item?.name || "").trim().toLowerCase();
+        const img = String(item?.img || "").trim().toLowerCase();
+        return !(/^(torch|факел|fakel inft?)$/.test(name) || name.includes("torch") || name.includes("факел") || img.includes("fakelinft") || img.includes("fakel_inft"));
+    });
+}
 function saveLocal() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify({ balance, inventory })); } catch(e) {} }
 function loadLocal() {
     try {
@@ -1374,7 +1552,11 @@ function loadLocal() {
         if (raw) {
             let data = JSON.parse(raw);
             if (isFinite(data.balance)) balance = Number(data.balance);
-            if (Array.isArray(data.inventory)) inventory = data.inventory;
+            if (Array.isArray(data.inventory)) {
+                const cleaned = removeTorchNFT(data.inventory);
+                inventory = cleaned;
+                if (cleaned.length !== data.inventory.length) saveLocal();
+            }
         }
     } catch(e) {}
 }
@@ -1413,13 +1595,19 @@ function loadUserData() {
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
+            let removedTorchFromServer = false;
             if (data.inventory) { 
                 try { 
                     let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory; 
-                    if (Array.isArray(parsed) && parsed.length >= inventory.length) inventory = parsed;
+                    if (Array.isArray(parsed) && parsed.length >= inventory.length) {
+                        const cleaned = removeTorchNFT(parsed);
+                        removedTorchFromServer = cleaned.length !== parsed.length;
+                        inventory = cleaned;
+                    }
                 } catch(e){} 
             }
-            saveLocal();
+            if (removedTorchFromServer) saveUserData();
+            else saveLocal();
             updateBalanceUI(); 
             userLoaded = true; 
             renderInventory();
@@ -1605,7 +1793,7 @@ function clickMine(i, c) {
     let prob = 1; for(let j=0; j<safeOpen; j++) prob *= (25-bombCnt-j)/(25-j);
     let step = 0.88 / prob;
     if(isEm) emeraldApplied = true;
-    mineMult = emeraldApplied ? step * 3 : step;
+    mineMult = emeraldApplied ? step * 2 : step;
     $("mine-mult").textContent = mineMult.toFixed(2);
     $("mines-button").disabled = false; $("mines-button").className = "primary green";
     $("mines-button").textContent = "ЗАБРАТЬ $" + money(mineBet * mineMult);
@@ -1881,7 +2069,6 @@ const UPGRADE_GIFTS = [
     { name: "Бокс", price: 0.50, img: "./box.png" },
     { name: "Ракетка", price: 0.75, img: "./rocket.png" },
     { name: "Кубок", price: 1.00, img: "./trofei.png" },
-    { name: "Torch", price: 6.00, img: "./fakelInft.png" },
     { name: "Ndtice", price: 7.50, img: "./ndtice.png" }
 ];
 const UPGRADE_TOP_GIFT_BALANCE = 10.00;
@@ -2433,7 +2620,7 @@ function openCase(id,name,pr,img,prizes,weights) {
     setCaseQuantity(1); window.scrollTo(0,0); haptic();
 }
 
-function closeCaseDetail() { if(opening)return; $("case-detail").classList.remove("active"); $("cases-list").style.display="block"; haptic(); }
+function closeCaseDetail() { if(opening)return; $("case-detail-card").classList.remove("opening"); $("case-detail").classList.remove("active"); $("cases-list").style.display="block"; haptic(); }
 
 function setCaseQuantity(q) {
     if(opening)return; caseQty=q;
@@ -2451,6 +2638,7 @@ async function openCurrentCase() {
     if(balance<cost) { alert("Недостаточно средств!"); notify("error"); return; }
     balance-=cost; updateBalanceUI(); opening=true;
     $("case-button").disabled=true; $("case-button").textContent="ОТКРЫВАЕМ..."; $("case-result").textContent="";
+    $("case-detail-card").classList.add("opening");
     let wraps = $("roulettes-container").querySelectorAll(".roulette-wrap");
     let proms = [];
     for(let i=0;i<caseQty;i++) {
@@ -2472,6 +2660,7 @@ async function openCurrentCase() {
         }));
     }
     await Promise.all(proms);
+    $("case-detail-card").classList.remove("opening");
     saveUserData(); renderInventory();
     $("case-result").textContent = `🎉 ВЫИГРАНО: ${caseQty} шт. (упало в инвентарь)`;
     opening=false; setCaseQuantity(caseQty); $("case-button").disabled=false; notify("success");
@@ -2556,6 +2745,7 @@ function adminViewInventory(targetUserId) {
     if (!player) return;
     let items = [];
     try { items = typeof player.inventory === 'string' ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
+    items = removeTorchNFT(items);
     $("admin-inv-title").textContent = "🎒 Инвентарь: " + player.username;
     let totalVal = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
     $("admin-inv-sub").textContent = `Предметов: ${items.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
