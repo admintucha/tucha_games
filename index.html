@@ -210,6 +210,34 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     100% { transform: scale(1); opacity: 1; }
 }
 
+/* ===== TOWER GAME SCREEN ===== */
+.tower-content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+.tower-container {
+    display: flex; flex-direction: column-reverse; gap: 8px;
+    background: rgba(255, 255, 255, 0.6); padding: 14px; border-radius: 22px;
+    border: 2px solid rgba(255, 215, 0, 0.4); box-shadow: inset 0 2px 10px rgba(234, 179, 8, 0.1);
+}
+.tower-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: rgba(255, 255, 255, 0.8); padding: 8px 12px; border-radius: 16px;
+    border: 2px solid rgba(234, 179, 8, 0.2); opacity: 0.5; pointer-events: none;
+    transition: opacity 0.2s, border-color 0.2s;
+}
+.tower-row.active-row { opacity: 1; pointer-events: auto; border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+.tower-row.passed-row { opacity: 0.8; }
+.tower-cells { display: flex; gap: 8px; flex: 1; justify-content: center; }
+.tower-cell {
+    flex: 1; aspect-ratio: 1; max-width: 50px; border: 0; border-radius: 12px;
+    background: linear-gradient(145deg, #ffffff, #fef08a); border-bottom: 4px solid #eab308;
+    box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; font-weight: 950; color: #332900;
+    transition: transform 0.15s, background 0.15s;
+}
+.tower-cell:not(:disabled):active { transform: scale(0.9); }
+.tower-cell.safe { background: #dcfce7 !important; border-bottom-color: #16a34a !important; color: #16a34a !important; }
+.tower-cell.bomb { background: #fee2e2 !important; border-bottom-color: #dc2626 !important; color: #dc2626 !important; }
+.tower-mult { font-size: 13px; font-weight: 950; color: #d97706; width: 48px; text-align: right; }
+
 /* ===== DICE GAME ===== */
 .dice-content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 .dice-result-wrapper {
@@ -370,9 +398,12 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <div class="game-card" onclick="openGameScreen('mines')">
                 <img src="./ikonkamin.png" alt="Мины">
             </div>
-            <!-- ИСПРАВЛЕННАЯ КАРТОЧКА DICE -->
             <div class="game-card" onclick="openGameScreen('dice')">
                 <img src="./dicel.png" alt="Дайс">
+            </div>
+            <!-- КАРТОЧКА БАШНИ С tower.png -->
+            <div class="game-card" onclick="openGameScreen('tower')">
+                <img src="./tower.png" alt="Башня">
             </div>
         </div>
     </section>
@@ -610,7 +641,6 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     </div>
     
     <div class="dice-content">
-        <!-- Блок с результатом -->
         <div class="dice-result-wrapper">
             <div id="dice-result" class="dice-result-val">50.00</div>
             <div id="dice-result-sub" class="dice-result-sub">Сделайте ставку</div>
@@ -619,12 +649,10 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         <div class="panel">
             <div style="font-weight:950; margin-bottom:10px;">Настройте шанс:</div>
             
-            <!-- Ползунок -->
             <div class="dice-slider-wrap">
                 <input id="dice-slider" type="range" min="1" max="95" value="50" oninput="updateDiceUI()">
             </div>
             
-            <!-- Инфо-блоки -->
             <div class="dice-info-row">
                 <div class="dice-info-box">
                     <div class="dice-info-label">Шанс победы</div>
@@ -636,11 +664,36 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
                 </div>
             </div>
 
-            <!-- Ставка -->
             <label style="display:block; margin-bottom: 5px;">Сумма ставки ($)</label>
             <input id="dice-bet" type="number" min="0.01" step="0.01" value="0.10">
             
             <button id="btn-dice-action" class="primary gold" onclick="playDice()">СДЕЛАТЬ СТАВКУ</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOWER GAME SCREEN -->
+<div id="screen-tower" class="game-screen">
+    <div class="game-top-bar">
+        <button class="game-back-btn" onclick="closeGameScreen('tower')">← Башня</button>
+        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
+            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
+        </div>
+    </div>
+    
+    <div class="tower-content">
+        <div class="panel">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:950;">
+                <b>🏰 БАШНЯ</b>
+                <span id="tower-state-label" style="color:#d97706;">Новая игра</span>
+            </div>
+            
+            <div id="tower-container" class="tower-container"></div>
+            
+            <label style="margin-top:16px; display:block;">Сумма ставки ($)</label>
+            <input id="tower-bet" type="number" min="0.01" step="0.01" value="0.10">
+            
+            <button id="tower-button" class="primary gold" onclick="handleTowerAction()">СТАРТ БАШНИ</button>
         </div>
     </div>
 </div>
@@ -705,9 +758,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <button onclick="$('admin-inv-modal').style.display='none'" style="background: #ffeb99; border: none; padding: 6px 12px; border-radius: 10px; font-weight: 950; color: #d97706;">✕</button>
         </div>
         <div id="admin-inv-sub" style="font-size: 13px; font-weight: 800; color: #16a34a; margin-bottom: 10px;"></div>
-        <div id="admin-inv-list" class="inventory-grid" style="overflow-y: auto; max-height: 60vh; gap: 8px;">
-            <!-- Динамический список инвентаря -->
-        </div>
+        <div id="admin-inv-list" class="inventory-grid" style="overflow-y: auto; max-height: 60vh; gap: 8px;"></div>
     </div>
 </div>
 
@@ -725,9 +776,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAu
 
 /* ВЕКТОРНЫЕ ИКОНКИ ДЛЯ ИГРЫ МИНЫ */
 const ICON_CLOUD = `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 3px 5px rgba(2,132,199,0.25));"><path d="M17.5 18C19.985 18 22 15.985 22 13.5C22 11.156 20.206 9.231 17.9 9.024C17.434 5.587 14.484 3 10.9 3C7.034 3 3.9 6.134 3.9 10C3.9 10.238 3.912 10.474 3.935 10.706C2.236 11.355 1 12.988 1 14.9C1 17.164 2.836 19 5.1 19H17.5Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
-
 const ICON_GOLD_CLOUD = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 4px 10px rgba(217,119,6,0.45));"><defs><linearGradient id="gG" x1="0" y1="0" x2="0" y2="100%"><stop offset="0%" stop-color="#fffbeb"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs><path d="M17.5 18C19.985 18 22 15.985 22 13.5C22 11.156 20.206 9.231 17.9 9.024C17.434 5.587 14.484 3 10.9 3C7.034 3 3.9 6.134 3.9 10C3.9 10.238 3.912 10.474 3.935 10.706C2.236 11.355 1 12.988 1 14.9C1 17.164 2.836 19 5.1 19H17.5Z" fill="url(#gG)" stroke="#d97706" stroke-width="1.8"/><path d="M19 2L19.8 3.8L21.5 4.5L19.8 5.2L19 7L18.2 5.2L16.5 4.5L18.2 3.8L19 2Z" fill="#facc15"/><path d="M5 2L5.6 3.2L7 3.8L5.6 4.4L5 5.6L4.4 4.4L3 3.8L4.4 3.2L5 2Z" fill="#facc15"/></svg>`;
-
 const ICON_BOMB = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));"><circle cx="11" cy="13" r="7.5" fill="#1e293b" stroke="#ffffff" stroke-width="1.8"/><path d="M15 7.5L18.5 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/><circle cx="19.5" cy="3" r="1.8" fill="#facc15"/><path d="M8.5 10.5C9 10 9.8 9.5 10.8 9.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/></svg>`;
 
 const userId = telegramUser ? String(telegramUser.id) : "demo_user";
@@ -737,15 +786,8 @@ let inventory = [];
 let userLoaded = false;
 let adminPlayersData = [];
 
-/* LOCAL STORAGE BACKUP FOR PERSISTENCE */
 const LOCAL_KEY = "tucha_user_data_" + userId;
-
-function saveLocal() {
-    try {
-        localStorage.setItem(LOCAL_KEY, JSON.stringify({ balance, inventory }));
-    } catch(e) {}
-}
-
+function saveLocal() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify({ balance, inventory })); } catch(e) {} }
 function loadLocal() {
     try {
         let raw = localStorage.getItem(LOCAL_KEY);
@@ -757,7 +799,6 @@ function loadLocal() {
     } catch(e) {}
 }
 
-/* TABS & GAMES NAVIGATION */
 function switchTab(name) {
     document.querySelectorAll(".tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + name));
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
@@ -779,7 +820,6 @@ function closeGameScreen(gameId) {
     haptic("light");
 }
 
-/* SYNC DATA */
 function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
 function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
 
@@ -787,9 +827,7 @@ function loadUserData() {
     loadLocal();
     updateBalanceUI(); 
     renderInventory();
-
     if (!isDBConnected()) return;
-
     fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
@@ -797,9 +835,7 @@ function loadUserData() {
             if (data.inventory) { 
                 try { 
                     let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory; 
-                    if (Array.isArray(parsed) && parsed.length >= inventory.length) {
-                        inventory = parsed;
-                    }
+                    if (Array.isArray(parsed) && parsed.length >= inventory.length) inventory = parsed;
                 } catch(e){} 
             }
             saveLocal();
@@ -815,24 +851,7 @@ function loadUserData() {
 function saveUserData() {
     saveLocal();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { 
-        method: "POST", 
-        body: JSON.stringify({ 
-            action: "update", 
-            userid: userId, 
-            username: userName, 
-            balance: balance, 
-            inventory: JSON.stringify(inventory) 
-        }) 
-    })
-    .then(res => res.json()).then(data => {
-        if (Number(data.credited) > 0) { 
-            balance += Number(data.credited); 
-            updateBalanceUI(); 
-            onDepositCredited(Number(data.credited)); 
-            saveUserData(); 
-        }
-    }).catch(()=>{});
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory) }) }).catch(()=>{});
 }
 
 if (telegramUser) {
@@ -865,29 +884,21 @@ function updateCrashHistoryUI() {
 function startCrashRound() {
     clearInterval(crashTimer); clearInterval(crashTick);
     crashState = "waiting"; crashBet = 0; inCrash = false; crashMultiplier = 1;
-    
     $("crash-rocket-img").src = "./rocket.png";
     $("crash-rocket-img").style.transform = "translateY(0px)";
     $("crash-val").textContent = "1.00x";
     $("crash-val").style.color = "#ffffff";
     $("crash-sub").textContent = "ОЖИДАНИЕ";
-    
     $("btn-crash-action").disabled = false;
     $("btn-crash-action").textContent = "Сделать ставку 🚀";
     $("btn-crash-action").style.background = "linear-gradient(180deg, #4da9ff, #2563eb)";
     $("crash-players-info").textContent = "Игроков онлайн: " + (Math.floor(Math.random()*15)+5);
-    
     let seconds = 3;
     $("crash-sub").textContent = "СТАРТ ЧЕРЕЗ " + seconds + "С";
-    
     crashTimer = setInterval(() => {
         seconds--;
-        if (seconds > 0) {
-            $("crash-sub").textContent = "СТАРТ ЧЕРЕЗ " + seconds + "С";
-        } else { 
-            clearInterval(crashTimer); 
-            runCrash(); 
-        }
+        if (seconds > 0) $("crash-sub").textContent = "СТАРТ ЧЕРЕЗ " + seconds + "С";
+        else { clearInterval(crashTimer); runCrash(); }
     }, 1000);
 }
 
@@ -901,15 +912,12 @@ function runCrash() {
     $("crash-rocket-img").src = "./rocket.gif.gif";
     $("crash-sub").textContent = "ПОЛЁТ";
     $("btn-crash-action").disabled = !inCrash;
-    
     crashTick = setInterval(() => {
         crashMultiplier += 0.01;
         $("crash-val").textContent = crashMultiplier.toFixed(2) + "x";
         $("crash-val").style.color = "#ffffff";
-        
         let floatY = Math.sin(Date.now() / 150) * 8;
         $("crash-rocket-img").style.transform = `translateY(${floatY}px)`;
-        
         if (inCrash) {
             $("btn-crash-action").textContent = "ЗАБРАТЬ $" + money(crashBet * crashMultiplier);
             $("btn-crash-action").style.background = "linear-gradient(135deg, #16a34a, #059669)";
@@ -925,16 +933,13 @@ function crashEnd() {
     $("crash-val").textContent = crashTarget.toFixed(2) + "x";
     $("crash-val").style.color = "#e11d48";
     $("crash-sub").textContent = "КРАШ";
-    
     crashHistoryList.unshift(Number(crashTarget.toFixed(2)));
     if (crashHistoryList.length > 7) crashHistoryList.pop();
     updateCrashHistoryUI();
-
     if (inCrash) { inCrash = false; notify("error"); }
     $("btn-crash-action").disabled = true;
     $("btn-crash-action").textContent = "РАУНД ЗАВЕРШЁН";
     $("btn-crash-action").style.background = "#94a3b8";
-    
     setTimeout(startCrashRound, 3000);
 }
 
@@ -963,7 +968,6 @@ function confirmCrashBet() {
 
 /* MINES LOGIC */
 let minesState="idle", minePos=[], mineBet=0, mineMult=1, safeOpen=0, bombCnt=3, emeraldApplied=false;
-
 function buildMines() {
     $("mines-grid").innerHTML = "";
     for(let i=0;i<25;i++) {
@@ -989,12 +993,10 @@ function startMines() {
     buildMines();
     let safeI=[]; for(let i=0;i<25;i++) if(!minePos.includes(i)) safeI.push(i);
     if(safeI.length>0) $("mines-grid").children[safeI[Math.floor(Math.random()*safeI.length)]].dataset.em = "true";
-    
     minesState="playing"; $("mines-state-label").textContent="Игра идёт";
     $("mines-slider").disabled=true; $("mines-multiplier").style.display="block";
     $("mine-mult").textContent="1.00";
     $("mines-button").disabled=true; $("mines-button").textContent="ОТКРОЙ КЛЕТКУ"; $("mines-button").className="primary";
-    
     [...$("mines-grid").children].forEach(c => { c.disabled=false; c.onclick=()=>clickMine(Number(c.dataset.i), c); });
     haptic("medium");
 }
@@ -1005,41 +1007,26 @@ function clickMine(i, c) {
         revealMines(); finishMines("ПРОИГРЫШ −$"+money(mineBet), "red"); notify("error"); return;
     }
     const isEm = c.dataset.em==="true";
-    if (isEm) {
-        c.className = "cell revealed-gold";
-        c.innerHTML = ICON_GOLD_CLOUD;
-    } else {
-        c.className = "cell revealed-safe";
-        c.innerHTML = ICON_CLOUD;
-    }
+    if (isEm) { c.className = "cell revealed-gold"; c.innerHTML = ICON_GOLD_CLOUD; }
+    else { c.className = "cell revealed-safe"; c.innerHTML = ICON_CLOUD; }
     c.disabled = true; safeOpen++;
-    
-    let prob = 1; 
-    for(let j=0; j<safeOpen; j++) prob *= (25-bombCnt-j)/(25-j);
+    let prob = 1; for(let j=0; j<safeOpen; j++) prob *= (25-bombCnt-j)/(25-j);
     let step = 0.88 / prob;
-    
     if(isEm) emeraldApplied = true;
     mineMult = emeraldApplied ? step * 3 : step;
-    
     $("mine-mult").textContent = mineMult.toFixed(2);
-    $("mines-button").disabled = false; 
-    $("mines-button").className = "primary green";
+    $("mines-button").disabled = false; $("mines-button").className = "primary green";
     $("mines-button").textContent = "ЗАБРАТЬ $" + money(mineBet * mineMult);
-    
     if(isEm) haptic("heavy"); else haptic();
     if(safeOpen === 25 - bombCnt) handleMinesAction();
 }
 
 function revealMines() {
     [...$("mines-grid").children].forEach((c,i)=>{
-        if(minePos.includes(i)){ 
-            c.className="cell bomb"; 
-            c.innerHTML=ICON_BOMB; 
-            c.disabled=true; 
-        } else if(!c.classList.contains("revealed-safe") && !c.classList.contains("revealed-gold")) { 
+        if(minePos.includes(i)){ c.className="cell bomb"; c.innerHTML=ICON_BOMB; c.disabled=true; }
+        else if(!c.classList.contains("revealed-safe") && !c.classList.contains("revealed-gold")) { 
             c.className = c.dataset.em === 'true' ? "cell revealed-gold" : "cell revealed-safe"; 
-            c.innerHTML = c.dataset.em === 'true' ? ICON_GOLD_CLOUD : ICON_CLOUD; 
-            c.disabled = true; 
+            c.innerHTML = c.dataset.em === 'true' ? ICON_GOLD_CLOUD : ICON_CLOUD; c.disabled = true; 
         }
     });
 }
@@ -1051,86 +1038,185 @@ function finishMines(msg, col) {
 }
 if($("mines-slider")) $("mines-slider").addEventListener("input",()=>$("mines-count").textContent=$("mines-slider").value);
 
-/* ===== DICE LOGIC ===== */
-let diceState = "idle";
-let diceChance = 50;
-let diceMult = 1.96;
-
+/* DICE LOGIC */
+let diceState = "idle", diceChance = 50, diceMult = 1.96;
 function updateDiceUI() {
     diceChance = Number($("dice-slider").value);
-    // Считаем множитель с 2% маржой казино
     diceMult = (98 / diceChance).toFixed(2);
-    
     $("dice-chance-val").textContent = diceChance + "%";
     $("dice-mult-val").textContent = diceMult + "x";
-    
-    // Зеленый цвет слева (выигрыш), красный справа
     $("dice-slider").style.background = `linear-gradient(90deg, #16a34a ${diceChance}%, #ef4444 ${diceChance}%)`;
-    
     haptic("light");
 }
 
 function playDice() {
     if (diceState === "rolling") return;
-    
     const bet = Number($("dice-bet").value);
-    if (!isFinite(bet) || bet <= 0 || bet > balance) {
-        alert("Недостаточно средств или неверная сумма ставки!");
-        notify("error");
-        return;
-    }
-
-    balance -= bet; 
-    updateBalanceUI(); 
-    
-    diceState = "rolling";
-    $("btn-dice-action").disabled = true;
-    $("btn-dice-action").textContent = "БРОСОК...";
-    $("btn-dice-action").className = "primary";
-    $("dice-result").style.color = "#332900";
-    
-    // Шанс от 0 до 100
+    if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств!"); notify("error"); return; }
+    balance -= bet; updateBalanceUI(); diceState = "rolling";
+    $("btn-dice-action").disabled = true; $("btn-dice-action").textContent = "БРОСОК...";
     const finalRoll = (Math.random() * 100);
     const isWin = finalRoll <= diceChance;
-    
     let ticks = 0;
     const anim = setInterval(() => {
         $("dice-result").textContent = (Math.random() * 100).toFixed(2);
         ticks++;
-        
         if (ticks > 15) {
             clearInterval(anim);
-            let displayRoll = finalRoll.toFixed(2);
-            $("dice-result").textContent = displayRoll;
-            
+            $("dice-result").textContent = finalRoll.toFixed(2);
             if (isWin) {
                 const winAmount = Math.floor(bet * diceMult * 100) / 100;
                 balance += winAmount;
-                $("dice-result").style.color = "#16a34a"; 
-                $("dice-result-sub").textContent = `ВЫИГРЫШ +$${winAmount.toFixed(2)}`;
-                $("dice-result-sub").style.color = "#16a34a";
+                $("dice-result").style.color = "#16a34a"; $("dice-result-sub").textContent = `ВЫИГРЫШ +$${winAmount.toFixed(2)}`;
                 notify("success");
             } else {
-                $("dice-result").style.color = "#ef4444"; 
-                $("dice-result-sub").textContent = `ПРОИГРЫШ -$${bet.toFixed(2)}`;
-                $("dice-result-sub").style.color = "#ef4444";
+                $("dice-result").style.color = "#ef4444"; $("dice-result-sub").textContent = `ПРОИГРЫШ -$${bet.toFixed(2)}`;
                 notify("error");
             }
-            
-            updateBalanceUI(); 
-            saveUserData();
-            
-            diceState = "idle";
-            $("btn-dice-action").disabled = false;
-            $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
-            $("btn-dice-action").className = "primary gold";
+            updateBalanceUI(); saveUserData();
+            diceState = "idle"; $("btn-dice-action").disabled = false; $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
         }
     }, 50);
 }
 
+/* TOWER LOGIC */
+let towerState = "idle", towerBet = 0, currentLevel = 0;
+// 5 уровней снизу вверх: количество ячеек и бомб на каждом уровне
+const towerLevels = [
+    { cells: 5, bombs: 1, mult: 1.25 }, // Низ
+    { cells: 4, bombs: 1, mult: 1.65 },
+    { cells: 3, bombs: 1, mult: 2.30 },
+    { cells: 3, bombs: 2, mult: 4.10 },
+    { cells: 2, bombs: 1, mult: 8.50 }  // Верх
+];
+
+function buildTower() {
+    const cont = $("tower-container");
+    cont.innerHTML = "";
+    towerLevels.forEach((lvl, idx) => {
+        let row = document.createElement("div");
+        row.className = "tower-row" + (idx === 0 ? " active-row" : "");
+        row.id = "tower-row-" + idx;
+        
+        let cellsDiv = document.createElement("div");
+        cellsDiv.className = "tower-cells";
+        for (let c = 0; c < lvl.cells; c++) {
+            let btn = document.createElement("button");
+            btn.className = "tower-cell";
+            btn.disabled = true;
+            btn.dataset.row = idx;
+            btn.dataset.cell = c;
+            btn.onclick = () => clickTowerCell(idx, c, btn);
+            cellsDiv.appendChild(btn);
+        }
+        
+        let multDiv = document.createElement("div");
+        multDiv.className = "tower-mult";
+        multDiv.textContent = "x" + lvl.mult.toFixed(2);
+        
+        row.appendChild(cellsDiv);
+        row.appendChild(multDiv);
+        cont.appendChild(row);
+    });
+}
+
+function handleTowerAction() {
+    if (towerState === "idle" || towerState === "finished") {
+        const b = Number($("tower-bet").value);
+        if (b <= 0 || b > balance) { alert("Недостаточно средств!"); return; }
+        balance -= b; updateBalanceUI(); towerBet = b; currentLevel = 0;
+        towerState = "playing";
+        $("tower-state-label").textContent = "Поднимаемся по башне...";
+        $("tower-button").disabled = true;
+        $("tower-button").textContent = "ИГРАЕТ БАШНЯ";
+        buildTower();
+        haptic("medium");
+    }
+}
+
+function clickTowerCell(rowIdx, cellIdx, btn) {
+    if (towerState !== "playing" || rowIdx !== currentLevel) return;
+    
+    // Генерируем бомбы для этого ряда
+    let lvl = towerLevels[rowIdx];
+    let bombIndices = [];
+    while(bombIndices.length < lvl.bombs) {
+        let r = Math.floor(Math.random() * lvl.cells);
+        if (!bombIndices.includes(r)) bombIndices.includes(r) || bombIndices.push(r);
+    }
+    
+    // Отключаем кнопки ряда
+    let rowEl = $("tower-row-" + rowIdx);
+    let cellButtons = rowEl.querySelectorAll(".tower-cell");
+    cellButtons.forEach((b, idx) => {
+        b.disabled = true;
+        if (bombIndices.includes(idx)) {
+            b.className = "tower-cell bomb";
+            b.innerHTML = "💣";
+        } else {
+            b.className = "tower-cell safe";
+            b.innerHTML = "✨";
+        }
+    });
+    
+    if (bombIndices.includes(cellIdx)) {
+        // Проигрыш
+        towerState = "finished";
+        $("tower-state-label").textContent = "ПРОИГРЫШ −$" + money(towerBet);
+        $("tower-button").disabled = false;
+        $("tower-button").textContent = "ИГРАТЬ СНОВА";
+        $("tower-button").className = "primary red";
+        notify("error");
+    } else {
+        // Успех на этаже
+        haptic("success");
+        rowEl.classList.remove("active-row");
+        rowEl.classList.add("passed-row");
+        
+        currentLevel++;
+        if (currentLevel < towerLevels.length) {
+            // Переход на следующий этаж
+            let nextRow = $("tower-row-" + currentLevel);
+            nextRow.classList.add("active-row");
+            nextRow.querySelectorAll(".tower-cell").forEach(b => b.disabled = false);
+            
+            let currentWin = towerBet * towerLevels[currentLevel - 1].mult;
+            $("tower-state-label").textContent = `Выигрыш: $${money(currentWin)}. Забрать или дальше?`;
+            $("tower-button").disabled = false;
+            $("tower-button").className = "primary green";
+            $("tower-button").textContent = `ЗАБРАТЬ $${money(currentWin)}`;
+            // Позволяем забрать досрочно при повторном нажатии кнопки
+            $("tower-button").onclick = cashOutTower;
+        } else {
+            // Победа на самом верху!
+            let finalWin = towerBet * towerLevels[towerLevels.length - 1].mult;
+            balance += finalWin; updateBalanceUI(); saveUserData();
+            towerState = "finished";
+            $("tower-state-label").textContent = `🎉 ПОБЕДА! ВЫИГРЫШ $${money(finalWin)}`;
+            $("tower-button").disabled = false;
+            $("tower-button").className = "primary green";
+            $("tower-button").textContent = "ИГРАТЬ СНОВА";
+            $("tower-button").onclick = handleTowerAction;
+            notify("success");
+        }
+    }
+}
+
+function cashOutTower() {
+    if (towerState !== "playing" || currentLevel === 0) return;
+    let win = towerBet * towerLevels[currentLevel - 1].mult;
+    balance += win; updateBalanceUI(); saveUserData();
+    towerState = "finished";
+    $("tower-state-label").textContent = `ЗАБРАНО: $${money(win)}`;
+    $("tower-button").disabled = false;
+    $("tower-button").className = "primary green";
+    $("tower-button").textContent = "ИГРАТЬ СНОВА";
+    $("tower-button").onclick = handleTowerAction;
+    notify("success");
+}
+
 /* CASES & INVENTORY LOGIC */
 let curCase=null, opening=false, caseQty=1;
-
 function openCase(id,name,pr,img,prizes,weights) {
     curCase={id,name,pr,img,prizes,weights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
@@ -1157,17 +1243,14 @@ async function openCurrentCase() {
     if(balance<cost) { alert("Недостаточно средств!"); notify("error"); return; }
     balance-=cost; updateBalanceUI(); opening=true;
     $("case-button").disabled=true; $("case-button").textContent="ОТКРЫВАЕМ..."; $("case-result").textContent="";
-    
     let wraps = $("roulettes-container").querySelectorAll(".roulette-wrap");
     let proms = [];
-    
     for(let i=0;i<caseQty;i++) {
         let win = choosePrize(curCase.prizes, curCase.weights);
         inventory.push({...win, id:Date.now()+Math.random()});
         let strip = wraps[i].querySelector(".roulette-strip");
         let vals=[]; for(let k=0;k<45;k++) vals.push(k===28?win:choosePrize(curCase.prizes, curCase.weights));
         strip.innerHTML = vals.map(v=>`<div class="roulette-prize"><img style="width:34px;height:34px;object-fit:contain;" src="${v.img}"><div style="color:#d97706;font-size:11px;font-weight:950;">$${v.price.toFixed(2)}</div></div>`).join('');
-        
         proms.push(new Promise(res=>{
             setTimeout(()=>{
                 strip.style.transition="none"; strip.style.transform="translateX(0)";
@@ -1181,10 +1264,7 @@ async function openCurrentCase() {
         }));
     }
     await Promise.all(proms);
-    
-    saveUserData(); 
-    renderInventory();
-    
+    saveUserData(); renderInventory();
     $("case-result").textContent = `🎉 ВЫИГРАНО: ${caseQty} шт. (упало в инвентарь)`;
     opening=false; setCaseQuantity(caseQty); $("case-button").disabled=false; notify("success");
 }
@@ -1205,16 +1285,8 @@ function renderInventory() {
     `).join('');
 }
 
-function sellItem(i) { 
-    balance += inventory[i].price; 
-    inventory.splice(i,1); 
-    updateBalanceUI(); 
-    saveUserData(); 
-    renderInventory(); 
-    notify("success"); 
-}
+function sellItem(i) { balance += inventory[i].price; inventory.splice(i,1); updateBalanceUI(); saveUserData(); renderInventory(); notify("success"); }
 
-/* DEPOSIT & ADMIN FUNCTIONS */
 function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
 function closeDeposit() { $("deposit-modal").classList.remove("active"); }
 
@@ -1243,23 +1315,14 @@ function openAdminPanel() {
 function fetchAllPlayers() {
     if (!isDBConnected()) return;
     $("admin-players-list").innerHTML = '<p style="text-align:center;">Загрузка...</p>';
-    
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "get_all" })
-    })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all" }) })
     .then(r => r.json())
     .then(d => {
         if (d.status === "success" && d.players) {
             adminPlayersData = d.players;
-            
             $("admin-players-list").innerHTML = d.players.map(p => {
                 let invCount = 0;
-                try {
-                    let parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory;
-                    if (Array.isArray(parsed)) invCount = parsed.length;
-                } catch(e) {}
-
+                try { let parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory; if (Array.isArray(parsed)) invCount = parsed.length; } catch(e) {}
                 return `
                 <div style="background:#fff; padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; border:2px solid rgba(255,215,0,0.3);">
                     <div>
@@ -1275,28 +1338,17 @@ function fetchAllPlayers() {
                 `;
             }).join('');
         }
-    })
-    .catch(() => {
-        $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>';
-    });
+    }).catch(() => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; });
 }
 
 function adminViewInventory(targetUserId) {
     const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
     if (!player) return;
-
     let items = [];
-    try {
-        items = typeof player.inventory === 'string' ? JSON.parse(player.inventory) : (player.inventory || []);
-    } catch(e) {
-        items = [];
-    }
-
+    try { items = typeof player.inventory === 'string' ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
     $("admin-inv-title").textContent = "🎒 Инвентарь: " + player.username;
-    
     let totalVal = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
     $("admin-inv-sub").textContent = `Предметов: ${items.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
-
     const listCont = $("admin-inv-list");
     if (!items || items.length === 0) {
         listCont.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">У игрока пустой инвентарь</p>';
@@ -1309,7 +1361,6 @@ function adminViewInventory(targetUserId) {
             </div>
         `).join('');
     }
-
     $("admin-inv-modal").style.display = "flex";
     haptic("light");
 }
@@ -1317,20 +1368,15 @@ function adminViewInventory(targetUserId) {
 function adminEditBalance(id, nm, b) {
     let nb = prompt("Новый баланс:", b); 
     if (nb !== null && !isNaN(nb)) {
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) })
-        }).then(() => { 
-            alert("Обновлено!"); 
-            fetchAllPlayers(); 
-            if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } 
-        });
+        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) }) })
+        .then(() => { alert("Обновлено!"); fetchAllPlayers(); if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } });
     }
 }
 
 /* INIT */
 loadUserData();
 buildMines();
+buildTower();
 updateCrashHistoryUI();
 startCrashRound();
 updateDiceUI();
