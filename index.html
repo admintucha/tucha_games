@@ -401,7 +401,6 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <div class="game-card" onclick="openGameScreen('dice')">
                 <img src="./dicel.png" alt="Дайс">
             </div>
-            <!-- КАРТОЧКА БАШНИ С tower.png -->
             <div class="game-card" onclick="openGameScreen('tower')">
                 <img src="./tower.png" alt="Башня">
             </div>
@@ -1081,13 +1080,12 @@ function playDice() {
 
 /* TOWER LOGIC */
 let towerState = "idle", towerBet = 0, currentLevel = 0;
-// 5 уровней снизу вверх: количество ячеек и бомб на каждом уровне
 const towerLevels = [
-    { cells: 5, bombs: 1, mult: 1.25 }, // Низ
+    { cells: 5, bombs: 1, mult: 1.25 },
     { cells: 4, bombs: 1, mult: 1.65 },
     { cells: 3, bombs: 1, mult: 2.30 },
     { cells: 3, bombs: 2, mult: 4.10 },
-    { cells: 2, bombs: 1, mult: 8.50 }  // Верх
+    { cells: 2, bombs: 1, mult: 8.50 }
 ];
 
 function buildTower() {
@@ -1103,10 +1101,10 @@ function buildTower() {
         for (let c = 0; c < lvl.cells; c++) {
             let btn = document.createElement("button");
             btn.className = "tower-cell";
-            btn.disabled = true;
+            btn.disabled = (idx !== 0); // Только первый ряд активен при старте
             btn.dataset.row = idx;
             btn.dataset.cell = c;
-            btn.onclick = () => clickTowerCell(idx, c, btn);
+            btn.onclick = () => clickTowerCell(idx, c);
             cellsDiv.appendChild(btn);
         }
         
@@ -1121,31 +1119,29 @@ function buildTower() {
 }
 
 function handleTowerAction() {
-    if (towerState === "idle" || towerState === "finished") {
-        const b = Number($("tower-bet").value);
-        if (b <= 0 || b > balance) { alert("Недостаточно средств!"); return; }
-        balance -= b; updateBalanceUI(); towerBet = b; currentLevel = 0;
-        towerState = "playing";
-        $("tower-state-label").textContent = "Поднимаемся по башне...";
-        $("tower-button").disabled = true;
-        $("tower-button").textContent = "ИГРАЕТ БАШНЯ";
-        buildTower();
-        haptic("medium");
-    }
+    const b = Number($("tower-bet").value);
+    if (b <= 0 || b > balance) { alert("Недостаточно средств!"); return; }
+    balance -= b; updateBalanceUI(); towerBet = b; currentLevel = 0;
+    towerState = "playing";
+    $("tower-state-label").textContent = "Поднимаемся по башне...";
+    $("tower-button").disabled = true;
+    $("tower-button").textContent = "ИГРАЕТ БАШНЯ";
+    buildTower();
+    haptic("medium");
 }
 
-function clickTowerCell(rowIdx, cellIdx, btn) {
+function clickTowerCell(rowIdx, cellIdx) {
     if (towerState !== "playing" || rowIdx !== currentLevel) return;
     
-    // Генерируем бомбы для этого ряда
     let lvl = towerLevels[rowIdx];
     let bombIndices = [];
     while(bombIndices.length < lvl.bombs) {
         let r = Math.floor(Math.random() * lvl.cells);
-        if (!bombIndices.includes(r)) bombIndices.includes(r) || bombIndices.push(r);
+        if (!bombIndices.includes(r)) {
+            bombIndices.push(r);
+        }
     }
     
-    // Отключаем кнопки ряда
     let rowEl = $("tower-row-" + rowIdx);
     let cellButtons = rowEl.querySelectorAll(".tower-cell");
     cellButtons.forEach((b, idx) => {
@@ -1160,22 +1156,20 @@ function clickTowerCell(rowIdx, cellIdx, btn) {
     });
     
     if (bombIndices.includes(cellIdx)) {
-        // Проигрыш
         towerState = "finished";
         $("tower-state-label").textContent = "ПРОИГРЫШ −$" + money(towerBet);
         $("tower-button").disabled = false;
         $("tower-button").textContent = "ИГРАТЬ СНОВА";
         $("tower-button").className = "primary red";
+        $("tower-button").onclick = handleTowerAction;
         notify("error");
     } else {
-        // Успех на этаже
         haptic("success");
         rowEl.classList.remove("active-row");
         rowEl.classList.add("passed-row");
         
         currentLevel++;
         if (currentLevel < towerLevels.length) {
-            // Переход на следующий этаж
             let nextRow = $("tower-row-" + currentLevel);
             nextRow.classList.add("active-row");
             nextRow.querySelectorAll(".tower-cell").forEach(b => b.disabled = false);
@@ -1185,10 +1179,8 @@ function clickTowerCell(rowIdx, cellIdx, btn) {
             $("tower-button").disabled = false;
             $("tower-button").className = "primary green";
             $("tower-button").textContent = `ЗАБРАТЬ $${money(currentWin)}`;
-            // Позволяем забрать досрочно при повторном нажатии кнопки
             $("tower-button").onclick = cashOutTower;
         } else {
-            // Победа на самом верху!
             let finalWin = towerBet * towerLevels[towerLevels.length - 1].mult;
             balance += finalWin; updateBalanceUI(); saveUserData();
             towerState = "finished";
