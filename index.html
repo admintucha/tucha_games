@@ -210,6 +210,44 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     100% { transform: scale(1); opacity: 1; }
 }
 
+/* ===== DICE GAME ===== */
+.dice-content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+.dice-result-wrapper {
+    background: linear-gradient(145deg, #ffffff, #fef08a);
+    border: 3px solid rgba(234, 179, 8, 0.5);
+    border-radius: 30px; padding: 30px 10px;
+    box-shadow: 0 10px 25px rgba(234, 179, 8, 0.2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.dice-result-val {
+    font-size: 56px; font-weight: 950; color: #332900;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.1); line-height: 1;
+    transition: color 0.3s;
+}
+.dice-result-sub { font-size: 14px; font-weight: 900; color: #9c841a; margin-top: 8px; text-transform: uppercase; }
+
+.dice-slider-wrap { position: relative; margin: 25px 0 15px; }
+#dice-slider {
+    -webkit-appearance: none; width: 100%; height: 16px; border-radius: 10px;
+    background: linear-gradient(90deg, #16a34a 50%, #dc2626 50%);
+    outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    margin: 0; cursor: pointer;
+}
+#dice-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 28px; height: 28px;
+    background: #ffffff; border: 4px solid #f59e0b; border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); transition: transform 0.1s;
+}
+#dice-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
+
+.dice-info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.dice-info-box {
+    background: rgba(255,255,255,0.7); border: 2px solid rgba(234, 179, 8, 0.3);
+    border-radius: 16px; padding: 12px; text-align: center;
+}
+.dice-info-label { font-size: 11px; font-weight: 900; color: #5c4a00; text-transform: uppercase; }
+.dice-info-value { font-size: 22px; font-weight: 950; color: #d97706; margin-top: 4px; }
+
 /* ===== INPUTS & RANGES ===== */
 label { font-size: 13px; font-weight: 900; color: #5c4a00; }
 input[type="number"] {
@@ -322,7 +360,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 <!-- MAIN APP CONTENT -->
 <main id="main-content">
 
-    <!-- GAMES HUB TAB (2 В РЯД) -->
+    <!-- GAMES HUB TAB -->
     <section id="tab-games" class="tab active">
         <div class="games-header">Игры</div>
         <div class="games-grid">
@@ -331,6 +369,10 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
             <div class="game-card" onclick="openGameScreen('mines')">
                 <img src="./ikonkamin.png" alt="Мины">
+            </div>
+            <!-- НОВАЯ КАРТОЧКА DICE -->
+            <div class="game-card" onclick="openGameScreen('dice')" style="grid-column: span 2;">
+                <img src="./dicel.png" alt="Дайс" style="object-fit: cover; height: 140px;">
             </div>
         </div>
     </section>
@@ -554,6 +596,51 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             <div style="margin-top:12px; color:#9c841a; text-align:center; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:4px;">
                 Найди Золотую Тучку ✨ (даёт мгновенно x3)!
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- DICE GAME SCREEN -->
+<div id="screen-dice" class="game-screen">
+    <div class="game-top-bar">
+        <button class="game-back-btn" onclick="closeGameScreen('dice')">← Дайс</button>
+        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
+            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
+        </div>
+    </div>
+    
+    <div class="dice-content">
+        <!-- Блок с результатом -->
+        <div class="dice-result-wrapper">
+            <div id="dice-result" class="dice-result-val">50.00</div>
+            <div id="dice-result-sub" class="dice-result-sub">Сделайте ставку</div>
+        </div>
+
+        <div class="panel">
+            <div style="font-weight:950; margin-bottom:10px;">Настройте шанс:</div>
+            
+            <!-- Ползунок -->
+            <div class="dice-slider-wrap">
+                <input id="dice-slider" type="range" min="1" max="95" value="50" oninput="updateDiceUI()">
+            </div>
+            
+            <!-- Инфо-блоки -->
+            <div class="dice-info-row">
+                <div class="dice-info-box">
+                    <div class="dice-info-label">Шанс победы</div>
+                    <div id="dice-chance-val" class="dice-info-value">50%</div>
+                </div>
+                <div class="dice-info-box">
+                    <div class="dice-info-label">Выплата</div>
+                    <div id="dice-mult-val" class="dice-info-value">1.96x</div>
+                </div>
+            </div>
+
+            <!-- Ставка -->
+            <label style="display:block; margin-bottom: 5px;">Сумма ставки ($)</label>
+            <input id="dice-bet" type="number" min="0.01" step="0.01" value="0.10">
+            
+            <button id="btn-dice-action" class="primary gold" onclick="playDice()">СДЕЛАТЬ СТАВКУ</button>
         </div>
     </div>
 </div>
@@ -964,6 +1051,83 @@ function finishMines(msg, col) {
 }
 if($("mines-slider")) $("mines-slider").addEventListener("input",()=>$("mines-count").textContent=$("mines-slider").value);
 
+/* ===== DICE LOGIC ===== */
+let diceState = "idle";
+let diceChance = 50;
+let diceMult = 1.96;
+
+function updateDiceUI() {
+    diceChance = Number($("dice-slider").value);
+    // Считаем множитель с 2% маржой казино
+    diceMult = (98 / diceChance).toFixed(2);
+    
+    $("dice-chance-val").textContent = diceChance + "%";
+    $("dice-mult-val").textContent = diceMult + "x";
+    
+    // Зеленый цвет слева (выигрыш), красный справа
+    $("dice-slider").style.background = `linear-gradient(90deg, #16a34a ${diceChance}%, #ef4444 ${diceChance}%)`;
+    
+    haptic("light");
+}
+
+function playDice() {
+    if (diceState === "rolling") return;
+    
+    const bet = Number($("dice-bet").value);
+    if (!isFinite(bet) || bet <= 0 || bet > balance) {
+        alert("Недостаточно средств или неверная сумма ставки!");
+        notify("error");
+        return;
+    }
+
+    balance -= bet; 
+    updateBalanceUI(); 
+    
+    diceState = "rolling";
+    $("btn-dice-action").disabled = true;
+    $("btn-dice-action").textContent = "БРОСОК...";
+    $("btn-dice-action").className = "primary";
+    $("dice-result").style.color = "#332900";
+    
+    // Шанс от 0 до 100
+    const finalRoll = (Math.random() * 100);
+    const isWin = finalRoll <= diceChance;
+    
+    let ticks = 0;
+    const anim = setInterval(() => {
+        $("dice-result").textContent = (Math.random() * 100).toFixed(2);
+        ticks++;
+        
+        if (ticks > 15) {
+            clearInterval(anim);
+            let displayRoll = finalRoll.toFixed(2);
+            $("dice-result").textContent = displayRoll;
+            
+            if (isWin) {
+                const winAmount = Math.floor(bet * diceMult * 100) / 100;
+                balance += winAmount;
+                $("dice-result").style.color = "#16a34a"; 
+                $("dice-result-sub").textContent = `ВЫИГРЫШ +$${winAmount.toFixed(2)}`;
+                $("dice-result-sub").style.color = "#16a34a";
+                notify("success");
+            } else {
+                $("dice-result").style.color = "#ef4444"; 
+                $("dice-result-sub").textContent = `ПРОИГРЫШ -$${bet.toFixed(2)}`;
+                $("dice-result-sub").style.color = "#ef4444";
+                notify("error");
+            }
+            
+            updateBalanceUI(); 
+            saveUserData();
+            
+            diceState = "idle";
+            $("btn-dice-action").disabled = false;
+            $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
+            $("btn-dice-action").className = "primary gold";
+        }
+    }, 50);
+}
+
 /* CASES & INVENTORY LOGIC */
 let curCase=null, opening=false, caseQty=1;
 
@@ -1169,6 +1333,7 @@ loadUserData();
 buildMines();
 updateCrashHistoryUI();
 startCrashRound();
+updateDiceUI();
 </script>
 </body>
 </html>
