@@ -1231,6 +1231,26 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
 
             <button class="primary green" onclick="openDeposit()">💳 ПОПОЛНИТЬ БАЛАНС</button>
+
+            <!-- REFERRAL PROGRAM -->
+            <div class="referral-card" style="margin-top:22px;padding:18px;text-align:left;background:linear-gradient(145deg,#fff8d8,#fff);border:2px solid #f5d66b;border-radius:20px;box-shadow:0 8px 22px rgba(170,130,0,.08);">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div style="width:42px;height:42px;border-radius:14px;background:#ffdf70;display:flex;align-items:center;justify-content:center;font-size:23px;">🎁</div>
+                    <div><div style="font-size:17px;font-weight:950;color:#332900;">Реферальная программа</div><div style="font-size:12px;color:#92751b;font-weight:800;">Получай 10% с пополнений друзей</div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;">
+                    <div style="background:#fff;border-radius:13px;padding:11px;"><div style="font-size:11px;color:#9a842e;font-weight:800;">Приглашено</div><div id="ref-invited" style="font-size:21px;font-weight:950;color:#332900;">0</div></div>
+                    <div style="background:#fff;border-radius:13px;padding:11px;"><div style="font-size:11px;color:#9a842e;font-weight:800;">Заработано всего</div><div id="ref-earned" style="font-size:21px;font-weight:950;color:#16803c;">$0.00</div></div>
+                </div>
+                <div style="background:#fff;border-radius:13px;padding:12px;margin-bottom:10px;">
+                    <div style="font-size:11px;color:#9a842e;font-weight:800;">Реферальный баланс</div>
+                    <div id="ref-balance" style="font-size:25px;font-weight:1000;color:#16803c;margin:2px 0 9px;">$0.00</div>
+                    <button id="ref-withdraw-btn" onclick="withdrawReferralBalance()" style="width:100%;border:0;border-radius:11px;padding:11px;background:#16a34a;color:white;font-weight:950;">ПЕРЕВЕСТИ НА ИГРОВОЙ БАЛАНС</button>
+                </div>
+                <button onclick="copyReferralLink()" style="width:100%;border:0;border-radius:12px;padding:13px;background:#f4c430;color:#332900;font-weight:950;">🔗 СКОПИРОВАТЬ МОЮ ССЫЛКУ</button>
+                <div id="ref-status" style="font-size:11px;color:#92751b;text-align:center;margin-top:9px;font-weight:750;">Приглашай друзей и получай 10% с каждого их пополнения</div>
+            </div>
+
             <button onclick="openAdminPanel()" style="margin-top:20px; background:none; border:none; color:#d97706; font-size:12px; font-weight:900;">⚙️ Админ-панель</button>
         </div>
     </section>
@@ -1625,6 +1645,9 @@ let balance = 0.10;
 let inventory = [];
 let userLoaded = false;
 let adminPlayersData = [];
+let referralInfo = { invited_count: 0, referral_balance: 0, total_earned: 0, referral_link: "" };
+const telegramInitData = tg?.initData || "";
+function apiPayload(extra) { return Object.assign({ initData: telegramInitData }, extra || {}); }
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
 
@@ -1683,7 +1706,7 @@ function loadUserData() {
     updateBalanceUI(); 
     renderInventory();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(apiPayload({action: "get", userid: userId, username: userName, balance: balance})) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
@@ -1701,7 +1724,9 @@ function loadUserData() {
             if (removedTorchFromServer) saveUserData();
             else saveLocal();
             updateBalanceUI(); 
-            userLoaded = true; 
+            userLoaded = true;
+            if (data.referral) { referralInfo = Object.assign(referralInfo, data.referral); renderReferralUI(); }
+            else loadReferralStats();
             renderInventory();
             if (Number(data.credited) > 0) onDepositCredited(Number(data.credited));
             checkPayments(true);
@@ -1712,7 +1737,7 @@ function loadUserData() {
 function saveUserData() {
     saveLocal();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory) }) }).catch(()=>{});
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(apiPayload({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory) })) }).catch(()=>{});
 }
 
 if (telegramUser) {
@@ -2825,7 +2850,7 @@ function createDeposit() {
     const a = Number($("deposit-amount").value); if(a<1)return;
     if(!isDBConnected()){ $("deposit-status").textContent="База не подключена"; return; }
     $("deposit-pay").disabled=true; $("deposit-pay").textContent="СОЗДАЁМ СЧЁТ...";
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_invoice", userid:userId, username:userName, amount:a}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(apiPayload({action:"create_invoice", userid:userId, username:userName, amount:a})) })
     .then(r=>r.json()).then(d=>{
         if(d.status==="success"){ $("deposit-status").textContent="Оплатите в Crypto Bot"; window.open(d.pay_url,"_blank"); setInterval(()=>checkPayments(true),10000); }
     }).finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT"; });
@@ -2833,8 +2858,65 @@ function createDeposit() {
 
 function checkPayments(sil) {
     if(!isDBConnected()||!userLoaded)return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(apiPayload({action:"check_payments", userid:userId})) })
     .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) saveUserData(); });
+}
+
+function renderReferralUI() {
+    const invited = $("ref-invited"), earned = $("ref-earned"), refBal = $("ref-balance");
+    if (invited) invited.textContent = String(Number(referralInfo.invited_count) || 0);
+    if (earned) earned.textContent = "$" + money(referralInfo.total_earned);
+    if (refBal) refBal.textContent = "$" + money(referralInfo.referral_balance);
+    const btn = $("ref-withdraw-btn");
+    if (btn) btn.disabled = !(Number(referralInfo.referral_balance) > 0) || !telegramUser;
+    if (btn) btn.style.opacity = btn.disabled ? ".55" : "1";
+}
+
+function loadReferralStats() {
+    if (!isDBConnected() || !telegramUser || !telegramInitData) { renderReferralUI(); return; }
+    fetch(SCRIPT_URL, { method:"POST", body:JSON.stringify(apiPayload({action:"get_referral", userid:userId})) })
+      .then(r=>r.json()).then(d=>{
+        if (d.status === "success" || d.success === true) {
+          referralInfo = Object.assign(referralInfo, d.referral || d.stats || d);
+          renderReferralUI();
+        }
+      }).catch(()=>{});
+}
+
+function copyReferralLink() {
+    const link = String(referralInfo.referral_link || "");
+    if (!link) {
+        const status = $("ref-status");
+        if (status) status.textContent = "Ссылка появится после загрузки профиля в Telegram";
+        loadReferralStats();
+        return;
+    }
+    const status = $("ref-status");
+    const done = () => { if(status) status.textContent = "✅ Реферальная ссылка скопирована!"; haptic("medium"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done).catch(()=>fallbackCopyReferral(link, done));
+    else fallbackCopyReferral(link, done);
+}
+function fallbackCopyReferral(link, done) {
+    const input = document.createElement("textarea"); input.value = link; input.style.position="fixed"; input.style.opacity="0"; document.body.appendChild(input); input.select();
+    try { document.execCommand("copy"); done(); } catch(e) { const status=$("ref-status"); if(status) status.textContent=link; }
+    input.remove();
+}
+
+function withdrawReferralBalance() {
+    if (!telegramUser || !telegramInitData) { alert("Открой игру через Telegram, чтобы вывести реферальный баланс."); return; }
+    if (!(Number(referralInfo.referral_balance) > 0)) { alert("Реферальный баланс пока пуст."); return; }
+    const btn = $("ref-withdraw-btn"); if(btn) btn.disabled = true;
+    fetch(SCRIPT_URL, { method:"POST", body:JSON.stringify(apiPayload({action:"withdraw_referral", userid:userId})) })
+      .then(r=>r.json()).then(d=>{
+        if (d.status === "success" || d.success === true) {
+          if (Number.isFinite(Number(d.balance))) balance = Number(d.balance);
+          referralInfo.referral_balance = Number(d.referral_balance ?? d.referralBalance ?? 0);
+          updateBalanceUI(); renderReferralUI(); saveLocal();
+          const status=$("ref-status"); if(status) status.textContent="✅ Средства переведены на игровой баланс";
+          notify("success");
+        } else { throw new Error(d.message || "Не удалось выполнить перевод"); }
+      }).catch(e=>{ alert(e.message || "Ошибка перевода реферального баланса"); })
+      .finally(()=>{ renderReferralUI(); });
 }
 
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
@@ -2907,6 +2989,7 @@ function adminEditBalance(id, nm, b) {
 
 /* INIT */
 loadUserData();
+renderReferralUI();
 buildMines();
 buildTower();
 updateCrashHistoryUI();
