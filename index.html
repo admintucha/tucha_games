@@ -1234,24 +1234,18 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
 
             <button class="primary green" onclick="openDeposit()">💳 ПОПОЛНИТЬ БАЛАНС</button>
-
-            <div class="panel" style="margin-top:16px;text-align:left;background:rgba(255,255,255,.88);">
-                <div style="font-size:19px;font-weight:950;color:#332900;">👥 Реферальная программа</div>
-                <div style="font-size:12px;color:#75601a;font-weight:800;margin:6px 0 12px;">Приглашай друзей и получай 10% с их пополнений.</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    <div style="background:#fff8d8;border-radius:13px;padding:10px;text-align:center;">
-                        <div style="font-size:11px;font-weight:900;color:#8b6b10;">Приглашено</div>
-                        <div id="ref-invited" style="font-size:22px;font-weight:950;color:#d97706;">0</div>
-                    </div>
-                    <div style="background:#fff8d8;border-radius:13px;padding:10px;text-align:center;">
-                        <div style="font-size:11px;font-weight:900;color:#8b6b10;">Реферальный баланс</div>
-                        <div style="font-size:22px;font-weight:950;color:#16a34a;">$<span id="ref-balance">0.00</span></div>
-                    </div>
+            <div class="panel" style="margin-top:18px;text-align:left;background:#fffdf3;border:2px solid rgba(245,158,11,.25);">
+                <div style="font-size:17px;font-weight:950;margin-bottom:8px;">👥 Реферальная программа</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+                    <div style="background:#fff4c2;border-radius:12px;padding:10px;"><div style="font-size:11px;color:#8b6b16;">Приглашено</div><b id="ref-invited-count" style="font-size:20px;">0</b></div>
+                    <div style="background:#fff4c2;border-radius:12px;padding:10px;"><div style="font-size:11px;color:#8b6b16;">Реферальный баланс</div><b id="ref-balance" style="font-size:20px;">$0.00</b></div>
                 </div>
-                <div style="margin-top:8px;font-size:12px;font-weight:850;color:#75601a;">Всего заработано: $<span id="ref-earned">0.00</span></div>
-                <button class="primary" style="margin-top:12px;padding:12px;" onclick="copyReferralLink()">🔗 СКОПИРОВАТЬ РЕФЕРАЛЬНУЮ ССЫЛКУ</button>
-                <button class="primary green" style="margin-top:8px;padding:12px;" onclick="withdrawReferralBalance()">💵 ПЕРЕВЕСТИ НА ИГРОВОЙ БАЛАНС</button>
-                <div id="ref-status" style="font-size:11px;font-weight:850;color:#75601a;text-align:center;margin-top:8px;">Загружаем статистику...</div>
+                <div style="font-size:12px;color:#7c641c;margin-bottom:8px;">Получай 10% от пополнений приглашённых игроков.</div>
+                <div style="font-size:12px;font-weight:850;margin-bottom:5px;">Твоя ссылка:</div>
+                <div style="display:flex;gap:6px;"><input id="ref-link" readonly value="Загрузка ссылки..." style="min-width:0;flex:1;font-size:11px;padding:9px;border:1px solid #f1d36b;border-radius:9px;background:#fff;"><button onclick="copyReferralLink()" style="background:#2563eb;color:#fff;border:0;border-radius:9px;padding:0 12px;font-weight:900;">Копировать</button></div>
+                <div style="font-size:11px;color:#8b6b16;margin-top:8px;">Всего заработано: <b id="ref-earned">$0.00</b></div>
+                <button id="ref-withdraw-btn" class="primary green" style="margin-top:10px;" onclick="withdrawReferralBalance()">Перевести на игровой баланс</button>
+                <div id="ref-status" style="font-size:11px;text-align:center;margin-top:7px;min-height:14px;"></div>
             </div>
             <button onclick="openAdminPanel()" style="margin-top:20px; background:none; border:none; color:#d97706; font-size:12px; font-weight:900;">⚙️ Админ-панель</button>
         </div>
@@ -1647,11 +1641,11 @@ let balance = 0.10;
 let inventory = [];
 let userLoaded = false;
 let adminPlayersData = [];
-let playerRtp = 1.0;
-let referralLink = "";
-let referralBalance = 0;
-let referralInvited = 0;
-let referralEarned = 0;
+let adminPasswordSession = "";
+let referralData = { invited_count: 0, referral_balance: 0, total_earned: 0, referral_link: "" };
+let playerRtp = 1;
+let inventoryVersion = 1;
+let settingsRefreshTimer = null;
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
 
@@ -1703,91 +1697,82 @@ function closeGameScreen(gameId) {
 }
 
 function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
-function getVerifiedTelegramPayload() {
-    return telegramUser && tg?.initData ? { initData: tg.initData } : {};
-}
-// RTP в таблице хранится коэффициентом: 1.00 = стандартное значение.
-function getPlayerRtp() {
-    const value = Number(playerRtp);
-    return Number.isFinite(value) ? Math.max(0, Math.min(2, value)) : 1;
-}
-function rtpAdjustedChance(basePercent) {
-    return Math.max(0, Math.min(100, Number(basePercent) * getPlayerRtp()));
-}
-function updateReferralUI() {
-    const invited = $("ref-invited"), refBal = $("ref-balance"), earned = $("ref-earned"), status = $("ref-status");
-    if (invited) invited.textContent = String(referralInvited);
-    if (refBal) refBal.textContent = money(referralBalance);
-    if (earned) earned.textContent = money(referralEarned);
-    if (status) status.textContent = referralLink ? "За каждое пополнение приглашённого начисляется 10%." : "Реферальная ссылка появится после загрузки профиля.";
+function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
+function getStartParam() { return String(tg?.initDataUnsafe?.start_param || ""); }
+async function apiPost(payload) {
+    const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+    const data = await response.json();
+    if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
+    return data;
 }
 function applyReferralData(data) {
     if (!data) return;
-    referralLink = String(data.referral_link || referralLink || "");
-    referralBalance = Number(data.referral_balance ?? referralBalance) || 0;
-    referralInvited = Number(data.invited_count ?? referralInvited) || 0;
-    referralEarned = Number(data.referral_total_earned ?? referralEarned) || 0;
-    updateReferralUI();
+    referralData = { ...referralData, ...data };
+    $("ref-invited-count").textContent = String(Number(referralData.invited_count) || 0);
+    $("ref-balance").textContent = "$" + money(referralData.referral_balance);
+    $("ref-earned").textContent = "$" + money(referralData.total_earned);
+    if (referralData.referral_link) $("ref-link").value = referralData.referral_link;
+    $("ref-withdraw-btn").disabled = Number(referralData.referral_balance) <= 0;
 }
-function copyReferralLink() {
-    if (!referralLink) { alert("Реферальная ссылка ещё загружается."); return; }
-    const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(referralLink) + "&text=" + encodeURIComponent("Заходи играть в Tucha Games!");
-    if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(referralLink).then(() => {
-            $("ref-status").textContent = "Ссылка скопирована! Отправь её друзьям.";
-            try { tg?.HapticFeedback?.notificationOccurred("success"); } catch(e) {}
-        }).catch(() => { window.open(shareUrl, "_blank"); });
-    } else {
-        window.open(shareUrl, "_blank");
-    }
+function applyPlayerRtp(value) {
+    const n = Number(value); playerRtp = Number.isFinite(n) ? Math.max(0, Math.min(3, n)) : 1;
 }
-function withdrawReferralBalance() {
-    if (!isDBConnected() || !userLoaded) { alert("Подожди, пока загрузится профиль."); return; }
-    if (referralBalance <= 0) { alert("Реферальный баланс пока пуст."); return; }
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "withdraw_referral", ...getVerifiedTelegramPayload(), userid: userId })
-    }).then(r => r.json()).then(data => {
-        if (data.status !== "success") throw new Error(data.message || "Не удалось перевести средства.");
-        balance = Number(data.balance) || balance;
-        referralBalance = Number(data.referral_balance) || 0;
-        updateBalanceUI(); updateReferralUI(); saveLocal();
-        $("ref-status").textContent = "Переведено на игровой баланс: $" + money(data.transferred);
-        notify("success");
-    }).catch(err => alert(err.message || "Ошибка перевода."));
+function rtpChance(baseChance) { return Math.max(0, Math.min(100, Number(baseChance) * playerRtp)); }
+async function refreshPlayerSettings() {
+    if (!isDBConnected() || !telegramUser) return;
+    try {
+        const d = await apiPost({ action: "get_settings", userid: userId, username: userName });
+        if (d.status === "success") {
+            applyPlayerRtp(d.rtp); applyReferralData(d.referral);
+            const activeRound = (typeof inCrash !== "undefined" && inCrash) || (typeof diceState !== "undefined" && diceState !== "idle") || (typeof towerState !== "undefined" && towerState === "playing") || (typeof minesState !== "undefined" && minesState === "playing") || (typeof upgradeBusy !== "undefined" && upgradeBusy) || (typeof rouletteIsSpinning !== "undefined" && rouletteIsSpinning) || (typeof opening !== "undefined" && opening);
+            if (!activeRound && Number.isFinite(Number(d.balance)) && Math.abs(Number(d.balance) - balance) > 0.001) { balance = Number(d.balance); updateBalanceUI(); saveLocal(); }
+        }
+    } catch (e) { console.warn("Не удалось обновить настройки игрока:", e); }
 }
-function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
+async function copyReferralLink() {
+    const link = $("ref-link").value; if (!link || !link.startsWith("http")) return alert("Ссылка ещё загружается.");
+    try { await navigator.clipboard.writeText(link); $("ref-status").textContent = "Ссылка скопирована!"; }
+    catch (e) { $("ref-link").select(); document.execCommand("copy"); $("ref-status").textContent = "Ссылка скопирована!"; }
+}
+async function withdrawReferralBalance() {
+    const button = $("ref-withdraw-btn"); button.disabled = true;
+    try {
+        const d = await apiPost({ action: "withdraw_referral", userid: userId, username: userName });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось перевести средства.");
+        balance = Number(d.balance) || balance; updateBalanceUI();
+        await refreshPlayerSettings(); await apiPost({ action: "get", userid: userId, username: userName }).then(x => { if (x.status === "success") { balance = Number(x.balance) || 0; updateBalanceUI(); } });
+        $("ref-status").textContent = "Переведено на игровой баланс: $" + money(d.transferred); saveLocal();
+    } catch (e) { $("ref-status").textContent = e.message; }
+    finally { button.disabled = Number(referralData.referral_balance) <= 0; }
+}
 
 function loadUserData() {
     loadLocal();
     updateBalanceUI(); 
     renderInventory();
-    updateReferralUI();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance, ...getVerifiedTelegramPayload()}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, start_param: getStartParam(), balance: balance}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
-            playerRtp = Number.isFinite(Number(data.rtp)) ? Number(data.rtp) : 1.0;
-            applyReferralData({
-                referral_link: data.referral_link,
-                referral_balance: data.referral_balance,
-                invited_count: data.invited_count,
-                referral_total_earned: data.referral_total_earned
-            });
             let removedTorchFromServer = false;
-            if (data.inventory) { 
-                try { 
-                    let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory; 
-                    if (Array.isArray(parsed) && parsed.length >= inventory.length) {
+            if (data.inventory !== undefined) {
+                try {
+                    let parsed = typeof data.inventory === 'string' ? JSON.parse(data.inventory) : data.inventory;
+                    if (Array.isArray(parsed)) {
                         const cleaned = removeTorchNFT(parsed);
                         removedTorchFromServer = cleaned.length !== parsed.length;
                         inventory = cleaned;
                     }
-                } catch(e){} 
+                } catch(e){}
             }
             if (removedTorchFromServer) saveUserData();
             else saveLocal();
+            inventoryVersion = Number(data.inventory_version) || 1;
+            applyPlayerRtp(data.rtp);
+            applyReferralData({ invited_count: data.invited_count, referral_balance: data.referral_balance, total_earned: data.referral_total_earned, referral_link: data.referral_link });
+            refreshPlayerSettings();
+            if (!settingsRefreshTimer) settingsRefreshTimer = setInterval(refreshPlayerSettings, 10000);
             updateBalanceUI(); 
             userLoaded = true; 
             renderInventory();
@@ -1800,7 +1785,16 @@ function loadUserData() {
 function saveUserData() {
     saveLocal();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory) }) }).catch(()=>{});
+    apiPost({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory), inventory_version: inventoryVersion })
+      .then(d => {
+        if (d.status === "success") {
+          if (d.inventory_conflict && d.inventory !== undefined) {
+            try { inventory = JSON.parse(d.inventory || "[]"); } catch(e) { inventory = []; }
+            inventoryVersion = Number(d.inventory_version) || inventoryVersion;
+            balance = Number(d.balance ?? balance); saveLocal(); updateBalanceUI(); renderInventory();
+          } else inventoryVersion = Number(d.inventory_version) || inventoryVersion;
+        } else console.warn("Не удалось сохранить игру:", d.message);
+      }).catch(e => console.warn("Ошибка сохранения игры:", e));
 }
 
 if (telegramUser) {
@@ -1854,11 +1848,11 @@ function startCrashRound() {
 function runCrash() {
     crashState = "flying"; crashMultiplier = 1;
     const r = Math.random();
-    if (r < 0.65) crashTarget = 1.05 + Math.random()*0.95;
-    else if (r < 0.90) crashTarget = 2.0 + Math.random()*2.5;
+    const lowCut = Math.min(1, 0.65 / Math.max(0.05, playerRtp));
+    const midCut = Math.min(1, 0.90 / Math.max(0.05, playerRtp));
+    if (r < lowCut) crashTarget = 1.05 + Math.random()*0.95;
+    else if (r < midCut) crashTarget = 2.0 + Math.random()*2.5;
     else crashTarget = 4.5 + Math.random()*15.0;
-    // RTP ниже 1 сокращает потенциальный множитель, выше 1 — увеличивает.
-    crashTarget = Math.max(1.01, 1 + (crashTarget - 1) * getPlayerRtp());
 
     $("crash-rocket-img").src = "./rocket.gif.gif";
     $("crash-sub").textContent = "ПОЛЁТ";
@@ -2020,9 +2014,8 @@ function playDice() {
     if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств!"); notify("error"); return; }
     balance -= bet; updateBalanceUI(); diceState = "rolling";
     $("btn-dice-action").disabled = true; $("btn-dice-action").textContent = "БРОСОК...";
-    const effectiveDiceChance = rtpAdjustedChance(diceChance);
     const finalRoll = (Math.random() * 100);
-    const isWin = finalRoll <= effectiveDiceChance;
+    const isWin = finalRoll <= rtpChance(diceChance);
     let ticks = 0;
     const anim = setInterval(() => {
         $("dice-result").textContent = (Math.random() * 100).toFixed(2);
@@ -2363,7 +2356,7 @@ function setUpgradeMode(mode) {
 
 function updateUpgradeUI() {
     const bet = getUpgradeBet();
-    let chance = rtpAdjustedChance(upgradeChance);
+    let chance = upgradeChance;
     let multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
     let payout = Math.floor((Math.max(0, bet) * multiplier + Number.EPSILON) * 100) / 100;
 
@@ -2374,13 +2367,13 @@ function updateUpgradeUI() {
             const level = upgradeGiftLevel(item);
             const sourcePrice = UPGRADE_GIFTS[level].price;
             multiplier = target.price / sourcePrice;
-            chance = rtpAdjustedChance(Math.min(95, Math.max(1, UPGRADE_RTP / multiplier)));
+            chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
             payout = target.price;
             $("upgrade-payout").innerHTML = target.type === "gift"
                 ? `<span style="font-size:17px;">🎁 ${displayGiftName(target.name, target.img)}</span><br><small style="font-size:11px;">$${money(target.price)}</small>`
                 : `<span style="font-size:19px;">$${money(target.price)}</span><br><small style="font-size:10px;">на баланс</small>`;
         } else {
-            chance = rtpAdjustedChance(upgradeChance);
+            chance = upgradeChance;
             multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
             $("upgrade-payout").textContent = "—";
         }
@@ -2477,9 +2470,8 @@ function playUpgrade() {
 
     upgradeBusy = true;
     upgradeState = "spinning";
-    chance = rtpAdjustedChance(chance);
     const randomRoll = Math.random() * 100;
-    const isWin = randomRoll < chance;
+    const isWin = randomRoll < rtpChance(chance);
     const moneyPayout = upgradeMode === "money" ? payout : (target.type === "balance" ? payout : 0);
 
     if (upgradeMode === "money") {
@@ -2745,15 +2737,14 @@ function spinRoulette() {
 
     const winningOptions = getRouletteWinningNumbers();
     if (!winningOptions.length) { alert("Выбери ставку перед вращением."); return; }
-    // Каждый раунд выбирает сектор независимо через crypto.getRandomValues; серии одного цвета возможны и не являются подстройкой.
-    const baseChance = winningOptions.length / ROULETTE_NUMBERS.length;
-    const adjustedChance = Math.max(0, Math.min(1, baseChance * getPlayerRtp()));
-    const isWin = secureRandomInt(1000000) < Math.round(adjustedChance * 1000000);
-    const outcomePool = isWin
-        ? ROULETTE_NUMBERS.filter(value => winningOptions.some(w => String(w) === String(value)))
-        : ROULETTE_NUMBERS.filter(value => !winningOptions.some(w => String(w) === String(value)));
+    // При RTP 100% сектор выбирается равномерно. Индивидуальный RTP меняет вероятность попадания в выбранную ставку.
+    const losingOptions = ROULETTE_NUMBERS.filter(value => !winningOptions.some(w => String(w) === String(value)));
+    const baseWinChance = winningOptions.length / ROULETTE_NUMBERS.length * 100;
+    const shouldWin = Math.random() * 100 < rtpChance(baseWinChance);
+    const outcomePool = shouldWin ? winningOptions : losingOptions;
     const winningNum = outcomePool[secureRandomInt(outcomePool.length)];
     const winningIdx = ROULETTE_NUMBERS.findIndex(value => String(value) === String(winningNum));
+    const isWin = shouldWin;
     const multiplier = ROULETTE_RTP_FACTOR / winningOptions.length;
 
     balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
@@ -2819,20 +2810,18 @@ function getBoostedCaseWeights(prizes, baseWeights, boost = CASE_RTP_BOOST) {
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
     const baseAverage = values.reduce((sum, value, i) => sum + value * weights[i], 0) / total;
-    const targetAverage = Math.min(maxValue, baseAverage * boost);
-    if (targetAverage <= baseAverage + 1e-9) return weights;
+    const targetAverage = Math.max(minValue, Math.min(maxValue, baseAverage * boost));
+    if (Math.abs(targetAverage - baseAverage) <= 1e-9) return weights;
 
-    // Экспоненциально перераспределяем вес к более дорогим призам.
-    // Двоичный поиск подбирает наклон так, чтобы средняя стоимость выросла ровно на 5%.
+    // Экспоненциально смещаем веса к более дорогим или дешёвым призам.
     const scores = values.map(v => maxValue === minValue ? 0 : (v - minValue) / (maxValue - minValue));
     const averageAt = alpha => {
         const adjusted = weights.map((w,i) => w * Math.exp(alpha * scores[i]));
         const sum = adjusted.reduce((a,b) => a+b, 0);
         return adjusted.reduce((acc,w,i) => acc + w * values[i], 0) / sum;
     };
-    let low = 0, high = 1;
-    while (averageAt(high) < targetAverage && high < 64) high *= 2;
-    for (let i = 0; i < 64; i++) {
+    let low = -64, high = 64;
+    for (let i = 0; i < 80; i++) {
         const mid = (low + high) / 2;
         if (averageAt(mid) < targetAverage) low = mid;
         else high = mid;
@@ -2880,15 +2869,8 @@ function openCase(id,name,pr,img,prizes,weights) {
     const prepared = prepareCasePrizes(prizes, weights, pr);
     prizes = prepared.prizes;
     weights = prepared.weights;
-    const boostedWeights = getBoostedCaseWeights(prizes, weights);
-    const rtp = getPlayerRtp();
-    const caseWeights = boostedWeights.map((weight, index) => {
-        const price = Math.max(0.001, Number(prizes[index].price) || 0.001);
-        const normalized = (price - Math.min(...prizes.map(p => Number(p.price) || 0))) /
-            Math.max(0.001, Math.max(...prizes.map(p => Number(p.price) || 0)) - Math.min(...prizes.map(p => Number(p.price) || 0)));
-        return weight * Math.pow(price, (rtp - 1) * 1.5);
-    });
-    curCase={id,name,pr,img,prizes,weights:caseWeights};
+    const boostedWeights = getBoostedCaseWeights(prizes, weights, CASE_RTP_BOOST * playerRtp);
+    curCase={id,name,pr,img,prizes,weights:boostedWeights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
     $("detail-case-title").textContent=name; $("case-big-image").src=img;
     $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}" alt="${displayGiftName(p.name, p.img)}">${p.name ? `<div class="prize-small-name">${displayGiftName(p.name, p.img)}</div>` : ""}<div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
@@ -2981,117 +2963,66 @@ function createDeposit() {
 function checkPayments(sil) {
     if(!isDBConnected()||!userLoaded)return;
     fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
-    .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) loadUserData(); });
+    .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) saveUserData(); });
 }
 
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
 
 function openAdminPanel() {
-    if(prompt("Пароль:")===ADMIN_PASSWORD){ $("admin-modal").style.display="flex"; fetchAllPlayers(); } else alert("Неверно!");
+    const entered = prompt("Пароль администратора:");
+    if (entered === null) return;
+    adminPasswordSession = entered;
+    $("admin-modal").style.display = "flex";
+    fetchAllPlayers();
 }
 
-function fetchAllPlayers() {
-    if (!isDBConnected()) return;
+async function fetchAllPlayers() {
+    if (!isDBConnected()) { $("admin-players-list").innerHTML = '<p style="color:red">База данных не подключена.</p>'; return; }
     $("admin-players-list").innerHTML = '<p style="text-align:center;">Загрузка...</p>';
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all" }) })
-    .then(r => r.json())
-    .then(d => {
-        if (d.status === "success" && d.players) {
-            adminPlayersData = d.players;
-            $("admin-players-list").innerHTML = d.players.map(p => {
-                let invCount = 0;
-                try { let parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory; if (Array.isArray(parsed)) invCount = parsed.length; } catch(e) {}
-                return `
-                <div style="background:#fff; padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; border:2px solid rgba(255,215,0,0.3);">
-                    <div>
-                        <b>${p.username}</b>
-                        <div style="font-size:11px; color:#888;">ID: ${p.userid}</div>
-                        <div style="color:green; font-weight:900;">$${parseFloat(p.balance).toFixed(2)}</div>
-                        <div style="font-size:11px;color:#7c3aed;font-weight:900;">RTP: ${Number(p.rtp ?? 1).toFixed(2)}</div>
-                    </div>
-                    <div style="display:flex; gap:6px; flex-direction:column; align-items:flex-end;">
-                        <button onclick="adminEditBalance('${p.userid}', '${p.username}', ${p.balance})" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">💰 Баланс</button>
-                        <button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎒 Предметы (${invCount})</button>
-                        <button onclick="adminSetPlayerRtp('${p.userid}', ${Number(p.rtp ?? 1)})" style="background:#7c3aed; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎯 RTP: ${Number(p.rtp ?? 1).toFixed(2)}</button>
-                    </div>
-                </div>
-                `;
-            }).join('');
-        }
-    }).catch(() => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; });
+    try {
+        const d = await apiPost({ action: "get_all", admin_password: adminPasswordSession });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось получить игроков.");
+        adminPlayersData = Array.isArray(d.players) ? d.players : [];
+        if (!adminPlayersData.length) { $("admin-players-list").innerHTML = '<p style="text-align:center;">Игроков пока нет.</p>'; return; }
+        $("admin-players-list").innerHTML = adminPlayersData.map(p => {
+            let invCount = 0; try { const parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory; if (Array.isArray(parsed)) invCount = parsed.length; } catch(e) {}
+            const safeName = String(p.username || "Игрок").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            return `<div style="background:#fff;padding:12px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;border:2px solid rgba(255,215,0,.3);"><div style="min-width:0;"><b>${safeName}</b><div style="font-size:11px;color:#888;">ID: ${p.userid}</div><div style="color:green;font-weight:900;">$${Number(p.balance||0).toFixed(2)}</div><div style="font-size:11px;color:#7c3aed;">RTP: ${Math.round((Number(p.rtp)||1)*100)}%</div></div><div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end;flex-shrink:0;"><button onclick="adminEditBalance('${p.userid}', ${Number(p.balance)||0})" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">💰 Баланс</button><button onclick="adminEditRtp('${p.userid}', ${Number(p.rtp)||1})" style="background:#7c3aed;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">🎯 RTP</button><button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">🎒 Предметы (${invCount})</button></div></div>`;
+        }).join('');
+    } catch (e) { $("admin-players-list").innerHTML = `<p style="text-align:center;color:#dc2626;">${e.message}</p>`; }
 }
 
 function adminViewInventory(targetUserId) {
-    const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
-    if (!player) return;
-    let items = [];
-    try { items = typeof player.inventory === "string" ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
+    const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId)); if (!player) return;
+    let items = []; try { items = typeof player.inventory === 'string' ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) {}
     if (!Array.isArray(items)) items = [];
-    const visibleItems = items.map((item, originalIndex) => ({ item, originalIndex })).filter(({item}) => {
-        const name = String(item?.name || "").toLowerCase();
-        const img = String(item?.img || "").toLowerCase();
-        return !(name.includes("torch") || name.includes("факел") || img.includes("fakelinft") || img.includes("fakel_inft"));
-    });
     $("admin-inv-title").textContent = "🎒 Инвентарь: " + player.username;
-    const totalVal = visibleItems.reduce((sum, row) => sum + (Number(row.item.price) || 0), 0);
-    $("admin-inv-sub").textContent = `Предметов: ${visibleItems.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
+    const totalVal = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+    $("admin-inv-sub").textContent = `Предметов: ${items.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
     const listCont = $("admin-inv-list");
-    if (!visibleItems.length) {
-        listCont.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">У игрока пустой инвентарь</p>';
-    } else {
-        listCont.innerHTML = visibleItems.map(({item, originalIndex}) => `
-            <div class="inventory-item" style="padding:10px;">
-                <img src="${item.img || ""}" style="width:45px;height:45px;">
-                <div class="inventory-item-name" style="font-size:12px;">${displayGiftName(item.name, item.img)}</div>
-                <div class="inventory-item-price" style="font-size:11px;">$${Number(item.price || 0).toFixed(2)}</div>
-                <button type="button" onclick="adminDeletePlayerItem('${String(player.userid)}', ${originalIndex})" style="background:#dc2626;color:#fff;border:0;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:950;">🗑 УДАЛИТЬ</button>
-            </div>
-        `).join("");
-    }
-    $("admin-inv-modal").style.display = "flex";
-    haptic("light");
+    if (!items.length) listCont.innerHTML = '<p style="grid-column:span 2;text-align:center;color:#9c841a;font-weight:800;padding:20px;">У игрока пустой инвентарь</p>';
+    else listCont.innerHTML = items.map((it, originalIndex) => `<div class="inventory-item" style="padding:10px;position:relative;"><img src="${it.img||''}" style="width:45px;height:45px;"><div class="inventory-item-name" style="font-size:12px;">${displayGiftName(it.name,it.img)}</div><div class="inventory-item-price" style="font-size:11px;">$${Number(it.price||0).toFixed(2)}</div><button onclick="adminDeleteItem('${player.userid}',${originalIndex})" style="grid-column:1/-1;background:#dc2626;color:#fff;border:0;border-radius:8px;padding:7px;font-size:11px;font-weight:900;">🗑 Удалить подарок</button></div>`).join('');
+    $("admin-inv-modal").style.display = "flex"; haptic("light");
 }
 
-function adminSetPlayerRtp(id, currentValue) {
-    const entered = prompt("RTP игрока (1.00 = стандартный; например 0.80 или 1.10):", String(currentValue));
-    if (entered === null) return;
-    const value = Number(entered);
-    if (!Number.isFinite(value) || value < 0 || value > 2) {
-        alert("Укажи RTP от 0 до 2.");
-        return;
-    }
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", target_userid: String(id), rtp: value }) })
-        .then(r => r.json()).then(data => {
-            if (data.status !== "success") throw new Error(data.message || "Не удалось изменить RTP.");
-            const player = adminPlayersData.find(p => String(p.userid) === String(id));
-            if (player) player.rtp = value;
-            if (String(id) === userId) playerRtp = value;
-            alert("RTP игрока обновлён: " + value.toFixed(2));
-            fetchAllPlayers();
-        }).catch(err => alert(err.message || "Ошибка изменения RTP."));
+async function adminEditBalance(id, current) {
+    const raw = prompt("Новый баланс игрока:", String(current)); if (raw === null) return;
+    const value = Number(raw); if (!Number.isFinite(value) || value < 0) return alert("Введи корректную сумму от 0.");
+    try { const d = await apiPost({ action: "admin_set_balance", target_userid: String(id), balance: value, admin_password: adminPasswordSession }); if (d.status !== "success") throw new Error(d.message || "Ошибка сохранения."); alert("Баланс успешно изменён."); await fetchAllPlayers(); if (String(id) === userId) { balance = value; updateBalanceUI(); saveLocal(); } }
+    catch(e) { alert("Не удалось изменить баланс: " + e.message); }
 }
 
-function adminDeletePlayerItem(targetUserId, originalIndex) {
-    if (!confirm("Удалить этот подарок из инвентаря игрока?")) return;
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "admin_delete_item", target_userid: String(targetUserId), item_index: Number(originalIndex) })
-    }).then(r => r.json()).then(data => {
-        if (data.status !== "success") throw new Error(data.message || "Не удалось удалить предмет.");
-        const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
-        if (player) player.inventory = data.inventory;
-        fetchAllPlayers();
-        adminViewInventory(targetUserId);
-        alert("Подарок удалён из инвентаря игрока.");
-    }).catch(err => alert(err.message || "Ошибка удаления подарка."));
+async function adminEditRtp(id, current) {
+    const raw = prompt("RTP игрока в процентах (например 100, 80 или 120):", String(Math.round(Number(current||1)*100))); if (raw === null) return;
+    const percent = Number(raw); if (!Number.isFinite(percent) || percent < 0 || percent > 300) return alert("Введи число от 0 до 300.");
+    try { const d = await apiPost({ action: "admin_set_rtp", target_userid: String(id), rtp: percent/100, admin_password: adminPasswordSession }); if (d.status !== "success") throw new Error(d.message || "Ошибка сохранения RTP."); alert("RTP сохранён: " + percent + "%"); await fetchAllPlayers(); if (String(id) === userId) applyPlayerRtp(percent/100); }
+    catch(e) { alert("Не удалось изменить RTP: " + e.message); }
 }
 
-function adminEditBalance(id, nm, b) {
-    let nb = prompt("Новый баланс:", b); 
-    if (nb !== null && !isNaN(nb)) {
-        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) }) })
-        .then(() => { alert("Обновлено!"); fetchAllPlayers(); if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } });
-    }
+async function adminDeleteItem(id, index) {
+    if (!confirm("Точно удалить этот подарок из инвентаря игрока?")) return;
+    try { const d = await apiPost({ action: "admin_delete_item", target_userid: String(id), item_index: Number(index), admin_password: adminPasswordSession }); if (d.status !== "success") throw new Error(d.message || "Ошибка удаления."); const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (p) { p.inventory = d.inventory; p.inventory_version = d.inventory_version; } adminViewInventory(id); await fetchAllPlayers(); if (String(id) === userId) { try { inventory = JSON.parse(d.inventory || "[]"); inventoryVersion = Number(d.inventory_version) || inventoryVersion; saveLocal(); renderInventory(); } catch(e) {} } }
+    catch(e) { alert("Не удалось удалить подарок: " + e.message); }
 }
 
 /* INIT */
