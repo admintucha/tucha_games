@@ -1654,6 +1654,7 @@ let playerRtp = 1;
 let modeRtp = { crash:1, mines:1, tower:1, dice:1, cases:1, upgrade:1, roulette:1 };
 let inventoryVersion = 1;
 let settingsRefreshTimer = null;
+let inventorySaveQueue = Promise.resolve();
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
 
@@ -1808,17 +1809,23 @@ function loadUserData() {
 
 function saveUserData() {
     saveLocal();
-    if (!isDBConnected()) return;
-    apiPost({ action: "update", userid: userId, username: userName, balance: balance, inventory: JSON.stringify(inventory), inventory_version: inventoryVersion })
-      .then(d => {
+    if (!isDBConnected()) return Promise.resolve();
+    // Все записи инвентаря отправляются строго по очереди. Это исключает ситуацию,
+    // когда ранний запрос перезаписывает более новое состояние и возвращает старый подарок.
+    const snapshot = { balance: Number(balance) || 0, inventory: JSON.stringify(inventory) };
+    inventorySaveQueue = inventorySaveQueue.catch(() => {}).then(async () => {
+        const d = await apiPost({ action: "update", userid: userId, username: userName,
+            balance: snapshot.balance, inventory: snapshot.inventory, inventory_version: inventoryVersion });
         if (d.status === "success") {
-          if (d.inventory_conflict && d.inventory !== undefined) {
-            try { inventory = JSON.parse(d.inventory || "[]"); } catch(e) { inventory = []; }
-            inventoryVersion = Number(d.inventory_version) || inventoryVersion;
-            balance = Number(d.balance ?? balance); saveLocal(); updateBalanceUI(); renderInventory();
-          } else inventoryVersion = Number(d.inventory_version) || inventoryVersion;
+            if (d.inventory_conflict && d.inventory !== undefined) {
+                try { inventory = JSON.parse(d.inventory || "[]"); } catch(e) { inventory = []; }
+                inventoryVersion = Number(d.inventory_version) || inventoryVersion;
+                balance = Number(d.balance ?? balance);
+                saveLocal(); updateBalanceUI(); renderInventory();
+            } else inventoryVersion = Number(d.inventory_version) || inventoryVersion;
         } else console.warn("Не удалось сохранить игру:", d.message);
-      }).catch(e => console.warn("Ошибка сохранения игры:", e));
+    }).catch(e => console.warn("Ошибка сохранения игры:", e));
+    return inventorySaveQueue;
 }
 
 if (telegramUser) {
@@ -2508,12 +2515,16 @@ function playUpgrade() {
     if (upgradeMode === "money") {
         balance = Math.max(0, Math.round((balance - bet + Number.EPSILON) * 100) / 100);
     } else {
+        // Сразу убираем ставочный подарок из локального инвентаря, но сохраняем
+        // итог только после завершения прокрутки (одной записью, без гонки запросов).
         inventory.splice(stakeGiftIndex, 1);
         upgradeGiftIndex = null;
         renderInventory();
+        $("upgrade-gift-list").innerHTML = '<div class="upgrade-gift-empty">🎁 Подарок участвует в апгрейде…</div>';
+        $("upgrade-gift-target").textContent = "Дождись завершения прокрутки";
     }
     updateBalanceUI();
-    saveUserData();
+    if (upgradeMode === "money") saveUserData();
     setUpgradeControlsDisabled(true);
     $("upgrade-result").className = "upgrade-result";
     $("upgrade-result").textContent = "КОЛЕСО ВРАЩАЕТСЯ...";
@@ -2525,11 +2536,12 @@ function playUpgrade() {
     ring.style.transition = "none";
     ring.style.transform = "rotate(0deg)";
     void ring.offsetWidth;
-    const turns = 4 + Math.floor(Math.random() * 2);
+    const turns = 7 + Math.floor(Math.random() * 3);
     const landingAngle = randomRoll * 3.6;
     const finalRotation = turns * 360 + (360 - landingAngle);
+    const spinDuration = 5600 + Math.floor(Math.random() * 700);
     ring.classList.add("spinning");
-    ring.style.transition = "transform 3.8s cubic-bezier(.10,.72,.08,1)";
+    ring.style.transition = `transform ${spinDuration}ms cubic-bezier(.08,.72,.08,1)`;
     requestAnimationFrame(() => { ring.style.transform = `rotate(${finalRotation}deg)`; });
     haptic("medium");
 
@@ -2571,7 +2583,7 @@ function playUpgrade() {
         updateUpgradeUI();
         setUpgradeControlsDisabled(false);
         haptic("light");
-    }, 3900);
+    }, spinDuration + 120);
 }
 
 /* ROULETTE LOGIC — 38 SECTORS, UNBIASED OUTCOMES, CORRECT PAYOUTS */
@@ -3010,16 +3022,22 @@ function checkPayments(sil) {
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
 
 function openAdminPanel() {
-    if(prompt("Пароль:")===ADMIN_PASSWORD){ $("admin-modal").style.display="flex"; fetchAllPlayers(); } else alert("Неверно!");
+    const entered = prompt("Пароль администратора:");
+    if (entered === null) return;
+    if (entered !== ADMIN_PASSWORD) { alert("Неверный пароль!"); return; }
+    adminPasswordSession = entered;
+    $("admin-modal").style.display = "flex";
+    fetchAllPlayers();
 }
 
 function fetchAllPlayers() {
     if (!isDBConnected()) return;
     $("admin-players-list").innerHTML = '<p style="text-align:center;">Загрузка...</p>';
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all" }) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all", admin_password: adminPasswordSession }) })
     .then(r => r.json())
     .then(d => {
         if (d.status === "success" && d.players) {
+            renderAdminModeRtp(d.mode_rtp_percent || {});
             adminPlayersData = d.players;
             $("admin-players-list").innerHTML = d.players.map(p => {
                 let invCount = 0;
@@ -3040,8 +3058,37 @@ function fetchAllPlayers() {
                 </div>
                 `;
             }).join('');
+        } else {
+            $("admin-players-list").innerHTML = '<p style="text-align:center;color:#dc2626;font-weight:900;">Ошибка: ' + String(d.message || "сервер не вернул список игроков") + '</p>';
+            $("admin-mode-rtp-list").innerHTML = '<p style="color:#dc2626;">' + String(d.message || "Не удалось загрузить настройки") + '</p>';
         }
-    }).catch(() => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; });
+    }).catch((err) => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки: ' + String(err.message || err) + '</p>'; });
+}
+
+function renderAdminModeRtp(values) {
+    const labels = { crash:"🚀 Ракетка", mines:"💣 Мины", tower:"🗼 Башня", dice:"🎲 Кости", cases:"🎁 Кейсы", upgrade:"⬆️ Апгрейд", roulette:"🎰 Рулетка" };
+    const root = $("admin-mode-rtp-list");
+    if (!root) return;
+    root.innerHTML = Object.keys(labels).map(mode => {
+        const value = Number(values[mode] ?? 100);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff8d6;border-radius:12px;padding:9px 10px;">
+            <b style="font-size:13px;color:#332900;">${labels[mode]}</b>
+            <div style="display:flex;align-items:center;gap:7px;">
+                <b style="color:#7c3aed;">${value}%</b>
+                <button onclick="adminSetModeRtp('${mode}', ${value})" style="border:0;border-radius:8px;padding:7px 10px;background:#7c3aed;color:#fff;font-weight:900;">Изменить</button>
+            </div>
+        </div>`;
+    }).join("");
+}
+
+function adminSetModeRtp(mode, current) {
+    const entered = prompt("RTP режима в процентах (0–300):", String(current));
+    if (entered === null) return;
+    const value = Number(entered);
+    if (!Number.isFinite(value) || value < 0 || value > 300) { alert("Укажи значение от 0 до 300."); return; }
+    apiPost({ action:"admin_set_mode_rtp", admin_password:adminPasswordSession, mode, rtp_percent:value })
+      .then(data => { if (data.status !== "success") throw new Error(data.message || "Не удалось сохранить RTP"); alert("RTP сохранён: " + value + "%"); fetchAllPlayers(); })
+      .catch(err => alert("Ошибка сохранения RTP: " + (err.message || err)));
 }
 
 function adminViewInventory(targetUserId) {
@@ -3083,7 +3130,7 @@ function adminSetPlayerRtp(id, currentValue) {
         alert("Укажи RTP от 0 до 2.");
         return;
     }
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", target_userid: String(id), rtp: value }) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", admin_password: adminPasswordSession, target_userid: String(id), rtp: value }) })
         .then(r => r.json()).then(data => {
             if (data.status !== "success") throw new Error(data.message || "Не удалось изменить RTP.");
             const player = adminPlayersData.find(p => String(p.userid) === String(id));
@@ -3100,7 +3147,7 @@ function adminDeletePlayerItem(targetUserId, originalIndex) {
     if (!player) { alert("Обнови список игроков и попробуй ещё раз."); return; }
     fetch(SCRIPT_URL, {
         method: "POST",
-        body: JSON.stringify({ action: "admin_delete_item", target_userid: String(targetUserId), item_index: Number(originalIndex), inventory_version: Number(player?.inventory_version) || 0 })
+        body: JSON.stringify({ action: "admin_delete_item", admin_password: adminPasswordSession, target_userid: String(targetUserId), item_index: Number(originalIndex), inventory_version: Number(player?.inventory_version) || 0 })
     }).then(r => r.json()).then(data => {
         if (data.status !== "success") throw new Error(data.message || "Не удалось удалить предмет.");
         const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
@@ -3114,8 +3161,9 @@ function adminDeletePlayerItem(targetUserId, originalIndex) {
 function adminEditBalance(id, nm, b) {
     let nb = prompt("Новый баланс:", b); 
     if (nb !== null && !isNaN(nb)) {
-        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) }) })
-        .then(() => { alert("Обновлено!"); fetchAllPlayers(); if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } });
+        apiPost({ action: "admin_set_balance", admin_password: adminPasswordSession, target_userid: String(id), balance: parseFloat(nb) })
+        .then(data => { if (data.status !== "success") throw new Error(data.message || "Не удалось изменить баланс"); alert("Баланс обновлён!"); fetchAllPlayers(); if (String(id) === String(userId)) { balance = parseFloat(nb); updateBalanceUI(); } })
+        .catch(err => alert("Ошибка изменения баланса: " + (err.message || err)));
     }
 }
 
