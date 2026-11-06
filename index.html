@@ -76,7 +76,7 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 .primary.red { background: linear-gradient(135deg, #dc2626, #e11d48); box-shadow: 0 8px 25px rgba(220, 38, 38, 0.35); }
 .primary:disabled { opacity: .55; cursor: default; box-shadow: none; }
 
-/* ===== GAMES HUB ===== */
+/* ===== GAMES HUB (2 В РЯД) ===== */
 .games-header {
     font-size: 27px; font-weight: 950; letter-spacing: -.8px; color: #332900; margin-bottom: 16px;
 }
@@ -328,6 +328,7 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
     border-color: #f59e0b !important;
     box-shadow: 0 0 0 2px rgba(245,158,11,.16), 0 8px 18px rgba(130,91,17,.18) !important;
 }
+/* У выбранной цветной ставки сохраняем цвет фона, чтобы белый текст не исчезал. */
 .roulette-opt-btn.red-opt.selected { background: linear-gradient(135deg,#ef4444,#c91f32) !important; color:#fff !important; }
 .roulette-opt-btn.black-opt.selected { background: linear-gradient(135deg,#273449,#101827) !important; color:#fff !important; }
 .roulette-opt-btn.green-opt.selected { background: linear-gradient(135deg,#10b981,#047857) !important; color:#fff !important; }
@@ -393,6 +394,7 @@ input[type="range"] { width: 100%; accent-color: #f59e0b; margin-bottom: 16px; h
 .qty-btn.active { background: #f59e0b; color: #fff; border-color: #f59e0b; }
 
 #roulettes-container { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+/* До начала открытия не показываем пустую ленту рулетки. */
 #roulettes-container.case-reel-hidden { visibility: hidden; height: 0; min-height: 0; margin: 0; overflow: hidden; }
 #roulettes-container:not(.case-reel-hidden) { visibility: visible; height: auto; margin-bottom: 14px; }
 .roulette-wrap { height: 90px; overflow: hidden; border-radius: 18px; background: #fff; border: 2px solid rgba(255,215,0,0.5); position: relative; }
@@ -591,6 +593,8 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 #upgrade-stake-card .upgrade-value-row { min-width: 0; gap: 8px; }
 #upgrade-stake-card .upgrade-step-btn { flex: 0 0 40px; width: 40px; height: 42px; }
 
+
+
 /* ===== UPDATE: 3D ROULETTE + ANIMATED TOWER ===== */
 .roulette-stage {
     perspective: 1100px;
@@ -772,16 +776,29 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     .tower-cell-art svg { width:33px; height:33px; }
 }
 
-/* ===== FINAL POLISH ===== */
+
+
+/* ===== FINAL POLISH: CLOUD BRAND, FIXED POINTER, 3D CASES ===== */
 .logo-icon {
-    width: 48px; height: 44px; flex: 0 0 48px;
-    display: flex; align-items: center; justify-content: center;
-    overflow: visible; border-radius: 0; background: transparent; box-shadow: none;
-    font-size: initial; perspective: 180px;
+    width: 48px;
+    height: 44px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: initial;
+    perspective: 180px;
     animation: logoCloudFloat 3.4s ease-in-out infinite;
 }
 .logo-cloud-art {
-    display: block; width: 53px; height: 47px; overflow: visible;
+    display: block;
+    width: 53px;
+    height: 47px;
+    overflow: visible;
     filter: drop-shadow(0 5px 3px rgba(38, 117, 177, .25)) drop-shadow(0 2px 7px rgba(245, 158, 11, .22));
     transform-style: preserve-3d;
 }
@@ -790,31 +807,51 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     50% { transform: translateY(-3px) rotate(2deg); }
 }
 
+/* Стрелка закреплена по центру; вращается только колесо. */
 .roulette-pointer {
-    position: absolute !important; left: 50% !important; top: -2px !important;
-    transform: translateX(-50%) !important; transform-origin: 50% 0 !important;
-    animation: none !important; transition: none !important; z-index: 40 !important;
-    border-left: 13px solid transparent !important; border-right: 13px solid transparent !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: -2px !important;
+    transform: translateX(-50%) !important;
+    transform-origin: 50% 0 !important;
+    animation: none !important;
+    transition: none !important;
+    z-index: 40 !important;
+    border-left: 13px solid transparent !important;
+    border-right: 13px solid transparent !important;
     border-top: 25px solid #f7bd35 !important;
     filter: drop-shadow(0 3px 2px rgba(76,39,0,.55)) drop-shadow(0 0 4px rgba(255,255,255,.65));
     pointer-events: none;
 }
 .roulette-stage.spinning .roulette-pointer {
-    animation: none !important; transform: translateX(-50%) !important;
+    animation: none !important;
+    transform: translateX(-50%) !important;
 }
 
+/* Объёмная подача карточек и открытия кейсов. */
 .case-card {
-    transform-style: preserve-3d; perspective: 900px;
+    transform-style: preserve-3d;
+    perspective: 900px;
     box-shadow: 0 13px 22px rgba(160, 105, 8, .16), inset 0 1px 0 rgba(255,255,255,.95);
 }
 .case-card::before {
-    content: ""; position: absolute; z-index: 2; top: -55%; left: -75%; width: 55%; height: 210%;
-    pointer-events: none; opacity: 0; transform: rotate(24deg) translateX(-40%);
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -55%;
+    left: -75%;
+    width: 55%;
+    height: 210%;
+    pointer-events: none;
+    opacity: 0;
+    transform: rotate(24deg) translateX(-40%);
     background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent);
 }
 .case-card:hover::before { opacity: 1; animation: caseCardShine .85s ease-out; }
 .case-card-image {
-    position: relative; z-index: 1; transform: translateZ(18px);
+    position: relative;
+    z-index: 1;
+    transform: translateZ(18px);
     animation: caseImageFloat 3.2s ease-in-out infinite;
 }
 .case-card-name, .case-card-price { position: relative; z-index: 3; transform: translateZ(10px); }
@@ -827,12 +864,20 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     50% { transform: translateY(-5px) translateZ(24px) rotate(1deg); }
 }
 .case-detail-card {
-    position: relative; overflow: hidden; transform-style: preserve-3d; perspective: 1100px;
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1100px;
     animation: caseDetailEnter .48s cubic-bezier(.2,.85,.25,1) both;
 }
 .case-detail-card::before {
-    content: ""; position: absolute; z-index: 0; inset: 0; border-radius: inherit;
-    pointer-events: none; background: radial-gradient(circle at 50% 12%, rgba(255,218,91,.22), transparent 42%);
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 12%, rgba(255,218,91,.22), transparent 42%);
 }
 .case-detail-card > * { position: relative; z-index: 1; }
 @keyframes caseDetailEnter {
@@ -840,7 +885,8 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     100% { opacity: 1; transform: perspective(1100px) rotateX(0) translateY(0) scale(1); }
 }
 .case-big-image {
-    transform-style: preserve-3d; transform: translateZ(25px);
+    transform-style: preserve-3d;
+    transform: translateZ(25px);
     animation: casePrizeFloat 3.4s ease-in-out infinite;
 }
 @keyframes casePrizeFloat {
@@ -877,6 +923,9 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     .case-detail-card.opening .roulette-wrap { animation: none !important; }
 }
 
+
+
+/* ===== CASES PREMIUM 3D POLISH + ROULETTE SELECTION FIX ===== */
 .case-grid { gap:16px; }
 .case-card {
     border:2px solid rgba(255,224,120,.95);
@@ -894,8 +943,12 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 }
 #roulettes-container { perspective:1200px; gap:12px; }
 .roulette-wrap {
-    height:102px; border:3px solid #e5b64a; border-radius:20px; overflow:hidden;
-    position:relative; isolation:isolate;
+    height:102px;
+    border:3px solid #e5b64a;
+    border-radius:20px;
+    overflow:hidden;
+    position:relative;
+    isolation:isolate;
     background:linear-gradient(180deg,#fffef8 0%,#fff5d7 46%,#f6dfa5 100%);
     box-shadow:inset 0 5px 12px rgba(130,86,8,.12),inset 0 -5px 10px rgba(130,86,8,.08),0 7px 0 #c9922d,0 12px 20px rgba(112,70,7,.16);
     transform:rotateX(2deg) translateZ(0);
@@ -907,10 +960,14 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
 .roulette-wrap::after { bottom:0;background:linear-gradient(0deg,rgba(173,111,16,.12),transparent); }
 .roulette-strip { gap:9px; padding:0 8px; align-items:center; transform-style:preserve-3d; }
 .roulette-prize {
-    flex:0 0 80px; height:82px; border-radius:15px; border:1.5px solid rgba(219,171,70,.52);
+    flex:0 0 80px;
+    height:82px;
+    border-radius:15px;
+    border:1.5px solid rgba(219,171,70,.52);
     background:linear-gradient(145deg,#fffef9 0%,#fff3cb 57%,#f2d98e 100%);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.98),inset 0 -4px 7px rgba(156,105,19,.1),0 5px 0 #d0a64c,0 8px 11px rgba(112,72,7,.14);
-    transform:perspective(650px) rotateX(5deg) translateZ(8px); transition:filter .2s,transform .2s;
+    transform:perspective(650px) rotateX(5deg) translateZ(8px);
+    transition:filter .2s,transform .2s;
 }
 .roulette-prize img { width:43px !important;height:43px !important;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(90,57,7,.22)); }
 .roulette-prize .prize-small-name { max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:950;color:#6b4b0b; }
@@ -925,9 +982,12 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     border-top:15px solid #e58b08;filter:drop-shadow(0 2px 2px rgba(90,55,5,.35));
 }
 #case-button {
-    position:relative;overflow:hidden; border:1px solid rgba(255,255,255,.7); border-bottom:6px solid #c36a09;
+    position:relative;overflow:hidden;
+    border:1px solid rgba(255,255,255,.7);
+    border-bottom:6px solid #c36a09;
     background:linear-gradient(180deg,#ffe66b 0%,#ffbe16 48%,#f0780b 100%);
-    box-shadow:inset 0 2px 0 rgba(255,255,255,.85),0 8px 18px rgba(177,99,5,.25); text-shadow:0 1px 1px rgba(128,65,0,.24);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.85),0 8px 18px rgba(177,99,5,.25);
+    text-shadow:0 1px 1px rgba(128,65,0,.24);
     transition:transform .14s,filter .2s,box-shadow .2s;
 }
 #case-button::after {
@@ -946,6 +1006,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     #case-button::after { animation:none !important; }
     .case-detail-card.opening #case-button { animation:none !important; }
 }
+
 </style>
 </head>
 
@@ -1027,7 +1088,7 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     <section id="tab-cases" class="tab">
         <div id="cases-list">
             <div class="games-header" style="margin-bottom:5px;">Кейсы</div>
-            <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!</div>
+            <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!<br><span style="color:#16834a;font-size:11px;font-weight:950;">Улучшенные шансы на более ценные призы</span></div>
             
             <div class="case-grid">
                 <!-- Mini Case ($0.20) -->
@@ -1173,6 +1234,25 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
             </div>
 
             <button class="primary green" onclick="openDeposit()">💳 ПОПОЛНИТЬ БАЛАНС</button>
+
+            <div class="panel" style="margin-top:16px;text-align:left;background:rgba(255,255,255,.88);">
+                <div style="font-size:19px;font-weight:950;color:#332900;">👥 Реферальная программа</div>
+                <div style="font-size:12px;color:#75601a;font-weight:800;margin:6px 0 12px;">Приглашай друзей и получай 10% с их пополнений.</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div style="background:#fff8d8;border-radius:13px;padding:10px;text-align:center;">
+                        <div style="font-size:11px;font-weight:900;color:#8b6b10;">Приглашено</div>
+                        <div id="ref-invited" style="font-size:22px;font-weight:950;color:#d97706;">0</div>
+                    </div>
+                    <div style="background:#fff8d8;border-radius:13px;padding:10px;text-align:center;">
+                        <div style="font-size:11px;font-weight:900;color:#8b6b10;">Реферальный баланс</div>
+                        <div style="font-size:22px;font-weight:950;color:#16a34a;">$<span id="ref-balance">0.00</span></div>
+                    </div>
+                </div>
+                <div style="margin-top:8px;font-size:12px;font-weight:850;color:#75601a;">Всего заработано: $<span id="ref-earned">0.00</span></div>
+                <button class="primary" style="margin-top:12px;padding:12px;" onclick="copyReferralLink()">🔗 СКОПИРОВАТЬ РЕФЕРАЛЬНУЮ ССЫЛКУ</button>
+                <button class="primary green" style="margin-top:8px;padding:12px;" onclick="withdrawReferralBalance()">💵 ПЕРЕВЕСТИ НА ИГРОВОЙ БАЛАНС</button>
+                <div id="ref-status" style="font-size:11px;font-weight:850;color:#75601a;text-align:center;margin-top:8px;">Загружаем статистику...</div>
+            </div>
             <button onclick="openAdminPanel()" style="margin-top:20px; background:none; border:none; color:#d97706; font-size:12px; font-weight:900;">⚙️ Админ-панель</button>
         </div>
     </section>
@@ -1536,6 +1616,7 @@ function money(number) { return (Math.round((Number(number) + Number.EPSILON) * 
 function haptic(type = "light") { try { tg?.HapticFeedback?.impactOccurred(type); } catch(e) {} }
 function notify(type = "success") { try { tg?.HapticFeedback?.notificationOccurred(type); } catch(e) {} }
 
+// Равномерный криптографический выбор без смещения по модулю.
 function secureRandomInt(max) {
     if (!Number.isInteger(max) || max < 1) throw new Error("Некорректный диапазон случайного числа");
     if (window.crypto && window.crypto.getRandomValues) {
@@ -1549,6 +1630,7 @@ function secureRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+// Старые записи в инвентаре автоматически показываются с английскими названиями.
 function displayGiftName(value, imagePath = "") {
     const original = String(value || "").trim();
     const normalized = `${original} ${String(imagePath || "")}`.toLocaleLowerCase("ru").replace(/[._-]+/g, " ").replace(/\s+/g, " ");
@@ -1565,9 +1647,15 @@ let balance = 0.10;
 let inventory = [];
 let userLoaded = false;
 let adminPlayersData = [];
+let playerRtp = 1.0;
+let referralLink = "";
+let referralBalance = 0;
+let referralInvited = 0;
+let referralEarned = 0;
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
 
+// Удаляем устаревший удалённый NFT из сохранённых инвентарей.
 function removeTorchNFT(items) {
     if (!Array.isArray(items)) return [];
     return items.filter(item => {
@@ -1615,17 +1703,78 @@ function closeGameScreen(gameId) {
 }
 
 function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
+function getVerifiedTelegramPayload() {
+    return telegramUser && tg?.initData ? { initData: tg.initData } : {};
+}
+// RTP в таблице хранится коэффициентом: 1.00 = стандартное значение.
+function getPlayerRtp() {
+    const value = Number(playerRtp);
+    return Number.isFinite(value) ? Math.max(0, Math.min(2, value)) : 1;
+}
+function rtpAdjustedChance(basePercent) {
+    return Math.max(0, Math.min(100, Number(basePercent) * getPlayerRtp()));
+}
+function updateReferralUI() {
+    const invited = $("ref-invited"), refBal = $("ref-balance"), earned = $("ref-earned"), status = $("ref-status");
+    if (invited) invited.textContent = String(referralInvited);
+    if (refBal) refBal.textContent = money(referralBalance);
+    if (earned) earned.textContent = money(referralEarned);
+    if (status) status.textContent = referralLink ? "За каждое пополнение приглашённого начисляется 10%." : "Реферальная ссылка появится после загрузки профиля.";
+}
+function applyReferralData(data) {
+    if (!data) return;
+    referralLink = String(data.referral_link || referralLink || "");
+    referralBalance = Number(data.referral_balance ?? referralBalance) || 0;
+    referralInvited = Number(data.invited_count ?? referralInvited) || 0;
+    referralEarned = Number(data.referral_total_earned ?? referralEarned) || 0;
+    updateReferralUI();
+}
+function copyReferralLink() {
+    if (!referralLink) { alert("Реферальная ссылка ещё загружается."); return; }
+    const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(referralLink) + "&text=" + encodeURIComponent("Заходи играть в Tucha Games!");
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(referralLink).then(() => {
+            $("ref-status").textContent = "Ссылка скопирована! Отправь её друзьям.";
+            try { tg?.HapticFeedback?.notificationOccurred("success"); } catch(e) {}
+        }).catch(() => { window.open(shareUrl, "_blank"); });
+    } else {
+        window.open(shareUrl, "_blank");
+    }
+}
+function withdrawReferralBalance() {
+    if (!isDBConnected() || !userLoaded) { alert("Подожди, пока загрузится профиль."); return; }
+    if (referralBalance <= 0) { alert("Реферальный баланс пока пуст."); return; }
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "withdraw_referral", ...getVerifiedTelegramPayload(), userid: userId })
+    }).then(r => r.json()).then(data => {
+        if (data.status !== "success") throw new Error(data.message || "Не удалось перевести средства.");
+        balance = Number(data.balance) || balance;
+        referralBalance = Number(data.referral_balance) || 0;
+        updateBalanceUI(); updateReferralUI(); saveLocal();
+        $("ref-status").textContent = "Переведено на игровой баланс: $" + money(data.transferred);
+        notify("success");
+    }).catch(err => alert(err.message || "Ошибка перевода."));
+}
 function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
 
 function loadUserData() {
     loadLocal();
     updateBalanceUI(); 
     renderInventory();
+    updateReferralUI();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, balance: balance, ...getVerifiedTelegramPayload()}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
+            playerRtp = Number.isFinite(Number(data.rtp)) ? Number(data.rtp) : 1.0;
+            applyReferralData({
+                referral_link: data.referral_link,
+                referral_balance: data.referral_balance,
+                invited_count: data.invited_count,
+                referral_total_earned: data.referral_total_earned
+            });
             let removedTorchFromServer = false;
             if (data.inventory) { 
                 try { 
@@ -1659,7 +1808,7 @@ if (telegramUser) {
     if (telegramUser.photo_url) $("avatar").innerHTML = `<img src="${telegramUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
 }
 
-/* CRASH (RACKET) LOGIC - MODIFIED */
+/* CRASH (RACKET) LOGIC */
 let crashState = "waiting", crashBet = 0, inCrash = false, crashMultiplier = 1, crashTarget = 2;
 let crashTimer = null, crashTick = null, crashHistoryList = [91.9, 86.8, 2.47, 9.75, 1.07];
 
@@ -1704,33 +1853,16 @@ function startCrashRound() {
 
 function runCrash() {
     crashState = "flying"; crashMultiplier = 1;
-    
-    // БОЛЕЕ РАНДОМНЫЕ ИКСЫ: Нелинейное случайное распределение коэффициентов
     const r = Math.random();
-    if (r < 0.40) {
-        crashTarget = 1.01 + Math.random() * 0.49; // 1.01x - 1.50x
-    } else if (r < 0.70) {
-        crashTarget = 1.51 + Math.random() * 1.49; // 1.51x - 3.00x
-    } else if (r < 0.90) {
-        crashTarget = 3.01 + Math.random() * 3.99; // 3.01x - 7.00x
-    } else if (r < 0.97) {
-        crashTarget = 7.01 + Math.random() * 7.99; // 7.01x - 15.00x
-    } else {
-        crashTarget = 15.01 + Math.random() * 85.0; // 15.01x - 100.00x
-    }
+    if (r < 0.65) crashTarget = 1.05 + Math.random()*0.95;
+    else if (r < 0.90) crashTarget = 2.0 + Math.random()*2.5;
+    else crashTarget = 4.5 + Math.random()*15.0;
+    // RTP ниже 1 сокращает потенциальный множитель, выше 1 — увеличивает.
+    crashTarget = Math.max(1.01, 1 + (crashTarget - 1) * getPlayerRtp());
 
     $("crash-rocket-img").src = "./rocket.gif.gif";
     $("crash-sub").textContent = "ПОЛЁТ";
-    
-    // ЗАПРЕТ СТАВИТЬ В ПОЛЁТЕ: Если игрок не сделал ставку до старта, кнопка блокируется
-    if (!inCrash) {
-        $("btn-crash-action").disabled = true;
-        $("btn-crash-action").textContent = "ПОЛЁТ ИДЁТ...";
-        $("btn-crash-action").style.background = "#94a3b8";
-    } else {
-        $("btn-crash-action").disabled = false;
-    }
-
+    $("btn-crash-action").disabled = !inCrash;
     crashTick = setInterval(() => {
         crashMultiplier += 0.01;
         $("crash-val").textContent = crashMultiplier.toFixed(2) + "x";
@@ -1777,10 +1909,6 @@ function handleCrashAction() {
 }
 
 function confirmCrashBet() {
-    if (crashState !== "waiting") {
-        alert("Ставку можно делать только до начала полёта!");
-        return;
-    }
     const bet = Math.round(Number($("crash-bet-input").value) * 100) / 100;
     if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств или неверная сумма!"); return; }
     balance -= bet; crashBet = bet; inCrash = true;
@@ -1822,6 +1950,7 @@ function startMines() {
     while(minePos.length<bombCnt) { let p=Math.floor(Math.random()*25); if(!minePos.includes(p)) minePos.push(p); }
     buildMines();
     let safeI=[]; for(let i=0;i<25;i++) if(!minePos.includes(i)) safeI.push(i);
+    // При 21-24 минах бонусная золотая клетка отключена: обычные безопасные клетки остаются.
     if(bombCnt <= 20 && safeI.length > 0) {
         $("mines-grid").children[safeI[Math.floor(Math.random()*safeI.length)]].dataset.em = "true";
     }
@@ -1891,8 +2020,9 @@ function playDice() {
     if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств!"); notify("error"); return; }
     balance -= bet; updateBalanceUI(); diceState = "rolling";
     $("btn-dice-action").disabled = true; $("btn-dice-action").textContent = "БРОСОК...";
+    const effectiveDiceChance = rtpAdjustedChance(diceChance);
     const finalRoll = (Math.random() * 100);
-    const isWin = finalRoll <= diceChance;
+    const isWin = finalRoll <= effectiveDiceChance;
     let ticks = 0;
     const anim = setInterval(() => {
         $("dice-result").textContent = (Math.random() * 100).toFixed(2);
@@ -1915,7 +2045,7 @@ function playDice() {
     }, 50);
 }
 
-/* TOWER LOGIC */
+/* TOWER LOGIC — 3D BLOCKS + FIXED FLOOR LAYOUT */
 let towerState = "idle", towerBet = 0, currentLevel = 0;
 let towerLayout = [];
 const towerLevels = [
@@ -2118,7 +2248,7 @@ let upgradeChance = 47;
 let upgradeBusy = false;
 let upgradeMode = "money";
 let upgradeGiftIndex = null;
-const UPGRADE_RTP = 96.5;
+const UPGRADE_RTP = 96.5; // Небольшое увеличение RTP с 94.5% до 96.5%.
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
@@ -2233,7 +2363,7 @@ function setUpgradeMode(mode) {
 
 function updateUpgradeUI() {
     const bet = getUpgradeBet();
-    let chance = upgradeChance;
+    let chance = rtpAdjustedChance(upgradeChance);
     let multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
     let payout = Math.floor((Math.max(0, bet) * multiplier + Number.EPSILON) * 100) / 100;
 
@@ -2244,13 +2374,13 @@ function updateUpgradeUI() {
             const level = upgradeGiftLevel(item);
             const sourcePrice = UPGRADE_GIFTS[level].price;
             multiplier = target.price / sourcePrice;
-            chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
+            chance = rtpAdjustedChance(Math.min(95, Math.max(1, UPGRADE_RTP / multiplier)));
             payout = target.price;
             $("upgrade-payout").innerHTML = target.type === "gift"
                 ? `<span style="font-size:17px;">🎁 ${displayGiftName(target.name, target.img)}</span><br><small style="font-size:11px;">$${money(target.price)}</small>`
                 : `<span style="font-size:19px;">$${money(target.price)}</span><br><small style="font-size:10px;">на баланс</small>`;
         } else {
-            chance = upgradeChance;
+            chance = rtpAdjustedChance(upgradeChance);
             multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
             $("upgrade-payout").textContent = "—";
         }
@@ -2347,6 +2477,7 @@ function playUpgrade() {
 
     upgradeBusy = true;
     upgradeState = "spinning";
+    chance = rtpAdjustedChance(chance);
     const randomRoll = Math.random() * 100;
     const isWin = randomRoll < chance;
     const moneyPayout = upgradeMode === "money" ? payout : (target.type === "balance" ? payout : 0);
@@ -2420,10 +2551,10 @@ function playUpgrade() {
     }, 3900);
 }
 
-/* ROULETTE LOGIC */
+/* ROULETTE LOGIC — 38 SECTORS, UNBIASED OUTCOMES, CORRECT PAYOUTS */
 const ROULETTE_NUMBERS = [0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, "00", 27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2];
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-const ROULETTE_RTP_FACTOR = 36;
+const ROULETTE_RTP_FACTOR = 36; // 38 секторов, выплата 36 к 1 для одного сектора: RTP 36/38.
 
 let rouletteCategory = "colors";
 let rouletteSelectedOption = "red";
@@ -2614,9 +2745,15 @@ function spinRoulette() {
 
     const winningOptions = getRouletteWinningNumbers();
     if (!winningOptions.length) { alert("Выбери ставку перед вращением."); return; }
-    const winningIdx = secureRandomInt(ROULETTE_NUMBERS.length);
-    const winningNum = ROULETTE_NUMBERS[winningIdx];
-    const isWin = winningOptions.some(value => String(value) === String(winningNum));
+    // Каждый раунд выбирает сектор независимо через crypto.getRandomValues; серии одного цвета возможны и не являются подстройкой.
+    const baseChance = winningOptions.length / ROULETTE_NUMBERS.length;
+    const adjustedChance = Math.max(0, Math.min(1, baseChance * getPlayerRtp()));
+    const isWin = secureRandomInt(1000000) < Math.round(adjustedChance * 1000000);
+    const outcomePool = isWin
+        ? ROULETTE_NUMBERS.filter(value => winningOptions.some(w => String(w) === String(value)))
+        : ROULETTE_NUMBERS.filter(value => !winningOptions.some(w => String(w) === String(value)));
+    const winningNum = outcomePool[secureRandomInt(outcomePool.length)];
+    const winningIdx = ROULETTE_NUMBERS.findIndex(value => String(value) === String(winningNum));
     const multiplier = ROULETTE_RTP_FACTOR / winningOptions.length;
 
     balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
@@ -2666,10 +2803,9 @@ function spinRoulette() {
     }, 5350);
 }
 
-/* CASES & INVENTORY LOGIC - MODIFIED RTP */
+/* CASES & INVENTORY LOGIC */
 let curCase=null, opening=false, caseQty=1;
-// СНИЖЕНИЕ RTP: Изменено со значения 1.05 до 0.92 для уменьшения отдачи кейсов
-const CASE_RTP_BOOST = 0.92; 
+const CASE_RTP_BOOST = 1.05; // +5% к прежней ожидаемой стоимости призов.
 
 function getBoostedCaseWeights(prizes, baseWeights, boost = CASE_RTP_BOOST) {
     if (!Array.isArray(prizes) || !Array.isArray(baseWeights) || prizes.length !== baseWeights.length || !prizes.length) {
@@ -2686,6 +2822,8 @@ function getBoostedCaseWeights(prizes, baseWeights, boost = CASE_RTP_BOOST) {
     const targetAverage = Math.min(maxValue, baseAverage * boost);
     if (targetAverage <= baseAverage + 1e-9) return weights;
 
+    // Экспоненциально перераспределяем вес к более дорогим призам.
+    // Двоичный поиск подбирает наклон так, чтобы средняя стоимость выросла ровно на 5%.
     const scores = values.map(v => maxValue === minValue ? 0 : (v - minValue) / (maxValue - minValue));
     const averageAt = alpha => {
         const adjusted = weights.map((w,i) => w * Math.exp(alpha * scores[i]));
@@ -2715,6 +2853,7 @@ function prepareCasePrizes(prizes, weights, casePrice) {
     (Array.isArray(prizes) ? prizes : []).forEach((item, i) => {
         const prize = {...item};
         const image = String(prize.img || '').toLowerCase();
+        // Изображение самого кейса не может быть наградой — заменяем его денежным призом.
         if (/case|prem|talagram|caser|casevip/.test(image)) {
             prize.name = '$' + Number(prize.price || 0).toFixed(2);
             prize.img = icon;
@@ -2723,6 +2862,8 @@ function prepareCasePrizes(prizes, weights, casePrice) {
         cleanWeights.push(Math.max(0, Number(weights?.[i]) || 0));
     });
 
+    // Дополнительные небольшие денежные награды делают список разнообразнее.
+    // Их веса невелики; крупные награды не удаляются и не гарантируются.
     const extraValues = [...new Set([
         Math.max(0.01, Math.round(casePrice * 0.10 * 100) / 100),
         Math.max(0.02, Math.round(casePrice * 0.20 * 100) / 100),
@@ -2740,7 +2881,14 @@ function openCase(id,name,pr,img,prizes,weights) {
     prizes = prepared.prizes;
     weights = prepared.weights;
     const boostedWeights = getBoostedCaseWeights(prizes, weights);
-    curCase={id,name,pr,img,prizes,weights:boostedWeights};
+    const rtp = getPlayerRtp();
+    const caseWeights = boostedWeights.map((weight, index) => {
+        const price = Math.max(0.001, Number(prizes[index].price) || 0.001);
+        const normalized = (price - Math.min(...prizes.map(p => Number(p.price) || 0))) /
+            Math.max(0.001, Math.max(...prizes.map(p => Number(p.price) || 0)) - Math.min(...prizes.map(p => Number(p.price) || 0)));
+        return weight * Math.pow(price, (rtp - 1) * 1.5);
+    });
+    curCase={id,name,pr,img,prizes,weights:caseWeights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
     $("detail-case-title").textContent=name; $("case-big-image").src=img;
     $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}" alt="${displayGiftName(p.name, p.img)}">${p.name ? `<div class="prize-small-name">${displayGiftName(p.name, p.img)}</div>` : ""}<div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
@@ -2833,7 +2981,7 @@ function createDeposit() {
 function checkPayments(sil) {
     if(!isDBConnected()||!userLoaded)return;
     fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
-    .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) saveUserData(); });
+    .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) loadUserData(); });
 }
 
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
@@ -2859,10 +3007,12 @@ function fetchAllPlayers() {
                         <b>${p.username}</b>
                         <div style="font-size:11px; color:#888;">ID: ${p.userid}</div>
                         <div style="color:green; font-weight:900;">$${parseFloat(p.balance).toFixed(2)}</div>
+                        <div style="font-size:11px;color:#7c3aed;font-weight:900;">RTP: ${Number(p.rtp ?? 1).toFixed(2)}</div>
                     </div>
                     <div style="display:flex; gap:6px; flex-direction:column; align-items:flex-end;">
                         <button onclick="adminEditBalance('${p.userid}', '${p.username}', ${p.balance})" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">💰 Баланс</button>
                         <button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎒 Предметы (${invCount})</button>
+                        <button onclick="adminSetPlayerRtp('${p.userid}', ${Number(p.rtp ?? 1)})" style="background:#7c3aed; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎯 RTP: ${Number(p.rtp ?? 1).toFixed(2)}</button>
                     </div>
                 </div>
                 `;
@@ -2875,25 +3025,65 @@ function adminViewInventory(targetUserId) {
     const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
     if (!player) return;
     let items = [];
-    try { items = typeof player.inventory === 'string' ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
-    items = removeTorchNFT(items);
+    try { items = typeof player.inventory === "string" ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
+    if (!Array.isArray(items)) items = [];
+    const visibleItems = items.map((item, originalIndex) => ({ item, originalIndex })).filter(({item}) => {
+        const name = String(item?.name || "").toLowerCase();
+        const img = String(item?.img || "").toLowerCase();
+        return !(name.includes("torch") || name.includes("факел") || img.includes("fakelinft") || img.includes("fakel_inft"));
+    });
     $("admin-inv-title").textContent = "🎒 Инвентарь: " + player.username;
-    let totalVal = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
-    $("admin-inv-sub").textContent = `Предметов: ${items.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
+    const totalVal = visibleItems.reduce((sum, row) => sum + (Number(row.item.price) || 0), 0);
+    $("admin-inv-sub").textContent = `Предметов: ${visibleItems.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
     const listCont = $("admin-inv-list");
-    if (!items || items.length === 0) {
+    if (!visibleItems.length) {
         listCont.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">У игрока пустой инвентарь</p>';
     } else {
-        listCont.innerHTML = items.map(it => `
+        listCont.innerHTML = visibleItems.map(({item, originalIndex}) => `
             <div class="inventory-item" style="padding:10px;">
-                <img src="${it.img}" style="width:45px; height:45px;">
-                <div class="inventory-item-name" style="font-size:12px;">${displayGiftName(it.name, it.img)}</div>
-                <div class="inventory-item-price" style="font-size:11px;">$${Number(it.price).toFixed(2)}</div>
+                <img src="${item.img || ""}" style="width:45px;height:45px;">
+                <div class="inventory-item-name" style="font-size:12px;">${displayGiftName(item.name, item.img)}</div>
+                <div class="inventory-item-price" style="font-size:11px;">$${Number(item.price || 0).toFixed(2)}</div>
+                <button type="button" onclick="adminDeletePlayerItem('${String(player.userid)}', ${originalIndex})" style="background:#dc2626;color:#fff;border:0;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:950;">🗑 УДАЛИТЬ</button>
             </div>
-        `).join('');
+        `).join("");
     }
     $("admin-inv-modal").style.display = "flex";
     haptic("light");
+}
+
+function adminSetPlayerRtp(id, currentValue) {
+    const entered = prompt("RTP игрока (1.00 = стандартный; например 0.80 или 1.10):", String(currentValue));
+    if (entered === null) return;
+    const value = Number(entered);
+    if (!Number.isFinite(value) || value < 0 || value > 2) {
+        alert("Укажи RTP от 0 до 2.");
+        return;
+    }
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", target_userid: String(id), rtp: value }) })
+        .then(r => r.json()).then(data => {
+            if (data.status !== "success") throw new Error(data.message || "Не удалось изменить RTP.");
+            const player = adminPlayersData.find(p => String(p.userid) === String(id));
+            if (player) player.rtp = value;
+            if (String(id) === userId) playerRtp = value;
+            alert("RTP игрока обновлён: " + value.toFixed(2));
+            fetchAllPlayers();
+        }).catch(err => alert(err.message || "Ошибка изменения RTP."));
+}
+
+function adminDeletePlayerItem(targetUserId, originalIndex) {
+    if (!confirm("Удалить этот подарок из инвентаря игрока?")) return;
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "admin_delete_item", target_userid: String(targetUserId), item_index: Number(originalIndex) })
+    }).then(r => r.json()).then(data => {
+        if (data.status !== "success") throw new Error(data.message || "Не удалось удалить предмет.");
+        const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
+        if (player) player.inventory = data.inventory;
+        fetchAllPlayers();
+        adminViewInventory(targetUserId);
+        alert("Подарок удалён из инвентаря игрока.");
+    }).catch(err => alert(err.message || "Ошибка удаления подарка."));
 }
 
 function adminEditBalance(id, nm, b) {
