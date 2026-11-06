@@ -2742,3 +2742,394 @@ function renderRouletteOptions() {
     }
     updateRouletteOdds();
 }
+
+function selectRouletteOpt(value, button) {
+    if (rouletteIsSpinning) return;
+    rouletteSelectedOption = value;
+    button.parentElement.querySelectorAll(".roulette-opt-btn").forEach(item => item.classList.remove("selected"));
+    button.classList.add("selected");
+    updateRouletteOdds();
+    haptic("light");
+}
+
+function selectRouletteNum(value, button) {
+    if (rouletteIsSpinning) return;
+    rouletteSelectedOption = value;
+    button.parentElement.querySelectorAll(".roulette-num-btn").forEach(item => item.classList.remove("selected"));
+    button.classList.add("selected");
+    updateRouletteOdds();
+    haptic("light");
+}
+
+function spinRoulette() {
+    if (rouletteIsSpinning) return;
+    const bet = Number($("roulette-bet").value);
+    if (!Number.isFinite(bet) || bet < 0.01 || bet > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
+
+    const winningOptions = getRouletteWinningNumbers();
+    if (!winningOptions.length) { alert("Выбери ставку перед вращением."); return; }
+    // Каждый раунд выбирает сектор независимо через crypto.getRandomValues; серии одного цвета возможны и не являются подстройкой.
+    const baseChance = winningOptions.length / ROULETTE_NUMBERS.length;
+    const adjustedChance = Math.max(0, Math.min(1, baseChance * effectiveRtp("roulette")));
+    const isWin = secureRandomInt(1000000) < Math.round(adjustedChance * 1000000);
+    const outcomePool = isWin
+        ? ROULETTE_NUMBERS.filter(value => winningOptions.some(w => String(w) === String(value)))
+        : ROULETTE_NUMBERS.filter(value => !winningOptions.some(w => String(w) === String(value)));
+    const winningNum = outcomePool[secureRandomInt(outcomePool.length)];
+    const winningIdx = ROULETTE_NUMBERS.findIndex(value => String(value) === String(winningNum));
+    const multiplier = ROULETTE_RTP_FACTOR / winningOptions.length;
+
+    balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
+    updateBalanceUI();
+    saveUserData();
+    rouletteIsSpinning = true;
+    $("btn-roulette-action").disabled = true;
+    $("btn-roulette-action").textContent = "ВРАЩЕНИЕ...";
+    $("roulette-status").textContent = "Шарик вращается...";
+    $("roulette-status").style.color = "#332900";
+    $("roulette-stage")?.classList.add("spinning");
+
+    const sliceDeg = 360 / ROULETTE_NUMBERS.length;
+    const targetSliceCenterDeg = winningIdx * sliceDeg + sliceDeg / 2;
+    const currentMod = ((rouletteCurrentRotation % 360) + 360) % 360;
+    const alignment = (360 - targetSliceCenterDeg - currentMod + 720) % 360;
+    const finalRotation = rouletteCurrentRotation + 7 * 360 + alignment;
+    rouletteCurrentRotation = finalRotation;
+
+    const canvas = $("roulette-canvas");
+    canvas.style.transition = "none";
+    canvas.style.transform = `translateZ(12px) rotate(${finalRotation - 7 * 360 - alignment}deg)`;
+    void canvas.offsetWidth;
+    canvas.style.transition = "transform 5.25s cubic-bezier(.13,.76,.12,1)";
+    requestAnimationFrame(() => { canvas.style.transform = `translateZ(12px) rotate(${finalRotation}deg)`; });
+    haptic("medium");
+
+    setTimeout(() => {
+        rouletteIsSpinning = false;
+        $("roulette-stage")?.classList.remove("spinning");
+        $("btn-roulette-action").disabled = false;
+        $("btn-roulette-action").textContent = "СДЕЛАТЬ СТАВКУ";
+
+        if (isWin) {
+            const winAmount = Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100;
+            balance = Math.round((balance + winAmount + Number.EPSILON) * 100) / 100;
+            $("roulette-status").textContent = `🎉 ВЫПАЛО ${winningNum}! ВЫИГРЫШ +$${money(winAmount)}`;
+            $("roulette-status").style.color = "#16a34a";
+            notify("success");
+        } else {
+            $("roulette-status").textContent = `ВЫПАЛО ${winningNum}. НЕ ПОВЕЗЛО -$${money(bet)}`;
+            $("roulette-status").style.color = "#dc2626";
+            notify("error");
+        }
+        updateBalanceUI();
+        saveUserData();
+    }, 5350);
+}
+
+/* CASES & INVENTORY LOGIC */
+let curCase=null, opening=false, caseQty=1;
+const CASE_RTP_BOOST = 1.05; // +5% к прежней ожидаемой стоимости призов.
+
+function getBoostedCaseWeights(prizes, baseWeights, boost = CASE_RTP_BOOST) {
+    if (!Array.isArray(prizes) || !Array.isArray(baseWeights) || prizes.length !== baseWeights.length || !prizes.length) {
+        return Array.isArray(baseWeights) ? baseWeights.slice() : [];
+    }
+    const values = prizes.map(p => Math.max(0, Number(p.price) || 0));
+    const weights = baseWeights.map(w => Math.max(0, Number(w) || 0));
+    const total = weights.reduce((a,b) => a+b, 0);
+    if (!total || values.every(v => v === values[0])) return weights;
+
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const baseAverage = values.reduce((sum, value, i) => sum + value * weights[i], 0) / total;
+    const targetAverage = Math.min(maxValue, baseAverage * boost);
+    if (targetAverage <= baseAverage + 1e-9) return weights;
+
+    // Экспоненциально перераспределяем вес к более дорогим призам.
+    // Двоичный поиск подбирает наклон так, чтобы средняя стоимость выросла ровно на 5%.
+    const scores = values.map(v => maxValue === minValue ? 0 : (v - minValue) / (maxValue - minValue));
+    const averageAt = alpha => {
+        const adjusted = weights.map((w,i) => w * Math.exp(alpha * scores[i]));
+        const sum = adjusted.reduce((a,b) => a+b, 0);
+        return adjusted.reduce((acc,w,i) => acc + w * values[i], 0) / sum;
+    };
+    let low = 0, high = 1;
+    while (averageAt(high) < targetAverage && high < 64) high *= 2;
+    for (let i = 0; i < 64; i++) {
+        const mid = (low + high) / 2;
+        if (averageAt(mid) < targetAverage) low = mid;
+        else high = mid;
+    }
+    const alpha = (low + high) / 2;
+    return weights.map((w,i) => w * Math.exp(alpha * scores[i]));
+}
+
+function caseDollarIcon() {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b9ffd0"/><stop offset="1" stop-color="#16a34a"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="url(#g)" stroke="#087b38" stroke-width="3"/><path d="M39 19c-2-2-4-3-7-3-5 0-9 3-9 7 0 11 18 5 18 15 0 4-4 8-10 8-4 0-8-2-10-5M32 11v42" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>`;
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
+function prepareCasePrizes(prizes, weights, casePrice) {
+    const icon = caseDollarIcon();
+    const clean = [];
+    const cleanWeights = [];
+    (Array.isArray(prizes) ? prizes : []).forEach((item, i) => {
+        const prize = {...item};
+        const image = String(prize.img || '').toLowerCase();
+        // Изображение самого кейса не может быть наградой — заменяем его денежным призом.
+        if (/case|prem|talagram|caser|casevip/.test(image)) {
+            prize.name = '$' + Number(prize.price || 0).toFixed(2);
+            prize.img = icon;
+        }
+        clean.push(prize);
+        cleanWeights.push(Math.max(0, Number(weights?.[i]) || 0));
+    });
+
+    // Дополнительные небольшие денежные награды делают список разнообразнее.
+    // Их веса невелики; крупные награды не удаляются и не гарантируются.
+    const extraValues = [...new Set([
+        Math.max(0.01, Math.round(casePrice * 0.10 * 100) / 100),
+        Math.max(0.02, Math.round(casePrice * 0.20 * 100) / 100),
+        Math.max(0.03, Math.round(casePrice * 0.30 * 100) / 100)
+    ])].filter(v => !clean.some(x => Math.abs(Number(x.price) - v) < 0.001));
+    extraValues.forEach((value, i) => {
+        clean.push({name: '$' + value.toFixed(2), price: value, img: icon});
+        cleanWeights.push([5, 4, 3][i] || 3);
+    });
+    return {prizes: clean, weights: cleanWeights};
+}
+
+function openCase(id,name,pr,img,prizes,weights) {
+    const prepared = prepareCasePrizes(prizes, weights, pr);
+    prizes = prepared.prizes;
+    weights = prepared.weights;
+    const boostedWeights = getBoostedCaseWeights(prizes, weights);
+    const rtp = effectiveRtp("cases");
+    const caseWeights = boostedWeights.map((weight, index) => {
+        const price = Math.max(0.001, Number(prizes[index].price) || 0.001);
+        const normalized = (price - Math.min(...prizes.map(p => Number(p.price) || 0))) /
+            Math.max(0.001, Math.max(...prizes.map(p => Number(p.price) || 0)) - Math.min(...prizes.map(p => Number(p.price) || 0)));
+        return weight * Math.pow(price, (rtp - 1) * 1.5);
+    });
+    curCase={id,name,pr,img,prizes,weights:caseWeights};
+    $("cases-list").style.display="none"; $("case-detail").classList.add("active");
+    $("detail-case-title").textContent=name; $("case-big-image").src=img;
+    $("prizes-grid").innerHTML = prizes.map(p=>`<div class="prize-small"><img src="${p.img}" alt="${displayGiftName(p.name, p.img)}">${p.name ? `<div class="prize-small-name">${displayGiftName(p.name, p.img)}</div>` : ""}<div class="prize-small-value">$${p.price.toFixed(2)}</div></div>`).join('');
+    $("case-result").textContent="";
+    $("roulettes-container").classList.add("case-reel-hidden");
+    setCaseQuantity(1); window.scrollTo(0,0); haptic();
+}
+
+function closeCaseDetail() { if(opening)return; $("case-detail-card").classList.remove("opening"); $("case-detail").classList.remove("active"); $("cases-list").style.display="block"; haptic(); }
+
+function setCaseQuantity(q) {
+    if(opening)return; caseQty=q;
+    document.querySelectorAll('.qty-btn').forEach(b=>{ b.classList.remove('active'); if(parseInt(b.textContent)===q) b.classList.add('active'); });
+    $("detail-case-price").textContent = "1шт = $"+curCase.pr.toFixed(2);
+    $("case-button").textContent = `ОТКРЫТЬ ${q} ЗА $${(curCase.pr*q).toFixed(2)}`;
+    $("roulettes-container").innerHTML = Array(q).fill().map(()=>`<div class="roulette-wrap"><div class="roulette-strip"></div><div class="roulette-marker"></div></div>`).join('');
+    $("roulettes-container").classList.add("case-reel-hidden");
+    haptic("light");
+}
+
+function choosePrize(pr, w) { let t=w.reduce((a,b)=>a+b,0), r=Math.random()*t; for(let i=0;i<pr.length;i++){ r-=w[i]; if(r<=0)return pr[i]; } return pr[0]; }
+
+async function openCurrentCase() {
+    if(!curCase||opening)return; const cost = curCase.pr*caseQty;
+    if(balance<cost) { alert("Недостаточно средств!"); notify("error"); return; }
+    balance-=cost; updateBalanceUI(); opening=true;
+    $("case-button").disabled=true; $("case-button").textContent="ОТКРЫВАЕМ..."; $("case-result").textContent="";
+    $("case-detail-card").classList.add("opening");
+    $("roulettes-container").classList.remove("case-reel-hidden");
+    let wraps = $("roulettes-container").querySelectorAll(".roulette-wrap");
+    let proms = [];
+    for(let i=0;i<caseQty;i++) {
+        let win = choosePrize(curCase.prizes, curCase.weights);
+        inventory.push({...win, id:Date.now()+Math.random()});
+        let strip = wraps[i].querySelector(".roulette-strip");
+        let vals=[]; for(let k=0;k<45;k++) vals.push(k===28?win:choosePrize(curCase.prizes, curCase.weights));
+        strip.innerHTML = vals.map(v=>`<div class="roulette-prize"><img style="width:34px;height:34px;object-fit:contain;" src="${v.img}" alt="${displayGiftName(v.name, v.img)}">${v.name ? `<div class="prize-small-name">${displayGiftName(v.name, v.img)}</div>` : ""}<div style="color:#d97706;font-size:11px;font-weight:950;">$${v.price.toFixed(2)}</div></div>`).join('');
+        proms.push(new Promise(res=>{
+            setTimeout(()=>{
+                strip.style.transition="none"; strip.style.transform="translateX(0)";
+                requestAnimationFrame(()=>{
+                    strip.style.transition="transform 6s cubic-bezier(0.15,0.75,0.05,1)";
+                    let shift = (28*89) + 48 + (Math.random()-0.5)*8 - (wraps[i].getBoundingClientRect().width/2);
+                    strip.style.transform=`translateX(-${shift}px)`;
+                    setTimeout(res,6200);
+                });
+            }, i*150);
+        }));
+    }
+    await Promise.all(proms);
+    $("case-detail-card").classList.remove("opening");
+    saveUserData(); renderInventory();
+    $("case-result").textContent = `🎉 ВЫИГРАНО: ${caseQty} шт. (упало в инвентарь)`;
+    opening=false; setCaseQuantity(caseQty); $("case-button").disabled=false; notify("success");
+}
+
+function renderInventory() {
+    $("inventory-count").textContent = inventory.length + " предметов";
+    if(inventory.length===0) { 
+        $("inventory-list").innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">Инвентарь пуст</p>'; 
+        if (typeof renderUpgradeGiftList === "function") renderUpgradeGiftList();
+        return; 
+    }
+    $("inventory-list").innerHTML = inventory.map((it,i)=>`
+        <div class="inventory-item">
+            <img src="${it.img}">
+            <div class="inventory-item-name">${displayGiftName(it.name, it.img)}</div>
+            <div class="inventory-item-price">$${it.price.toFixed(2)}</div>
+            <button class="primary green" style="padding:8px;font-size:12px;border-radius:10px;" onclick="sellItem(${i})">ПРОДАТЬ</button>
+        </div>
+    `).join('');
+    if (typeof renderUpgradeGiftList === "function") renderUpgradeGiftList();
+}
+
+function sellItem(i) { balance += inventory[i].price; inventory.splice(i,1); updateBalanceUI(); saveUserData(); renderInventory(); notify("success"); }
+
+function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
+function closeDeposit() { $("deposit-modal").classList.remove("active"); }
+
+function createDeposit() {
+    const a = Number($("deposit-amount").value); if(a<1)return;
+    if(!isDBConnected()){ $("deposit-status").textContent="База не подключена"; return; }
+    $("deposit-pay").disabled=true; $("deposit-pay").textContent="СОЗДАЁМ СЧЁТ...";
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_invoice", userid:userId, username:userName, amount:a}) })
+    .then(r=>r.json()).then(d=>{
+        if(d.status==="success"){ $("deposit-status").textContent="Оплатите в Crypto Bot"; window.open(d.pay_url,"_blank"); setInterval(()=>checkPayments(true),10000); }
+    }).finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT"; });
+}
+
+function checkPayments(sil) {
+    if(!isDBConnected()||!userLoaded)return;
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
+    .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) loadUserData(); });
+}
+
+function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
+
+function openAdminPanel() {
+    if(prompt("Пароль:")===ADMIN_PASSWORD){ $("admin-modal").style.display="flex"; fetchAllPlayers(); } else alert("Неверно!");
+}
+
+function fetchAllPlayers() {
+    if (!isDBConnected()) return;
+    $("admin-players-list").innerHTML = '<p style="text-align:center;">Загрузка...</p>';
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all" }) })
+    .then(r => r.json())
+    .then(d => {
+        if (d.status === "success" && d.players) {
+            adminPlayersData = d.players;
+            $("admin-players-list").innerHTML = d.players.map(p => {
+                let invCount = 0;
+                try { let parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory; if (Array.isArray(parsed)) invCount = parsed.length; } catch(e) {}
+                return `
+                <div style="background:#fff; padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; border:2px solid rgba(255,215,0,0.3);">
+                    <div>
+                        <b>${p.username}</b>
+                        <div style="font-size:11px; color:#888;">ID: ${p.userid}</div>
+                        <div style="color:green; font-weight:900;">$${parseFloat(p.balance).toFixed(2)}</div>
+                        <div style="font-size:11px;color:#7c3aed;font-weight:900;">RTP: ${Number(p.rtp ?? 1).toFixed(2)}</div>
+                    </div>
+                    <div style="display:flex; gap:6px; flex-direction:column; align-items:flex-end;">
+                        <button onclick="adminEditBalance('${p.userid}', '${p.username}', ${p.balance})" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">💰 Баланс</button>
+                        <button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎒 Предметы (${invCount})</button>
+                        <button onclick="adminSetPlayerRtp('${p.userid}', ${Number(p.rtp ?? 1)})" style="background:#7c3aed; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎯 RTP: ${Number(p.rtp ?? 1).toFixed(2)}</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+    }).catch(() => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки</p>'; });
+}
+
+function adminViewInventory(targetUserId) {
+    const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
+    if (!player) return;
+    let items = [];
+    try { items = typeof player.inventory === "string" ? JSON.parse(player.inventory) : (player.inventory || []); } catch(e) { items = []; }
+    if (!Array.isArray(items)) items = [];
+    const visibleItems = items.map((item, originalIndex) => ({ item, originalIndex })).filter(({item}) => {
+        const name = String(item?.name || "").toLowerCase();
+        const img = String(item?.img || "").toLowerCase();
+        return !(name.includes("torch") || name.includes("факел") || img.includes("fakelinft") || img.includes("fakel_inft"));
+    });
+    $("admin-inv-title").textContent = "🎒 Инвентарь: " + player.username;
+    const totalVal = visibleItems.reduce((sum, row) => sum + (Number(row.item.price) || 0), 0);
+    $("admin-inv-sub").textContent = `Предметов: ${visibleItems.length} шт. | Общая стоимость: $${totalVal.toFixed(2)}`;
+    const listCont = $("admin-inv-list");
+    if (!visibleItems.length) {
+        listCont.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #9c841a; font-weight: 800; padding: 20px;">У игрока пустой инвентарь</p>';
+    } else {
+        listCont.innerHTML = visibleItems.map(({item, originalIndex}) => `
+            <div class="inventory-item" style="padding:10px;">
+                <img src="${item.img || ""}" style="width:45px;height:45px;">
+                <div class="inventory-item-name" style="font-size:12px;">${displayGiftName(item.name, item.img)}</div>
+                <div class="inventory-item-price" style="font-size:11px;">$${Number(item.price || 0).toFixed(2)}</div>
+                <button type="button" onclick="adminDeletePlayerItem('${String(player.userid)}', ${originalIndex})" style="background:#dc2626;color:#fff;border:0;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:950;">🗑 УДАЛИТЬ</button>
+            </div>
+        `).join("");
+    }
+    $("admin-inv-modal").style.display = "flex";
+    haptic("light");
+}
+
+function adminSetPlayerRtp(id, currentValue) {
+    const entered = prompt("RTP игрока (1.00 = стандартный; например 0.80 или 1.10):", String(currentValue));
+    if (entered === null) return;
+    const value = Number(entered);
+    if (!Number.isFinite(value) || value < 0 || value > 2) {
+        alert("Укажи RTP от 0 до 2.");
+        return;
+    }
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", target_userid: String(id), rtp: value }) })
+        .then(r => r.json()).then(data => {
+            if (data.status !== "success") throw new Error(data.message || "Не удалось изменить RTP.");
+            const player = adminPlayersData.find(p => String(p.userid) === String(id));
+            if (player) player.rtp = value;
+            if (String(id) === userId) playerRtp = value;
+            alert("RTP игрока обновлён: " + value.toFixed(2));
+            fetchAllPlayers();
+        }).catch(err => alert(err.message || "Ошибка изменения RTP."));
+}
+
+function adminDeletePlayerItem(targetUserId, originalIndex) {
+    if (!confirm("Удалить этот подарок из инвентаря игрока?")) return;
+    const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
+    if (!player) { alert("Обнови список игроков и попробуй ещё раз."); return; }
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "admin_delete_item", target_userid: String(targetUserId), item_index: Number(originalIndex), inventory_version: Number(player?.inventory_version) || 0 })
+    }).then(r => r.json()).then(data => {
+        if (data.status !== "success") throw new Error(data.message || "Не удалось удалить предмет.");
+        const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
+        if (player) { player.inventory = data.inventory; player.inventory_version = Number(data.inventory_version) || 0; }
+        fetchAllPlayers();
+        adminViewInventory(targetUserId);
+        alert("Подарок удалён из инвентаря игрока.");
+    }).catch(err => alert(err.message || "Ошибка удаления подарка."));
+}
+
+function adminEditBalance(id, nm, b) {
+    let nb = prompt("Новый баланс:", b); 
+    if (nb !== null && !isNaN(nb)) {
+        fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "update", userid: id, username: nm, balance: parseFloat(nb) }) })
+        .then(() => { alert("Обновлено!"); fetchAllPlayers(); if (id === userId) { balance = parseFloat(nb); updateBalanceUI(); } });
+    }
+}
+
+/* INIT */
+loadUserData();
+buildMines();
+buildTower();
+updateCrashHistoryUI();
+startCrashRound();
+updateDiceUI();
+updateUpgradeUI();
+renderRouletteOptions();
+drawRouletteWheel();
+updateTowerProgress();
+</script>
+</body>
+</html>
