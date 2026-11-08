@@ -1315,6 +1315,13 @@ header, .game-top-bar {
 .promo-status { min-height:22px; margin-top:10px; text-align:center; font-size:13px; font-weight:900; }
 .admin-promo-row { display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff8df;border:1px solid #ead18a;border-radius:12px;padding:10px;margin-top:8px;font-size:12px; }
 
+
+/* FIX: all text/number/date inputs must accept keyboard and pointer input */
+input, textarea, select, button { -webkit-user-select: auto; user-select: auto; }
+input:not([type="range"]), textarea, select { pointer-events:auto !important; position:relative; z-index:2; touch-action:manipulation; caret-color:#493508; }
+input[type="text"], input[type="number"], input[type="date"], textarea { -webkit-appearance:none; appearance:none; }
+input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28) !important; outline-offset:1px; }
+
 </style>
 </head>
 
@@ -3163,46 +3170,50 @@ function caseDollarIcon() {
 
 function prepareCasePrizes(prizes, weights, casePrice) {
     const icon = caseDollarIcon();
-    const clean = [];
-    const cleanWeights = [];
+    const floor = Math.max(0.01, Number(casePrice) * 0.75);
+    const clean = [], cleanWeights = [];
     (Array.isArray(prizes) ? prizes : []).forEach((item, i) => {
         const prize = {...item};
         const image = String(prize.img || '').toLowerCase();
-        // Изображение самого кейса не может быть наградой — заменяем его денежным призом.
         if (/case|prem|talagram|caser|casevip/.test(image)) {
             prize.name = '$' + Number(prize.price || 0).toFixed(2);
             prize.img = icon;
         }
+        // Убираем мелкие денежные награды: оставляем выплаты от 75% цены кейса.
+        if (Number(prize.price) < floor) return;
         clean.push(prize);
-        cleanWeights.push(Math.max(0, Number(weights?.[i]) || 0));
+        cleanWeights.push(Math.max(0.0001, Number(weights?.[i]) || 1));
     });
-
-    // Дополнительные небольшие денежные награды делают список разнообразнее.
-    // Их веса невелики; крупные награды не удаляются и не гарантируются.
-    const extraValues = [...new Set([
-        Math.max(0.01, Math.round(casePrice * 0.10 * 100) / 100),
-        Math.max(0.02, Math.round(casePrice * 0.20 * 100) / 100),
-        Math.max(0.03, Math.round(casePrice * 0.30 * 100) / 100)
-    ])].filter(v => !clean.some(x => Math.abs(Number(x.price) - v) < 0.001));
-    extraValues.forEach((value, i) => {
-        clean.push({name: '$' + value.toFixed(2), price: value, img: icon});
-        cleanWeights.push([5, 4, 3][i] || 3);
-    });
+    // На случай нестандартного кейса оставляем хотя бы самый дорогой приз.
+    if (!clean.length && Array.isArray(prizes) && prizes.length) {
+        const best = prizes.reduce((a,b) => Number(a.price)>Number(b.price)?a:b);
+        clean.push({...best}); cleanWeights.push(1);
+    }
     return {prizes: clean, weights: cleanWeights};
+}
+
+function calibrateCaseWeights(prizes, baseWeights, casePrice, targetRtp = 0.88) {
+    const values = prizes.map(p => Math.max(0, Number(p.price)||0));
+    const base = baseWeights.map(w => Math.max(0.0001, Number(w)||0));
+    if (!values.length) return base;
+    const min = Math.min(...values), max = Math.max(...values);
+    const target = Math.min(max, Math.max(min, Number(casePrice) * targetRtp));
+    const mean = a => {
+        const ws = base.map((w,i)=>w*Math.exp(a*((values[i]-min)/Math.max(0.000001,max-min))));
+        const sum=ws.reduce((x,y)=>x+y,0);
+        return ws.reduce((x,w,i)=>x+w*values[i],0)/sum;
+    };
+    let lo=-64, hi=64;
+    for(let i=0;i<90;i++) { const mid=(lo+hi)/2; if(mean(mid)>target) hi=mid; else lo=mid; }
+    const alpha=(lo+hi)/2;
+    return base.map((w,i)=>w*Math.exp(alpha*((values[i]-min)/Math.max(0.000001,max-min))));
 }
 
 function openCase(id,name,pr,img,prizes,weights) {
     const prepared = prepareCasePrizes(prizes, weights, pr);
     prizes = prepared.prizes;
     weights = prepared.weights;
-    const boostedWeights = getBoostedCaseWeights(prizes, weights);
-    const rtp = effectiveRtp("cases");
-    const caseWeights = boostedWeights.map((weight, index) => {
-        const price = Math.max(0.001, Number(prizes[index].price) || 0.001);
-        const normalized = (price - Math.min(...prizes.map(p => Number(p.price) || 0))) /
-            Math.max(0.001, Math.max(...prizes.map(p => Number(p.price) || 0)) - Math.min(...prizes.map(p => Number(p.price) || 0)));
-        return weight * Math.pow(price, (rtp - 1) * 1.5);
-    });
+    const caseWeights = calibrateCaseWeights(prizes, weights, pr, 0.88);
     curCase={id,name,pr,img,prizes,weights:caseWeights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
     $("detail-case-title").textContent=name; $("case-big-image").src=img;
@@ -3459,6 +3470,54 @@ function adminEditBalance(id, nm, b) {
         .catch(err => alert("Ошибка изменения баланса: " + (err.message || err)));
     }
 }
+
+/* ===== GAME SOUND EFFECTS (Web Audio, no external files) ===== */
+let tuchaAudioCtx = null;
+let tuchaSoundsEnabled = localStorage.getItem("tucha_sounds") !== "off";
+function playTuchaSound(kind="tap") {
+    if (!tuchaSoundsEnabled) return;
+    try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        tuchaAudioCtx = tuchaAudioCtx || new Ctx();
+        if (tuchaAudioCtx.state === "suspended") tuchaAudioCtx.resume();
+        const now=tuchaAudioCtx.currentTime;
+        const notes = kind === "win" ? [660,880,1100] : kind === "lose" ? [330,220] : kind === "upgrade" ? [440,620,820,1040] : kind === "case" ? [390,520,690] : [520];
+        notes.forEach((freq,i)=>{
+            const osc=tuchaAudioCtx.createOscillator(), gain=tuchaAudioCtx.createGain();
+            osc.type=kind === "lose" ? "triangle" : "sine";
+            osc.frequency.setValueAtTime(freq,now+i*.075);
+            gain.gain.setValueAtTime(.0001,now+i*.075);
+            gain.gain.exponentialRampToValueAtTime(kind === "tap" ? .035 : .055,now+i*.075+.012);
+            gain.gain.exponentialRampToValueAtTime(.0001,now+i*.075+.13);
+            osc.connect(gain); gain.connect(tuchaAudioCtx.destination);
+            osc.start(now+i*.075); osc.stop(now+i*.075+.15);
+        });
+    } catch(e) {}
+}
+function toggleTuchaSounds() {
+    tuchaSoundsEnabled=!tuchaSoundsEnabled;
+    localStorage.setItem("tucha_sounds",tuchaSoundsEnabled?"on":"off");
+    if(tuchaSoundsEnabled) playTuchaSound("win");
+    alert("Звуки " + (tuchaSoundsEnabled ? "включены" : "выключены"));
+}
+document.addEventListener("click", function(e) {
+    const target=e.target.closest("button,.game-card,.case-card,.upgrade-gift-choice");
+    if(!target || target.disabled) return;
+    const label=(target.textContent||"").toLowerCase();
+    if(label.includes("открыть") || target.classList.contains("case-card")) playTuchaSound("case");
+    else if(label.includes("апгрейд") || label.includes("улучшить")) playTuchaSound("upgrade");
+    else playTuchaSound("tap");
+}, true);
+
+/* Sound toggle button */
+(function addSoundToggle(){
+    const b=document.createElement("button"); b.type="button"; b.id="tucha-sound-toggle";
+    b.textContent=tuchaSoundsEnabled?"🔊":"🔇"; b.title="Включить/выключить звуки";
+    b.style.cssText="position:fixed;right:12px;bottom:88px;z-index:220;border:2px solid rgba(151,102,16,.25);border-radius:14px;background:#fff3c4;padding:9px 11px;font-size:18px;box-shadow:0 4px 12px #6b4b1833";
+    b.addEventListener("click",()=>{toggleTuchaSounds();b.textContent=tuchaSoundsEnabled?"🔊":"🔇";});
+    document.body.appendChild(b);
+})();
 
 /* INIT */
 loadUserData();
