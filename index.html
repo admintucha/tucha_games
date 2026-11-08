@@ -1308,6 +1308,13 @@ header, .game-top-bar {
     inset 0 -4px 9px rgba(133,82,10,.15) !important;
 }
 
+
+/* PROMO CODES */
+.promo-card { background:linear-gradient(145deg,#fff9e4,#f4dfa0); border:2px solid rgba(157,107,18,.25); border-radius:22px; padding:18px; box-shadow:0 9px 22px rgba(104,69,8,.12); }
+.promo-input { width:100%; padding:16px; border:2px solid rgba(190,135,24,.35); border-radius:14px; background:#fffdf5; color:#493508; font-size:18px; font-weight:950; text-align:center; text-transform:uppercase; letter-spacing:1px; }
+.promo-status { min-height:22px; margin-top:10px; text-align:center; font-size:13px; font-weight:900; }
+.admin-promo-row { display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff8df;border:1px solid #ead18a;border-radius:12px;padding:10px;margin-top:8px;font-size:12px; }
+
 </style>
 </head>
 
@@ -1523,6 +1530,23 @@ header, .game-top-bar {
         </div>
     </section>
 
+
+    <!-- PROMO CODES TAB -->
+    <section id="tab-promos" class="tab">
+        <div class="games-header">🎟️ Промокоды</div>
+        <div class="promo-card">
+            <div style="font-size:38px;text-align:center;margin:2px 0 8px;">🎁</div>
+            <div style="font-size:18px;font-weight:950;text-align:center;margin-bottom:6px;">Активируй промокод</div>
+            <div style="font-size:12px;color:#80621b;font-weight:800;text-align:center;margin-bottom:16px;">Введи код и получи награду на игровой баланс</div>
+            <input id="promo-code-input" class="promo-input" type="text" maxlength="24" placeholder="ВВЕДИ КОД" autocomplete="off" autocapitalize="characters">
+            <button id="promo-redeem-btn" class="primary gold" style="margin-top:12px;" onclick="redeemPromoCode()">АКТИВИРОВАТЬ</button>
+            <div id="promo-status" class="promo-status"></div>
+        </div>
+        <div class="panel" style="margin-top:14px;font-size:12px;color:#80621b;font-weight:800;line-height:1.5;">
+            Один промокод можно активировать только один раз на аккаунт. Если код ограничен по количеству активаций или сроку действия, после окончания лимита он перестанет работать.
+        </div>
+    </section>
+
     <!-- PROFILE TAB -->
     <section id="tab-profile" class="tab">
         <div class="panel" style="text-align:center; padding-top:32px;">
@@ -1563,6 +1587,9 @@ header, .game-top-bar {
     </button>
     <button data-tab="inventory" onclick="switchTab('inventory')">
         <span class="nav-icon">🎒</span> ИНВЕНТАРЬ
+    </button>
+    <button data-tab="promos" onclick="switchTab('promos')">
+        <span class="nav-icon">🎟️</span> ПРОМО
     </button>
     <button data-tab="profile" onclick="switchTab('profile')">
         <span class="nav-icon">👤</span> ПРОФИЛЬ
@@ -1883,6 +1910,24 @@ header, .game-top-bar {
         <h3 style="margin: 0; font-size: 20px; color: #facc15;">👑 Админ Панель</h3>
         <button onclick="$('admin-modal').style.display='none'" style="background: #fff; padding: 8px 14px; border:none; border-radius: 10px; font-weight: 950;">✕</button>
     </div>
+
+    <div class="panel" style="margin-top:14px;">
+        <h4 style="margin:0 0 12px;color:#7c520b;">🎟️ Управление промокодами</h4>
+        <div style="display:grid;gap:8px;">
+            <input id="admin-promo-code" type="text" maxlength="24" placeholder="КОД (например TUCHA10)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;text-transform:uppercase;font-weight:900;">
+            <select id="admin-promo-type" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;font-weight:900;">
+                <option value="balance">На баланс — бонусные средства</option>
+                <option value="deposit">Промо-пополнение — средства на баланс</option>
+            </select>
+            <input id="admin-promo-amount" type="number" min="0.01" step="0.01" value="1" placeholder="Сумма награды ($)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;">
+            <input id="admin-promo-limit" type="number" min="0" step="1" value="100" placeholder="Лимит активаций (0 = без лимита)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;">
+            <label style="font-size:11px;">Дата окончания (необязательно)</label>
+            <input id="admin-promo-expiry" type="date" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;">
+            <button class="primary green" onclick="adminCreatePromo()">СОЗДАТЬ ПРОМОКОД</button>
+        </div>
+        <div id="admin-promo-status" style="font-size:12px;font-weight:900;margin-top:8px;"></div>
+        <div id="admin-promos-list" style="margin-top:10px;">Загрузка промокодов...</div>
+    </div>
     <div class="panel">
         <div id="admin-players-list" style="display: grid; gap: 8px; max-height: 400px; overflow-y: auto;">
             <p style="text-align:center;">Загрузка...</p>
@@ -1988,6 +2033,7 @@ function openGameScreen(gameId) {
     $("main-content").style.display = "none";
     $("screen-" + gameId).classList.add("active");
     if (gameId === 'roulette') drawRouletteWheel();
+    if (gameId === 'tower') resumeTowerRound();
     haptic("medium");
 }
 function closeGameScreen(gameId) {
@@ -2002,7 +2048,8 @@ function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
 function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
 function getStartParam() { return String(tg?.initDataUnsafe?.start_param || ""); }
 async function apiPost(payload) {
-    const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+    const securedPayload = { ...payload, initData: tg?.initData || "", userid: payload.userid || userId, username: payload.username || userName };
+    const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(securedPayload) });
     const data = await response.json();
     if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
     return data;
@@ -2056,7 +2103,7 @@ function loadUserData() {
     updateBalanceUI(); 
     renderInventory();
     if (!isDBConnected()) return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, start_param: getStartParam(), balance: balance}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, start_param: getStartParam(), initData: tg?.initData || ""}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
             balance = parseFloat(data.balance);
@@ -2090,21 +2137,20 @@ function loadUserData() {
 function saveUserData() {
     saveLocal();
     if (!isDBConnected()) return Promise.resolve();
-    // Все записи инвентаря отправляются строго по очереди. Это исключает ситуацию,
-    // когда ранний запрос перезаписывает более новое состояние и возвращает старый подарок.
-    const snapshot = { balance: Number(balance) || 0, inventory: JSON.stringify(inventory) };
     inventorySaveQueue = inventorySaveQueue.catch(() => {}).then(async () => {
-        const d = await apiPost({ action: "update", userid: userId, username: userName,
-            balance: snapshot.balance, inventory: snapshot.inventory, inventory_version: inventoryVersion });
-        if (d.status === "success") {
-            if (d.inventory_conflict && d.inventory !== undefined) {
-                try { inventory = JSON.parse(d.inventory || "[]"); } catch(e) { inventory = []; }
-                inventoryVersion = Number(d.inventory_version) || inventoryVersion;
-                balance = Number(d.balance ?? balance);
-                saveLocal(); updateBalanceUI(); renderInventory();
-            } else inventoryVersion = Number(d.inventory_version) || inventoryVersion;
-        } else console.warn("Не удалось сохранить игру:", d.message);
-    }).catch(e => console.warn("Ошибка сохранения игры:", e));
+        // Snapshot is made only when this queued request executes, not when it is enqueued.
+        // Thus an old delayed save cannot overwrite a newer inventory snapshot.
+        const snapshot = { balance:Number(balance)||0, inventory:JSON.stringify(inventory) };
+        const d = await apiPost({ action:"update", balance:snapshot.balance, inventory:snapshot.inventory, inventory_version:inventoryVersion });
+        if(d.status==="success"){
+            if(d.inventory_conflict){
+                try{inventory=JSON.parse(d.inventory||"[]");}catch(e){inventory=[];}
+                inventoryVersion=Number(d.inventory_version)||inventoryVersion;
+                // Do not overwrite authoritative server balance with a stale client snapshot.
+                balance=Number(d.balance??balance); saveLocal(); updateBalanceUI(); renderInventory();
+            }else inventoryVersion=Number(d.inventory_version)||inventoryVersion;
+        }else console.warn("Не удалось сохранить игру:",d.message);
+    }).catch(e=>console.warn("Ошибка сохранения игры:",e));
     return inventorySaveQueue;
 }
 
@@ -2351,19 +2397,18 @@ function playDice() {
 }
 
 /* TOWER LOGIC — 3D BLOCKS + FIXED FLOOR LAYOUT */
-let towerState = "idle", towerBet = 0, currentLevel = 0;
+let towerState = "idle", towerBet = 0, currentLevel = 0, towerRoundId = "";
 let towerLayout = [];
 const towerLevels = [
-    { cells: 5, bombs: 1, mult: 1.25 },
-    { cells: 4, bombs: 1, mult: 1.65 },
-    { cells: 3, bombs: 1, mult: 2.30 },
-    { cells: 3, bombs: 2, mult: 4.10 },
-    { cells: 2, bombs: 1, mult: 8.50 }
+    { cells: 5, bombs: 1, mult: 1.18 },
+    { cells: 4, bombs: 1, mult: 1.52 },
+    { cells: 3, bombs: 1, mult: 2.10 },
+    { cells: 3, bombs: 2, mult: 3.60 },
+    { cells: 2, bombs: 1, mult: 7.20 }
 ];
 
 function getTowerMultiplier(levelIndex) {
-    const base = Number(towerLevels[levelIndex]?.mult || 0);
-    return base * effectiveRtp("tower");
+    return Number(towerLevels[levelIndex]?.mult || 0);
 }
 
 const TOWER_GEM_ART = `<svg viewBox="0 0 64 64" role="img" aria-label="Золотой кристалл">
@@ -2454,102 +2499,104 @@ function createTowerLayout() {
     });
 }
 
-function handleTowerAction() {
+async function resumeTowerRound(){
+    if(!telegramUser||towerState==="playing")return;
+    try{
+        const d=await apiPost({action:"tower_resume"});
+        if(d.status!=="success"||!d.active)return;
+        towerRoundId=String(d.round_id||"");towerBet=Number(d.bet)||0;currentLevel=Number(d.level)||0;towerState="playing";
+        buildTower();
+        for(let i=0;i<towerLevels.length;i++){
+            const row=$("tower-row-"+i);
+            if(i<currentLevel){row.classList.remove("active-row");row.classList.add("passed-row");row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=true);}
+            else if(i===currentLevel){row.classList.add("active-row");row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=false);}
+            else row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=true);
+        }
+        $("tower-state-label").textContent=`ВОЗВРАТ В ИГРУ · ЭТАЖ ${currentLevel+1} ИЗ ${towerLevels.length}`;
+        const button=$("tower-button");
+        if(currentLevel>0){button.disabled=false;button.className="primary green";button.textContent=`ЗАБРАТЬ $${money(towerBet*getTowerMultiplier(currentLevel-1))}`;button.onclick=cashOutTower;}
+        else{button.disabled=true;button.className="primary gold";button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ";button.onclick=handleTowerAction;}
+        updateTowerProgress();
+    }catch(e){console.warn("Не удалось восстановить башню:",e);}
+}
+
+async function handleTowerAction() {
+    if (towerState === "playing") return;
     const b = Number($("tower-bet").value);
     if (!Number.isFinite(b) || b < 0.01 || b > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
-    balance = Math.round((balance - b + Number.EPSILON) * 100) / 100;
-    updateBalanceUI();
-    towerBet = b;
-    currentLevel = 0;
-    createTowerLayout();
-    towerState = "playing";
-    $("tower-state-label").textContent = "ЭТАЖ 1 ИЗ 5 — ВЫБЕРИ БЛОК";
-    $("tower-button").disabled = true;
-    $("tower-button").textContent = "ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ";
-    $("tower-button").className = "primary gold";
-    $("tower-button").onclick = handleTowerAction;
-    buildTower();
-    saveUserData();
-    haptic("medium");
+    const button=$("tower-button"); button.disabled=true; button.textContent="ЗАПУСК...";
+    try {
+        const d=await apiPost({action:"tower_start",bet:b});
+        if(d.status!=="success") throw new Error(d.message||"Не удалось начать башню.");
+        towerRoundId=String(d.round_id||""); towerBet=Number(d.bet)||b; currentLevel=0; towerLayout=[];
+        balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
+        towerState="playing";
+        $("tower-state-label").textContent="ЭТАЖ 1 ИЗ 5 — ВЫБЕРИ БЛОК";
+        button.disabled=true; button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ"; button.className="primary gold"; button.onclick=handleTowerAction;
+        buildTower(); haptic("medium");
+    } catch(e) {
+        button.disabled=false; button.textContent="СТАРТ БАШНИ";
+        await resumeTowerRound();
+        if(towerState!=="playing") alert(e.message||"Ошибка запуска башни.");
+    }
 }
 
-function clickTowerCell(rowIdx, cellIdx) {
+async function clickTowerCell(rowIdx, cellIdx) {
     if (towerState !== "playing" || rowIdx !== currentLevel) return;
-
-    const bombIndices = towerLayout[rowIdx] || [];
-    const isBomb = bombIndices.includes(cellIdx);
-    const rowEl = $("tower-row-" + rowIdx);
-    const cellButtons = rowEl.querySelectorAll(".tower-cell");
-
-    cellButtons.forEach((button, idx) => {
-        button.disabled = true;
-        const hit = bombIndices.includes(idx);
-        button.classList.remove("safe", "bomb");
-        button.classList.add(hit ? "reveal-bomb" : "reveal-safe");
-        if (idx === cellIdx) button.classList.add("picked");
-        button.innerHTML = `<span class="tower-cell-art">${hit ? TOWER_BOMB_ART : TOWER_GEM_ART}</span>`;
-        button.setAttribute("aria-label", hit ? "Бомба" : "Золотой кристалл");
-        button.style.animationDelay = `${idx * 55}ms`;
-    });
-
-    if (isBomb) {
-        towerState = "finished";
-        $("tower-state-label").textContent = "💥 БАШНЯ ОБРУШИЛАСЬ — ПОПРОБУЙ ЕЩЁ РАЗ";
-        $("tower-button").disabled = false;
-        $("tower-button").textContent = "ИГРАТЬ СНОВА";
-        $("tower-button").className = "primary red";
-        $("tower-button").onclick = handleTowerAction;
-        updateTowerProgress();
-        saveUserData();
-        notify("error");
-        return;
-    }
-
-    haptic("success");
-    rowEl.classList.remove("active-row");
-    rowEl.classList.add("passed-row");
-    currentLevel++;
-    updateTowerProgress();
-
-    if (currentLevel < towerLevels.length) {
-        const nextRow = $("tower-row-" + currentLevel);
-        nextRow.classList.add("active-row");
-        nextRow.querySelectorAll(".tower-cell").forEach(button => { button.disabled = false; });
-        const currentWin = towerBet * getTowerMultiplier(currentLevel - 1);
-        $("tower-state-label").textContent = `✅ ЭТАЖ ПРОЙДЕН! МОЖНО ЗАБРАТЬ $${money(currentWin)} ИЛИ ИДТИ ВЫШЕ`;
-        $("tower-button").disabled = false;
-        $("tower-button").className = "primary green";
-        $("tower-button").textContent = `ЗАБРАТЬ $${money(currentWin)}`;
-        $("tower-button").onclick = cashOutTower;
-    } else {
-        const finalWin = towerBet * getTowerMultiplier(towerLevels.length - 1);
-        balance = Math.round((balance + finalWin + Number.EPSILON) * 100) / 100;
-        updateBalanceUI();
-        saveUserData();
-        towerState = "finished";
-        $("tower-state-label").textContent = `🏆 БАШНЯ ПРОЙДЕНА! ВЫИГРЫШ $${money(finalWin)}`;
-        $("tower-button").disabled = false;
-        $("tower-button").className = "primary green";
-        $("tower-button").textContent = "ИГРАТЬ СНОВА";
-        $("tower-button").onclick = handleTowerAction;
-        notify("success");
+    const rowEl=$("tower-row-"+rowIdx), buttons=rowEl.querySelectorAll(".tower-cell");
+    buttons.forEach(b=>b.disabled=true);
+    try {
+        const d=await apiPost({action:"tower_pick",round_id:towerRoundId,cell_index:cellIdx});
+        if(d.status!=="success") throw new Error(d.message||"Не удалось проверить клетку.");
+        towerLayout[rowIdx]=Array.isArray(d.bombs)?d.bombs:[];
+        const bombs=towerLayout[rowIdx], isBomb=bombs.includes(cellIdx);
+        buttons.forEach((button,idx)=>{
+            const hit=bombs.includes(idx);
+            button.classList.remove("safe","bomb");
+            button.classList.add(hit?"reveal-bomb":"reveal-safe");
+            if(idx===cellIdx) button.classList.add("picked");
+            button.innerHTML=`<span class="tower-cell-art">${hit?TOWER_BOMB_ART:TOWER_GEM_ART}</span>`;
+            button.setAttribute("aria-label",hit?"Бомба":"Золотой кристалл");
+            button.style.animationDelay=`${idx*55}ms`;
+        });
+        balance=Number(d.balance); if(!Number.isFinite(balance)) balance=0; updateBalanceUI(); saveLocal();
+        if(d.result==="lost") {
+            towerState="finished";
+            $("tower-state-label").textContent="💥 БАШНЯ ОБРУШИЛАСЬ — ПОПРОБУЙ ЕЩЁ РАЗ";
+            $("tower-button").disabled=false; $("tower-button").textContent="ИГРАТЬ СНОВА"; $("tower-button").className="primary red"; $("tower-button").onclick=handleTowerAction;
+            updateTowerProgress(); notify("error"); return;
+        }
+        rowEl.classList.remove("active-row"); rowEl.classList.add("passed-row");
+        currentLevel=Number(d.level)||currentLevel+1; updateTowerProgress(); haptic("success");
+        if(d.result==="won") {
+            towerState="finished";
+            $("tower-state-label").textContent=`🏆 БАШНЯ ПРОЙДЕНА! ВЫИГРЫШ $${money(d.win)}`;
+            $("tower-button").disabled=false; $("tower-button").textContent="ИГРАТЬ СНОВА"; $("tower-button").className="primary green"; $("tower-button").onclick=handleTowerAction;
+            notify("success"); return;
+        }
+        const nextRow=$("tower-row-"+currentLevel);
+        if(nextRow){nextRow.classList.add("active-row");nextRow.querySelectorAll(".tower-cell").forEach(b=>b.disabled=false);}
+        const currentWin=towerBet*getTowerMultiplier(currentLevel-1);
+        $("tower-state-label").textContent=`✅ ЭТАЖ ПРОЙДЕН! МОЖНО ЗАБРАТЬ $${money(currentWin)} ИЛИ ИДТИ ВЫШЕ`;
+        $("tower-button").disabled=false; $("tower-button").className="primary green"; $("tower-button").textContent=`ЗАБРАТЬ $${money(currentWin)}`; $("tower-button").onclick=cashOutTower;
+    } catch(e) {
+        buttons.forEach(b=>b.disabled=false);
+        alert(e.message||"Ошибка башни.");
     }
 }
 
-function cashOutTower() {
-    if (towerState !== "playing" || currentLevel === 0) return;
-    const win = towerBet * getTowerMultiplier(currentLevel - 1);
-    balance = Math.round((balance + win + Number.EPSILON) * 100) / 100;
-    updateBalanceUI();
-    saveUserData();
-    towerState = "finished";
-    $("tower-state-label").textContent = `💰 ЗАБРАНО: $${money(win)}`;
-    $("tower-button").disabled = false;
-    $("tower-button").className = "primary green";
-    $("tower-button").textContent = "ИГРАТЬ СНОВА";
-    $("tower-button").onclick = handleTowerAction;
-    updateTowerProgress();
-    notify("success");
+async function cashOutTower() {
+    if(towerState!=="playing"||currentLevel===0||!towerRoundId)return;
+    const button=$("tower-button"); button.disabled=true; button.textContent="ЗАЧИСЛЯЕМ...";
+    try{
+        const d=await apiPost({action:"tower_cashout",round_id:towerRoundId});
+        if(d.status!=="success") throw new Error(d.message||"Не удалось забрать выигрыш.");
+        balance=Number(d.balance); if(!Number.isFinite(balance)) balance=0; updateBalanceUI(); saveLocal();
+        towerState="finished";
+        $("tower-state-label").textContent=`💰 ЗАБРАНО: $${money(d.win)}`;
+        button.disabled=false; button.className="primary green"; button.textContent="ИГРАТЬ СНОВА"; button.onclick=handleTowerAction;
+        updateTowerProgress(); notify("success");
+    }catch(e){button.disabled=false;alert(e.message||"Ошибка вывода.");}
 }
 
 /* UPGRADE LOGIC */
@@ -2558,7 +2605,7 @@ let upgradeChance = 47;
 let upgradeBusy = false;
 let upgradeMode = "money";
 let upgradeGiftIndex = null;
-const UPGRADE_RTP = 96.5; // Небольшое увеличение RTP с 94.5% до 96.5%.
+const UPGRADE_RTP = 95.0; // Серверный RTP; результат всегда определяется сервером.
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
@@ -2698,7 +2745,7 @@ function updateUpgradeUI() {
         $("upgrade-payout").textContent = "$" + money(payout);
     }
 
-    const shownChance = rtpChance(chance, "upgrade");
+    const shownChance = Math.max(1,Math.min(95,chance));
     $("upgrade-chance-value").textContent = (upgradeMode === "gift" ? shownChance.toFixed(1).replace(/\.0$/, "") : Math.round(shownChance)) + "%";
     $("upgrade-range-label").textContent = (upgradeMode === "gift" ? shownChance.toFixed(1).replace(/\.0$/, "") : Math.round(shownChance)) + "%";
     $("upgrade-wheel-chance").textContent = (upgradeMode === "gift" ? shownChance.toFixed(1).replace(/\.0$/, "") : Math.round(shownChance)) + "%";
@@ -2752,118 +2799,71 @@ function setUpgradeControlsDisabled(disabled) {
     });
 }
 
-function playUpgrade() {
+async function playUpgrade() {
     if (upgradeBusy || upgradeState === "spinning") return;
-
-    let bet = 0;
-    let chance = upgradeChance;
-    let multiplier = UPGRADE_RTP / Math.max(1, upgradeChance);
-    let payout = 0;
-    let stakeGift = null;
-    let target = null;
-    let stakeGiftIndex = null;
-
-    if (upgradeMode === "gift") {
-        stakeGiftIndex = upgradeGiftIndex;
-        stakeGift = getSelectedUpgradeGift();
-        if (!stakeGift) {
-            alert("Сначала выбери подарок из инвентаря!"); notify("error"); return;
-        }
-        target = getUpgradeGiftTarget(stakeGift);
-        if (!target) { alert("Не удалось определить следующий уровень подарка."); return; }
-        const sourcePrice = UPGRADE_GIFTS[upgradeGiftLevel(stakeGift)].price;
-        multiplier = target.price / sourcePrice;
-        chance = Math.min(95, Math.max(1, UPGRADE_RTP / multiplier));
-        payout = target.price;
-    } else {
-        bet = getUpgradeBet();
-        if (!Number.isFinite(bet) || bet < 0.01) {
-            alert("Минимальная ставка — $0.01"); notify("error"); return;
-        }
-        if (bet > balance) {
-            alert("Недостаточно средств!"); notify("error"); return;
-        }
-        payout = Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100;
+    let bet=0, chance=upgradeChance, stakeGift=getSelectedUpgradeGift(), target=null;
+    if(upgradeMode==="gift"){
+        if(!stakeGift){alert("Сначала выбери подарок из инвентаря!");notify("error");return;}
+        target=getUpgradeGiftTarget(stakeGift);
+        if(!target){alert("Не удалось определить следующий уровень подарка.");return;}
+    }else{
+        bet=getUpgradeBet();
+        if(!Number.isFinite(bet)||bet<0.01){alert("Минимальная ставка — $0.01");notify("error");return;}
+        if(bet>balance){alert("Недостаточно средств!");notify("error");return;}
     }
-
-    upgradeBusy = true;
-    upgradeState = "spinning";
-    const randomRoll = Math.random() * 100;
-    const isWin = randomRoll < rtpChance(chance, "upgrade");
-    const moneyPayout = upgradeMode === "money" ? payout : (target.type === "balance" ? payout : 0);
-
-    if (upgradeMode === "money") {
-        balance = Math.max(0, Math.round((balance - bet + Number.EPSILON) * 100) / 100);
-    } else {
-        // Сразу убираем ставочный подарок из локального инвентаря, но сохраняем
-        // итог только после завершения прокрутки (одной записью, без гонки запросов).
-        inventory.splice(stakeGiftIndex, 1);
-        upgradeGiftIndex = null;
-        renderInventory();
-        $("upgrade-gift-list").innerHTML = '<div class="upgrade-gift-empty">🎁 Подарок участвует в апгрейде…</div>';
-        $("upgrade-gift-target").textContent = "Дождись завершения прокрутки";
-    }
-    updateBalanceUI();
-    if (upgradeMode === "money") saveUserData();
-    setUpgradeControlsDisabled(true);
-    $("upgrade-result").className = "upgrade-result";
-    $("upgrade-result").textContent = "КОЛЕСО ВРАЩАЕТСЯ...";
-    $("upgrade-wheel-caption").textContent = "ПРОВЕРКА";
-    $("upgrade-button").textContent = "ПРОВЕРЯЕМ...";
-
-    const ring = $("upgrade-wheel-ring");
-    ring.classList.remove("won", "lost", "spinning");
-    ring.style.transition = "none";
-    ring.style.transform = "rotate(0deg)";
-    void ring.offsetWidth;
-    const turns = 7 + Math.floor(Math.random() * 3);
-    const landingAngle = randomRoll * 3.6;
-    const finalRotation = turns * 360 + (360 - landingAngle);
-    const spinDuration = 5600 + Math.floor(Math.random() * 700);
-    ring.classList.add("spinning");
-    ring.style.transition = `transform ${spinDuration}ms cubic-bezier(.08,.72,.08,1)`;
-    requestAnimationFrame(() => { ring.style.transform = `rotate(${finalRotation}deg)`; });
-    haptic("medium");
-
-    setTimeout(() => {
-        ring.classList.remove("spinning");
-        ring.classList.add(isWin ? "won" : "lost");
-        if (isWin) {
-            if (upgradeMode === "money") {
-                balance = Math.round((balance + moneyPayout + Number.EPSILON) * 100) / 100;
-                $("upgrade-result").textContent = `ПОБЕДА! ВЫИГРЫШ +$${money(moneyPayout)}`;
-            } else if (target.type === "gift") {
-                const newGift = { name: target.name, price: target.price, img: target.img, id: Date.now() + Math.random() };
-                inventory.push(newGift);
-                upgradeGiftIndex = inventory.length - 1;
-                $("upgrade-result").textContent = `🎉 ПОДАРОК УЛУЧШЕН: ${displayGiftName(target.name, target.img)}`;
-                renderInventory();
-            } else {
-                balance = Math.round((balance + moneyPayout + Number.EPSILON) * 100) / 100;
-                $("upgrade-result").textContent = `🎉 КУБОК ОБМЕНЯН НА $${money(moneyPayout)} НА БАЛАНС`;
+    upgradeBusy=true; upgradeState="spinning"; setUpgradeControlsDisabled(true);
+    $("upgrade-result").className="upgrade-result";
+    $("upgrade-result").textContent="ПРОВЕРЯЕМ СТАВКУ НА СЕРВЕРЕ...";
+    $("upgrade-wheel-caption").textContent="ПРОВЕРКА";
+    $("upgrade-button").textContent="ПРОВЕРЯЕМ...";
+    const requestId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+"-"+Math.random().toString(36).slice(2));
+    try{
+        const d=await apiPost({
+            action:"upgrade_play",request_id:requestId,mode:upgradeMode,
+            bet:bet,chance:chance,gift_id:upgradeMode==="gift"?String(stakeGift.id||""):""
+        });
+        if(d.status!=="success") throw new Error(d.message||"Сервер не принял апгрейд.");
+        const isWin=!!d.win;
+        chance=Number(d.chance)||chance;
+        const randomRoll=isWin?Math.random()*Math.max(1,chance):(chance+Math.random()*Math.max(1,100-chance));
+        const ring=$("upgrade-wheel-ring");
+        ring.classList.remove("won","lost","spinning"); ring.style.transition="none"; ring.style.transform="rotate(0deg)"; void ring.offsetWidth;
+        const turns=7+Math.floor(Math.random()*3), landingAngle=randomRoll*3.6, finalRotation=turns*360+(360-landingAngle);
+        const spinDuration=5600+Math.floor(Math.random()*700);
+        $("upgrade-result").textContent="КОЛЕСО ВРАЩАЕТСЯ...";
+        ring.classList.add("spinning"); ring.style.transition=`transform ${spinDuration}ms cubic-bezier(.08,.72,.08,1)`;
+        requestAnimationFrame(()=>{ring.style.transform=`rotate(${finalRotation}deg)`;});
+        haptic("medium");
+        await new Promise(resolve=>setTimeout(resolve,spinDuration+120));
+        ring.classList.remove("spinning"); ring.classList.add(isWin?"won":"lost");
+        balance=Number(d.balance)||0;
+        if(Array.isArray(d.inventory)) inventory=d.inventory;
+        else if(typeof d.inventory==="string"){try{inventory=JSON.parse(d.inventory||"[]");}catch(e){inventory=[];}}
+        inventoryVersion=Number(d.inventory_version)||inventoryVersion;
+        if(isWin){
+            if(upgradeMode==="money"){
+                $("upgrade-result").textContent=`ПОБЕДА! ВЫИГРЫШ +$${money(d.payout)}`;
+            }else if(d.target&&d.target.type==="balance"){
+                $("upgrade-result").textContent=`🎉 ПОДАРОК ОБМЕНЯН НА $${money(d.payout)} НА БАЛАНС`;
+            }else{
+                $("upgrade-result").textContent=`🎉 ПОДАРОК УЛУЧШЕН: ${displayGiftName(d.target?.name||"Подарок",d.target?.img||"")}`;
             }
-            $("upgrade-result").className = "upgrade-result win";
-            $("upgrade-wheel-caption").textContent = "УСПЕШНО!";
-            $("upgrade-button").textContent = "АПГРЕЙДИТЬ ЕЩЁ РАЗ";
-            notify("success");
-        } else {
-            $("upgrade-result").className = "upgrade-result lose";
-            $("upgrade-result").textContent = upgradeMode === "money"
-                ? `НЕ ПОВЕЗЛО. ПОТЕРЯНО $${money(bet)}`
-                : `НЕ ПОВЕЗЛО. ПОДАРОК ${displayGiftName(stakeGift.name, stakeGift.img)} ПОТЕРЯН`;
-            $("upgrade-wheel-caption").textContent = "НЕУДАЧА";
-            $("upgrade-button").textContent = "ПОПРОБОВАТЬ ЕЩЁ";
-            notify("error");
+            $("upgrade-result").className="upgrade-result win"; $("upgrade-wheel-caption").textContent="УСПЕШНО!"; notify("success");
+        }else{
+            $("upgrade-result").className="upgrade-result lose";
+            $("upgrade-result").textContent=upgradeMode==="money"?`НЕ ПОВЕЗЛО. ПОТЕРЯНО $${money(bet)}`:`НЕ ПОВЕЗЛО. ПОДАРОК ${displayGiftName(stakeGift?.name,stakeGift?.img)} ПОТЕРЯН`;
+            $("upgrade-wheel-caption").textContent="НЕУДАЧА"; notify("error");
         }
-        upgradeState = "idle";
-        upgradeBusy = false;
-        updateBalanceUI();
-        saveUserData();
-        renderInventory();
-        updateUpgradeUI();
-        setUpgradeControlsDisabled(false);
-        haptic("light");
-    }, spinDuration + 120);
+        $("upgrade-button").textContent="АПГРЕЙДИТЬ ЕЩЁ РАЗ";
+        updateBalanceUI(); saveLocal(); renderInventory();
+    }catch(e){
+        $("upgrade-result").className="upgrade-result lose";
+        $("upgrade-result").textContent=e.message||"Не удалось выполнить апгрейд.";
+        $("upgrade-wheel-caption").textContent="ОШИБКА";
+        alert(e.message||"Ошибка апгрейда.");
+    }finally{
+        upgradeState="idle"; upgradeBusy=false; updateUpgradeUI(); setUpgradeControlsDisabled(false); haptic("light");
+    }
 }
 
 /* ROULETTE LOGIC — 38 SECTORS, UNBIASED OUTCOMES, CORRECT PAYOUTS */
@@ -3278,7 +3278,66 @@ function renderInventory() {
     if (typeof renderUpgradeGiftList === "function") renderUpgradeGiftList();
 }
 
-function sellItem(i) { balance += inventory[i].price; inventory.splice(i,1); updateBalanceUI(); saveUserData(); renderInventory(); notify("success"); }
+async function sellItem(i) {
+    const item=inventory[i]; if(!item||!item.id)return;
+    const buttons=$("inventory-list").querySelectorAll("button"); buttons.forEach(b=>b.disabled=true);
+    try{
+        const d=await apiPost({action:"sell_inventory_item",item_id:String(item.id)});
+        if(d.status!=="success") throw new Error(d.message||"Не удалось продать предмет.");
+        balance=Number(d.balance)||0;
+        inventory=typeof d.inventory==="string"?JSON.parse(d.inventory||"[]"):(d.inventory||[]);
+        inventoryVersion=Number(d.inventory_version)||inventoryVersion;
+        updateBalanceUI();saveLocal();renderInventory();notify("success");
+    }catch(e){alert(e.message||"Ошибка продажи.");buttons.forEach(b=>b.disabled=false);}
+}
+
+
+async function redeemPromoCode(){
+    const input=$("promo-code-input"),button=$("promo-redeem-btn"),status=$("promo-status");
+    const code=String(input.value||"").trim().toUpperCase();
+    if(!code){status.style.color="#dc2626";status.textContent="Введи промокод.";return;}
+    button.disabled=true;button.textContent="ПРОВЕРЯЕМ...";status.textContent="";
+    try{
+        const d=await apiPost({action:"redeem_promo",code:code});
+        if(d.status!=="success")throw new Error(d.message||"Промокод не сработал.");
+        balance=Number(d.balance)||balance;updateBalanceUI();saveLocal();
+        status.style.color="#15803d";status.textContent=`Промокод активирован! Начислено +$${money(d.reward)}.`;
+        input.value="";notify("success");
+    }catch(e){status.style.color="#dc2626";status.textContent=e.message||"Ошибка активации.";notify("error");}
+    finally{button.disabled=false;button.textContent="АКТИВИРОВАТЬ";}
+}
+async function fetchAdminPromos(){
+    const box=$("admin-promos-list"); if(!box)return;
+    box.textContent="Загрузка промокодов...";
+    try{
+        const d=await apiPost({action:"admin_get_promos",admin_password:adminPasswordSession});
+        if(d.status!=="success")throw new Error(d.message||"Не удалось загрузить промокоды.");
+        const promos=d.promos||[];
+        box.innerHTML=promos.length?promos.map(p=>`<div class="admin-promo-row">
+            <div><b>${p.code}</b><div>${p.type==="deposit"?"Промо-пополнение":"Бонус на баланс"} · $${money(p.amount)}</div><div>Использовано: ${p.used}${Number(p.max_uses)>0?"/"+p.max_uses:"/∞"} · ${p.expires_at||"Без срока"}</div></div>
+            <button type="button" onclick="adminTogglePromo('${p.code}',${!p.active})" style="border:0;border-radius:9px;padding:8px 10px;font-weight:900;color:white;background:${p.active?"#dc2626":"#16a34a"}">${p.active?"ОТКЛЮЧИТЬ":"ВКЛЮЧИТЬ"}</button>
+        </div>`).join(""):'<div style="font-size:12px;color:#80621b;">Промокодов пока нет.</div>';
+    }catch(e){box.textContent=e.message||"Ошибка загрузки.";}
+}
+async function adminCreatePromo(){
+    const status=$("admin-promo-status");
+    try{
+        const d=await apiPost({action:"admin_create_promo",admin_password:adminPasswordSession,
+            code:$("admin-promo-code").value,type:$("admin-promo-type").value,
+            amount:Number($("admin-promo-amount").value),max_uses:Number($("admin-promo-limit").value),
+            expires_at:$("admin-promo-expiry").value});
+        if(d.status!=="success")throw new Error(d.message||"Не удалось создать промокод.");
+        status.style.color="#15803d";status.textContent="Промокод создан.";
+        $("admin-promo-code").value="";fetchAdminPromos();
+    }catch(e){status.style.color="#dc2626";status.textContent=e.message||"Ошибка создания.";}
+}
+async function adminTogglePromo(code,active){
+    try{
+        const d=await apiPost({action:"admin_toggle_promo",admin_password:adminPasswordSession,code:code,active:active});
+        if(d.status!=="success")throw new Error(d.message||"Не удалось изменить статус.");
+        fetchAdminPromos();
+    }catch(e){alert(e.message||"Ошибка промокода.");}
+}
 
 function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
 function closeDeposit() { $("deposit-modal").classList.remove("active"); }
@@ -3287,7 +3346,7 @@ function createDeposit() {
     const a = Number($("deposit-amount").value); if(a<1)return;
     if(!isDBConnected()){ $("deposit-status").textContent="База не подключена"; return; }
     $("deposit-pay").disabled=true; $("deposit-pay").textContent="СОЗДАЁМ СЧЁТ...";
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_invoice", userid:userId, username:userName, amount:a}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_invoice", userid:userId, username:userName, amount:a, initData:tg?.initData || ""}) })
     .then(r=>r.json()).then(d=>{
         if(d.status==="success"){ $("deposit-status").textContent="Оплатите в Crypto Bot"; window.open(d.pay_url,"_blank"); setInterval(()=>checkPayments(true),10000); }
     }).finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT"; });
@@ -3295,7 +3354,7 @@ function createDeposit() {
 
 function checkPayments(sil) {
     if(!isDBConnected()||!userLoaded)return;
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"check_payments", userid:userId, initData:tg?.initData || ""}) })
     .then(r=>r.json()).then(d=>{ if(Number(d.found)>0) loadUserData(); });
 }
 
@@ -3308,6 +3367,7 @@ function openAdminPanel() {
     adminPasswordSession = entered;
     $("admin-modal").style.display = "flex";
     fetchAllPlayers();
+    fetchAdminPromos();
 }
 
 function fetchAllPlayers() {
