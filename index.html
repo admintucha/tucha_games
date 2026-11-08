@@ -1582,13 +1582,6 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
         <h3 style="margin: 0; font-size: 20px; color: #facc15;">👑 Админ Панель</h3>
         <button onclick="$('admin-modal').style.display='none'" style="background: #fff; padding: 8px 14px; border:none; border-radius: 10px; font-weight: 950;">✕</button>
     </div>
-    <div class="panel" style="margin-bottom:14px;">
-        <h4 style="margin:0 0 6px;color:#332900;">🎯 RTP по игровым режимам</h4>
-        <div style="font-size:12px;color:#8a6d16;font-weight:800;margin-bottom:12px;">Общие настройки для всех игроков. Значение 100% — базовый уровень.</div>
-        <div id="admin-mode-rtp-list" style="display:grid;gap:8px;">
-            <p style="text-align:center;">Загрузка настроек RTP...</p>
-        </div>
-    </div>
     <div class="panel">
         <div id="admin-players-list" style="display: grid; gap: 8px; max-height: 400px; overflow-y: auto;">
             <p style="text-align:center;">Загрузка...</p>
@@ -1651,7 +1644,6 @@ let adminPlayersData = [];
 let adminPasswordSession = "";
 let referralData = { invited_count: 0, referral_balance: 0, total_earned: 0, referral_link: "" };
 let playerRtp = 1;
-let modeRtp = { crash:1, mines:1, tower:1, dice:1, cases:1, upgrade:1, roulette:1 };
 let inventoryVersion = 1;
 let settingsRefreshTimer = null;
 let inventorySaveQueue = Promise.resolve();
@@ -1726,20 +1718,7 @@ function applyReferralData(data) {
 function applyPlayerRtp(value) {
     const n = Number(value); playerRtp = Number.isFinite(n) ? Math.max(0, Math.min(3, n)) : 1;
 }
-function applyModeRtp(value) {
-    const defaults = { crash:1, mines:1, tower:1, dice:1, cases:1, upgrade:1, roulette:1 };
-    if (!value || typeof value !== "object") { modeRtp = defaults; return; }
-    Object.keys(defaults).forEach(mode => {
-        const n = Number(value[mode]);
-        defaults[mode] = Number.isFinite(n) ? Math.max(0, Math.min(3, n)) : 1;
-    });
-    modeRtp = defaults;
-}
-function effectiveRtp(mode) {
-    const globalValue = Number(modeRtp[mode]);
-    const modeValue = Number.isFinite(globalValue) ? globalValue : 1;
-    return Math.max(0, Math.min(9, playerRtp * modeValue));
-}
+function effectiveRtp() { return Math.max(0, Math.min(3, playerRtp)); }
 function rtpChance(baseChance, mode) {
     return Math.max(0, Math.min(100, Number(baseChance) * effectiveRtp(mode || "dice")));
 }
@@ -1748,7 +1727,7 @@ async function refreshPlayerSettings() {
     try {
         const d = await apiPost({ action: "get_settings", userid: userId, username: userName });
         if (d.status === "success") {
-            applyPlayerRtp(d.rtp); applyModeRtp(d.mode_rtp); applyReferralData(d.referral);
+            applyPlayerRtp(d.rtp); applyReferralData(d.referral);
             const activeRound = (typeof inCrash !== "undefined" && inCrash) || (typeof diceState !== "undefined" && diceState !== "idle") || (typeof towerState !== "undefined" && towerState === "playing") || (typeof minesState !== "undefined" && minesState === "playing") || (typeof upgradeBusy !== "undefined" && upgradeBusy) || (typeof rouletteIsSpinning !== "undefined" && rouletteIsSpinning) || (typeof opening !== "undefined" && opening);
             if (!activeRound && Number.isFinite(Number(d.balance)) && Math.abs(Number(d.balance) - balance) > 0.001) { balance = Number(d.balance); updateBalanceUI(); saveLocal(); }
         }
@@ -3037,7 +3016,6 @@ function fetchAllPlayers() {
     .then(r => r.json())
     .then(d => {
         if (d.status === "success" && d.players) {
-            renderAdminModeRtp(d.mode_rtp_percent || {});
             adminPlayersData = d.players;
             $("admin-players-list").innerHTML = d.players.map(p => {
                 let invCount = 0;
@@ -3048,48 +3026,20 @@ function fetchAllPlayers() {
                         <b>${p.username}</b>
                         <div style="font-size:11px; color:#888;">ID: ${p.userid}</div>
                         <div style="color:green; font-weight:900;">$${parseFloat(p.balance).toFixed(2)}</div>
-                        <div style="font-size:11px;color:#7c3aed;font-weight:900;">RTP: ${Number(p.rtp ?? 1).toFixed(2)}</div>
                     </div>
                     <div style="display:flex; gap:6px; flex-direction:column; align-items:flex-end;">
                         <button onclick="adminEditBalance('${p.userid}', '${p.username}', ${p.balance})" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">💰 Баланс</button>
                         <button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎒 Предметы (${invCount})</button>
-                        <button onclick="adminSetPlayerRtp('${p.userid}', ${Number(p.rtp ?? 1)})" style="background:#7c3aed; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎯 RTP: ${Number(p.rtp ?? 1).toFixed(2)}</button>
                     </div>
                 </div>
                 `;
             }).join('');
         } else {
             $("admin-players-list").innerHTML = '<p style="text-align:center;color:#dc2626;font-weight:900;">Ошибка: ' + String(d.message || "сервер не вернул список игроков") + '</p>';
-            $("admin-mode-rtp-list").innerHTML = '<p style="color:#dc2626;">' + String(d.message || "Не удалось загрузить настройки") + '</p>';
         }
     }).catch((err) => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки: ' + String(err.message || err) + '</p>'; });
 }
 
-function renderAdminModeRtp(values) {
-    const labels = { crash:"🚀 Ракетка", mines:"💣 Мины", tower:"🗼 Башня", dice:"🎲 Кости", cases:"🎁 Кейсы", upgrade:"⬆️ Апгрейд", roulette:"🎰 Рулетка" };
-    const root = $("admin-mode-rtp-list");
-    if (!root) return;
-    root.innerHTML = Object.keys(labels).map(mode => {
-        const value = Number(values[mode] ?? 100);
-        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff8d6;border-radius:12px;padding:9px 10px;">
-            <b style="font-size:13px;color:#332900;">${labels[mode]}</b>
-            <div style="display:flex;align-items:center;gap:7px;">
-                <b style="color:#7c3aed;">${value}%</b>
-                <button onclick="adminSetModeRtp('${mode}', ${value})" style="border:0;border-radius:8px;padding:7px 10px;background:#7c3aed;color:#fff;font-weight:900;">Изменить</button>
-            </div>
-        </div>`;
-    }).join("");
-}
-
-function adminSetModeRtp(mode, current) {
-    const entered = prompt("RTP режима в процентах (0–300):", String(current));
-    if (entered === null) return;
-    const value = Number(entered);
-    if (!Number.isFinite(value) || value < 0 || value > 300) { alert("Укажи значение от 0 до 300."); return; }
-    apiPost({ action:"admin_set_mode_rtp", admin_password:adminPasswordSession, mode, rtp_percent:value })
-      .then(data => { if (data.status !== "success") throw new Error(data.message || "Не удалось сохранить RTP"); alert("RTP сохранён: " + value + "%"); fetchAllPlayers(); })
-      .catch(err => alert("Ошибка сохранения RTP: " + (err.message || err)));
-}
 
 function adminViewInventory(targetUserId) {
     const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
@@ -3122,24 +3072,6 @@ function adminViewInventory(targetUserId) {
     haptic("light");
 }
 
-function adminSetPlayerRtp(id, currentValue) {
-    const entered = prompt("RTP игрока (1.00 = стандартный; например 0.80 или 1.10):", String(currentValue));
-    if (entered === null) return;
-    const value = Number(entered);
-    if (!Number.isFinite(value) || value < 0 || value > 2) {
-        alert("Укажи RTP от 0 до 2.");
-        return;
-    }
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "admin_set_rtp", admin_password: adminPasswordSession, target_userid: String(id), rtp: value }) })
-        .then(r => r.json()).then(data => {
-            if (data.status !== "success") throw new Error(data.message || "Не удалось изменить RTP.");
-            const player = adminPlayersData.find(p => String(p.userid) === String(id));
-            if (player) player.rtp = value;
-            if (String(id) === userId) playerRtp = value;
-            alert("RTP игрока обновлён: " + value.toFixed(2));
-            fetchAllPlayers();
-        }).catch(err => alert(err.message || "Ошибка изменения RTP."));
-}
 
 function adminDeletePlayerItem(targetUserId, originalIndex) {
     if (!confirm("Удалить этот подарок из инвентаря игрока?")) return;
