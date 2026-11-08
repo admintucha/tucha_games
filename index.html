@@ -1322,6 +1322,37 @@ input:not([type="range"]), textarea, select { pointer-events:auto !important; po
 input[type="text"], input[type="number"], input[type="date"], textarea { -webkit-appearance:none; appearance:none; }
 input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28) !important; outline-offset:1px; }
 
+
+/* ===== NOVEMBER 2026: SMOOTH GOLDEN BACKGROUND + TOWER PERFORMANCE ===== */
+html, body {
+  background: linear-gradient(145deg,#fff3bd 0%,#ffe99a 38%,#ffdf78 72%,#fff0b2 100%) !important;
+  background-attachment: fixed !important;
+}
+body { position:relative; isolation:isolate; }
+body::before {
+  width: min(900px,130vw); height: min(900px,130vw); top:-360px;
+  background: radial-gradient(circle at 50% 45%,rgba(255,255,255,.88) 0%,rgba(255,255,255,.42) 34%,rgba(255,255,255,0) 72%) !important;
+  z-index:-2;
+}
+body::after {
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background: radial-gradient(ellipse at 8% 22%,rgba(255,255,255,.34),transparent 38%),
+              radial-gradient(ellipse at 92% 68%,rgba(255,190,55,.17),transparent 42%);
+}
+.tower-container {
+  background:linear-gradient(155deg,rgba(255,255,255,.88),rgba(255,246,205,.92)) !important;
+  border:2px solid rgba(255,255,255,.92) !important;
+  box-shadow:0 12px 30px rgba(171,112,0,.13),inset 0 1px 0 #fff !important;
+}
+.tower-row { min-height:64px; transition:opacity .16s,border-color .16s,transform .16s; }
+.tower-row.active-row { transform:translateY(-1px); }
+.tower-cell { min-width:38px; min-height:42px; touch-action:manipulation; }
+.tower-cell-art svg { width:38px;height:38px;display:block; }
+#tower-button:disabled { opacity:.82; filter:saturate(.9); }
+.tower-cell.reveal-safe,.tower-cell.reveal-bomb { animation:towerReveal .22s ease-out both; }
+@keyframes towerReveal { from { transform:scale(.78) rotateY(35deg);opacity:.55 } to { transform:scale(1) rotateY(0);opacity:1 } }
+.case-prize-badge {font-size:10px;font-weight:950;color:#8a5a00;}
+
 </style>
 </head>
 
@@ -2531,7 +2562,9 @@ async function handleTowerAction() {
     if (towerState === "playing") return;
     const b = Number($("tower-bet").value);
     if (!Number.isFinite(b) || b < 0.01 || b > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
-    const button=$("tower-button"); button.disabled=true; button.textContent="ЗАПУСК...";
+    const button=$("tower-button"); button.disabled=true; button.textContent="СОЗДАЁМ БАШНЮ…";
+    $("tower-state-label").textContent="Подготавливаем этажи…";
+    button.setAttribute("aria-busy","true");
     try {
         const d=await apiPost({action:"tower_start",bet:b});
         if(d.status!=="success") throw new Error(d.message||"Не удалось начать башню.");
@@ -2540,11 +2573,12 @@ async function handleTowerAction() {
         towerState="playing";
         $("tower-state-label").textContent="ЭТАЖ 1 ИЗ 5 — ВЫБЕРИ БЛОК";
         button.disabled=true; button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ"; button.className="primary gold"; button.onclick=handleTowerAction;
-        buildTower(); haptic("medium");
+        buildTower(); button.removeAttribute("aria-busy"); haptic("medium");
     } catch(e) {
+        button.removeAttribute("aria-busy");
         button.disabled=false; button.textContent="СТАРТ БАШНИ";
-        await resumeTowerRound();
-        if(towerState!=="playing") alert(e.message||"Ошибка запуска башни.");
+        $("tower-state-label").textContent="Не удалось запустить. Попробуй ещё раз.";
+        alert(e.message||"Ошибка запуска башни.");
     }
 }
 
@@ -2552,6 +2586,7 @@ async function clickTowerCell(rowIdx, cellIdx) {
     if (towerState !== "playing" || rowIdx !== currentLevel) return;
     const rowEl=$("tower-row-"+rowIdx), buttons=rowEl.querySelectorAll(".tower-cell");
     buttons.forEach(b=>b.disabled=true);
+    $("tower-state-label").textContent="Проверяем выбранный блок…";
     try {
         const d=await apiPost({action:"tower_pick",round_id:towerRoundId,cell_index:cellIdx});
         if(d.status!=="success") throw new Error(d.message||"Не удалось проверить клетку.");
@@ -2588,6 +2623,7 @@ async function clickTowerCell(rowIdx, cellIdx) {
         $("tower-button").disabled=false; $("tower-button").className="primary green"; $("tower-button").textContent=`ЗАБРАТЬ $${money(currentWin)}`; $("tower-button").onclick=cashOutTower;
     } catch(e) {
         buttons.forEach(b=>b.disabled=false);
+        $("tower-state-label").textContent="Не удалось проверить блок. Выбери его ещё раз.";
         alert(e.message||"Ошибка башни.");
     }
 }
@@ -3170,26 +3206,43 @@ function caseDollarIcon() {
 
 function prepareCasePrizes(prizes, weights, casePrice) {
     const icon = caseDollarIcon();
-    const floor = Math.max(0.01, Number(casePrice) * 0.75);
+    const price = Math.max(0.01, Number(casePrice) || 0.01);
+    const floor = Math.round(price * 0.5 * 100) / 100;
+    const ceiling = Math.round(price * 10 * 100) / 100;
     const clean = [], cleanWeights = [];
     (Array.isArray(prizes) ? prizes : []).forEach((item, i) => {
         const prize = {...item};
+        let value = Math.round((Number(prize.price) || 0) * 100) / 100;
+        if (value < floor) return;
+        if (value > ceiling) { value = ceiling; prize.name = '$' + value.toFixed(2); prize.img = icon; }
+        prize.price = value;
         const image = String(prize.img || '').toLowerCase();
         if (/case|prem|talagram|caser|casevip/.test(image)) {
-            prize.name = '$' + Number(prize.price || 0).toFixed(2);
-            prize.img = icon;
+            prize.name = '$' + value.toFixed(2); prize.img = icon;
         }
-        // Убираем мелкие денежные награды: оставляем выплаты от 75% цены кейса.
-        if (Number(prize.price) < floor) return;
         clean.push(prize);
         cleanWeights.push(Math.max(0.0001, Number(weights?.[i]) || 1));
     });
-    // На случай нестандартного кейса оставляем хотя бы самый дорогой приз.
-    if (!clean.length && Array.isArray(prizes) && prizes.length) {
-        const best = prizes.reduce((a,b) => Number(a.price)>Number(b.price)?a:b);
-        clean.push({...best}); cleanWeights.push(1);
+    // Дополнительные денежные награды расширяют пул от 0.5x до 10x.
+    // 5x и 10x имеют крайне маленький вес, но не являются невозможными.
+    const tiers = [
+      [0.50,24],[0.65,20],[0.80,18],[1.00,15],[1.25,11],
+      [1.50,8],[2.00,5],[3.00,2.2],[5.00,0.35],[10.00,0.025]
+    ];
+    const seen = new Set(clean.map(p => Math.round(Number(p.price) * 100)));
+    tiers.forEach(([ratio, weight]) => {
+        const value = Math.round(price * ratio * 100) / 100;
+        const cents = Math.round(value * 100);
+        if (value < floor || value > ceiling || seen.has(cents)) return;
+        clean.push({name:'$' + value.toFixed(2), price:value, img:icon});
+        cleanWeights.push(weight); seen.add(cents);
+    });
+    // Не оставляем кейс без призов даже при нестандартном наборе.
+    if (!clean.length) {
+        clean.push({name:'$' + floor.toFixed(2),price:floor,img:icon});
+        cleanWeights.push(1);
     }
-    return {prizes: clean, weights: cleanWeights};
+    return {prizes:clean,weights:cleanWeights};
 }
 
 function calibrateCaseWeights(prizes, baseWeights, casePrice, targetRtp = 0.88) {
