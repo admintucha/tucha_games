@@ -1353,6 +1353,143 @@ body::after {
 @keyframes towerReveal { from { transform:scale(.78) rotateY(35deg);opacity:.55 } to { transform:scale(1) rotateY(0);opacity:1 } }
 .case-prize-badge {font-size:10px;font-weight:950;color:#8a5a00;}
 
+
+/* ===== UPGRADE VISUAL REDESIGN V3 ===== */
+#screen-upgrade .upgrade-wheel-stage {
+  min-height:310px !important; padding:24px 12px !important; border-radius:30px !important;
+  background:radial-gradient(ellipse at 50% 42%,#ffffff 0%,#e9faff 43%,#bfeeff 76%,#8bdcff 100%) !important;
+  border:3px solid #fff !important;
+  box-shadow:0 12px 0 #55b8df,0 18px 30px rgba(16,110,160,.25),inset 0 0 0 3px rgba(36,177,232,.24) !important;
+}
+#screen-upgrade .upgrade-wheel-stage::before {width:292px;height:292px;border:2px dashed rgba(17,158,220,.32);box-shadow:0 0 0 12px rgba(255,255,255,.17)}
+#screen-upgrade .upgrade-wheel-stage::after {width:258px;height:258px;border:2px solid rgba(255,255,255,.85);box-shadow:0 0 22px rgba(22,163,224,.22)}
+#screen-upgrade .upgrade-wheel-wrap {width:238px !important;height:238px !important;flex-basis:238px !important;filter:drop-shadow(0 13px 8px rgba(28,82,105,.28))}
+#screen-upgrade .upgrade-wheel-ring {
+  border:8px solid #fff !important;
+  background:conic-gradient(from -90deg,#00a9e8 0%,#56d4ff var(--upgrade-chance,47%),#fafdff var(--upgrade-chance,47%) 100%) !important;
+  box-shadow:0 0 0 5px #48bce9,0 9px 0 #1479a9,0 15px 24px rgba(4,87,130,.32),inset 0 3px 7px rgba(255,255,255,.95) !important;
+}
+#screen-upgrade .upgrade-wheel-ring::before {inset:8px;background:repeating-conic-gradient(from 0deg,rgba(0,104,158,.48) 0deg 1.2deg,transparent 1.2deg 7deg)}
+#screen-upgrade .upgrade-wheel-face {inset:29px !important;border:5px solid #fff !important;background:radial-gradient(circle at 35% 20%,#fff 0%,#f5fdff 45%,#cdefff 100%) !important;box-shadow:inset 0 5px 13px rgba(255,255,255,.95),inset 0 -7px 15px rgba(39,160,210,.13),0 5px 12px rgba(0,95,145,.16) !important}
+#screen-upgrade .upgrade-face-arrow {font-size:38px !important;color:#079bd8 !important;text-shadow:0 3px 0 #a7e8ff,0 5px 9px rgba(0,120,180,.2)}
+#screen-upgrade .upgrade-face-chance {font-size:34px !important;color:#173b58 !important;text-shadow:0 2px 0 #fff}
+#screen-upgrade .upgrade-face-mult {font-size:15px !important;color:#008fc9 !important}
+#screen-upgrade .upgrade-wheel-pointer {top:-7px !important;border-left-width:12px !important;border-right-width:12px !important;border-top:23px solid #078ec8 !important;filter:drop-shadow(0 3px 0 #fff) drop-shadow(0 5px 3px rgba(0,65,105,.3)) !important}
+#screen-upgrade .upgrade-speed-card {padding:13px 15px;border-radius:18px;background:linear-gradient(145deg,#fff,#e7f8ff);border:2px solid #a9e5fb;box-shadow:0 6px 17px rgba(14,165,233,.13)}
+#screen-upgrade .upgrade-speed-head {display:flex;align-items:center;justify-content:space-between;gap:8px;color:#39738e;font-size:11px;font-weight:1000;letter-spacing:.7px}
+#screen-upgrade .upgrade-speed-head strong {color:#078fc9;font-size:14px}
+#screen-upgrade #upgrade-speed {width:100%;height:9px;margin:13px 0 5px;appearance:none;-webkit-appearance:none;border-radius:99px;background:linear-gradient(90deg,#12b8ed var(--speed-fill,47%),#d5edf7 var(--speed-fill,47%));outline:none;cursor:pointer}
+#screen-upgrade #upgrade-speed::-webkit-slider-thumb {appearance:none;width:23px;height:23px;border-radius:50%;background:linear-gradient(145deg,#fff,#bceeff);border:3px solid #079ed8;box-shadow:0 3px 8px rgba(0,100,150,.25)}
+#screen-upgrade #upgrade-speed::-moz-range-thumb {width:18px;height:18px;border-radius:50%;background:#dff7ff;border:3px solid #079ed8;box-shadow:0 3px 8px rgba(0,100,150,.25)}
+#screen-upgrade .upgrade-speed-scale {display:flex;justify-content:space-between;color:#83a9ba;font-size:9px;font-weight:950;letter-spacing:.8px}
+@media(max-width:380px){#screen-upgrade .upgrade-wheel-wrap{width:218px!important;height:218px!important;flex-basis:218px!important}#screen-upgrade .upgrade-wheel-stage{min-height:285px!important}}
+
+
+
+/* ===== TUCHA GAMES V4: BRIGHT, SOFT, ROUNDED VISUAL POLISH ===== */
+:root {
+  --tg-bg:#fff0a8;
+  --tg-surface:#fffdf3;
+  --tg-surface-warm:#fff4ce;
+  --tg-gold:#f6b928;
+  --tg-gold-deep:#e99a13;
+  --tg-ink:#49320a;
+  --tg-line:rgba(190,132,22,.22);
+}
+html, body {
+  background:#ffed9b !important;
+  color:var(--tg-ink) !important;
+}
+body {
+  background:
+    radial-gradient(ellipse 90% 42% at 50% 0%,rgba(255,255,255,.96),transparent 74%),
+    radial-gradient(ellipse 70% 48% at 8% 35%,rgba(255,255,255,.32),transparent 72%),
+    linear-gradient(155deg,#fff3b8 0%,#ffe99a 48%,#ffdf79 100%) !important;
+  background-attachment:fixed !important;
+}
+body::before {
+  width:min(1000px,140vw) !important;height:min(1000px,140vw) !important;top:-420px !important;
+  background:radial-gradient(circle,rgba(255,255,255,.8),rgba(255,255,255,.18) 42%,transparent 72%) !important;
+}
+body::after { opacity:.55 !important; }
+header,.game-top-bar {
+  background:rgba(255,239,169,.94) !important;
+  border-bottom:1px solid rgba(202,143,24,.18) !important;
+  box-shadow:0 5px 18px rgba(146,99,12,.09) !important;
+  backdrop-filter:blur(18px) !important;
+}
+.panel,.roulette-stage,.roulette-nav-tabs,.upgrade-control-card,
+.upgrade-mode-switch,.dice-info-box,.upgrade-gift-panel,.upgrade-range-card,
+.promo-card,.tower-container,.crash-players-status,.dice-result-wrapper,
+.case-detail-card,.roulette-bet-panel,.roulette-controls,.upgrade-wheel-stage {
+  border-radius:24px !important;
+}
+.panel,.roulette-stage,.roulette-nav-tabs,.upgrade-control-card,
+.upgrade-mode-switch,.dice-info-box,.upgrade-gift-panel,.upgrade-range-card,
+.promo-card,.tower-container,.crash-players-status,.dice-result-wrapper {
+  background:linear-gradient(145deg,rgba(255,255,250,.98),rgba(255,244,207,.97)) !important;
+  border:1px solid rgba(198,142,30,.19) !important;
+  box-shadow:0 5px 0 rgba(205,157,55,.16),0 12px 26px rgba(119,78,8,.09),inset 0 1px 0 #fff !important;
+}
+.game-card,.case-card,.case-detail-card,.inventory-item,.roulette-opt-btn,
+.upgrade-step-btn,.upgrade-mini-btn,.tower-row,.tower-cell,.cell {
+  border-radius:19px !important;
+}
+.game-card,.case-card {
+  background:linear-gradient(145deg,#fffefa 0%,#fff2c9 100%) !important;
+  border:1px solid rgba(255,255,255,.98) !important;
+  box-shadow:0 4px 0 #e7c36e,0 10px 20px rgba(116,76,9,.12),inset 0 1px 0 #fff !important;
+}
+.game-card img { border-radius:15px !important; }
+.primary,.btn-crash-blue,.roulette-tab-btn,.upgrade-speed-btn,
+#tower-button,#case-button {
+  border-radius:17px !important;
+}
+.primary:not(.green):not(.red),.btn-crash-blue,.roulette-tab-btn.active {
+  background:linear-gradient(135deg,#ffd65e 0%,#ffb928 55%,#f29b16 100%) !important;
+  color:#543400 !important;
+  border:1px solid rgba(255,255,255,.72) !important;
+  box-shadow:0 4px 0 #d68c16,0 8px 15px rgba(173,111,8,.16),inset 0 1px 0 rgba(255,255,255,.9) !important;
+  text-shadow:none !important;
+}
+.primary.green { border-radius:17px !important; }
+.primary.red { border-radius:17px !important; }
+input:not([type=range]),textarea,select,.promo-input,.upgrade-bet-input {
+  border-radius:15px !important;
+  background:#fffefa !important;
+  border-color:rgba(194,137,24,.28) !important;
+  color:#49320a !important;
+}
+input:focus,textarea:focus,select:focus {
+  outline:3px solid rgba(255,184,40,.24) !important;
+  border-color:#edb33b !important;
+}
+.tower-container { padding:12px !important; }
+.tower-row { border-radius:16px !important; overflow:hidden; }
+.tower-cell,.cell {
+  overflow:hidden;
+  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease !important;
+}
+.tower-cell:active,.cell:active { transform:scale(.96) !important; }
+.roulette-wheel-wrapper { filter:drop-shadow(0 10px 12px rgba(95,62,9,.2)) !important; }
+.upgrade-wheel-stage {
+  background:radial-gradient(ellipse at 50% 36%,#fff 0%,#effcff 48%,#bcecff 100%) !important;
+  border:3px solid #fff !important;
+  box-shadow:0 7px 0 #79c9e8,0 15px 28px rgba(28,137,180,.17),inset 0 0 0 2px rgba(39,175,222,.16) !important;
+}
+.upgrade-wheel-ring { border-radius:50% !important; }
+.upgrade-wheel-face { border-radius:50% !important; }
+.case-detail-card { overflow:hidden !important; }
+.roulette-opt-btn { min-height:44px; }
+button:focus-visible,.game-card:focus-visible { outline:3px solid rgba(28,145,220,.45) !important; outline-offset:2px; }
+@media (max-width:420px) {
+  .panel,.roulette-stage,.upgrade-control-card,.upgrade-gift-panel,.upgrade-range-card { border-radius:20px !important; }
+  .game-card,.case-card { border-radius:17px !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+
 </style>
 </head>
 
@@ -1796,6 +1933,12 @@ body::after {
                     <div id="upgrade-wheel-caption" class="upgrade-face-caption">ШАНС ПОБЕДЫ</div>
                 </div>
             </div>
+        </div>
+
+        <div class="upgrade-speed-card">
+            <div class="upgrade-speed-head"><span>⚡ СКОРОСТЬ ПРОКРУТКИ</span><strong id="upgrade-speed-value">9 / 18</strong></div>
+            <input id="upgrade-speed" type="range" min="1" max="18" step="1" value="9" oninput="setUpgradeSpeed(this.value)" aria-label="Скорость прокрутки апгрейда">
+            <div class="upgrade-speed-scale"><span>МЕДЛЕННО</span><span>БЫСТРО</span></div>
         </div>
 
         <div class="upgrade-mode-switch">
@@ -2537,11 +2680,15 @@ function createTowerLayout() {
     });
 }
 
+let towerResumeBusy = false;
 async function resumeTowerRound(){
-    if(!telegramUser||towerState==="playing")return;
+    if(!telegramUser||towerState==="playing"||towerResumeBusy)return;
+    towerResumeBusy=true;
+    const label=$("tower-state-label");
+    if(label) label.textContent="ПРОВЕРЯЕМ АКТИВНУЮ БАШНЮ…";
     try{
         const d=await apiPost({action:"tower_resume"});
-        if(d.status!=="success"||!d.active)return;
+        if(d.status!=="success"||!d.active){if(label)label.textContent="ГОТОВ К НОВОЙ ИГРЕ";return;}
         towerRoundId=String(d.round_id||"");towerBet=Number(d.bet)||0;currentLevel=Number(d.level)||0;towerState="playing";
         buildTower();
         for(let i=0;i<towerLevels.length;i++){
@@ -2555,7 +2702,8 @@ async function resumeTowerRound(){
         if(currentLevel>0){button.disabled=false;button.className="primary green";button.textContent=`ЗАБРАТЬ $${money(towerBet*getTowerMultiplier(currentLevel-1))}`;button.onclick=cashOutTower;}
         else{button.disabled=true;button.className="primary gold";button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ";button.onclick=handleTowerAction;}
         updateTowerProgress();
-    }catch(e){console.warn("Не удалось восстановить башню:",e);}
+    }catch(e){console.warn("Не удалось восстановить башню:",e);if(label&&towerState!=="playing")label.textContent="ГОТОВ К НОВОЙ ИГРЕ";}
+    finally{towerResumeBusy=false;}
 }
 
 async function handleTowerAction() {
@@ -2648,6 +2796,7 @@ let upgradeChance = 47;
 let upgradeBusy = false;
 let upgradeMode = "money";
 let upgradeGiftIndex = null;
+let upgradeSpeed = 9; // 1 = медленно, 18 = быстро
 const UPGRADE_RTP = 95.0; // Серверный RTP; результат всегда определяется сервером.
 
 const UPGRADE_GIFTS = [
@@ -2658,6 +2807,18 @@ const UPGRADE_GIFTS = [
     { name: "Ndtice", price: 7.50, img: "./ndtice.png" }
 ];
 const UPGRADE_TOP_GIFT_BALANCE = 10.00;
+
+function setUpgradeSpeed(value) {
+    if (upgradeBusy) return;
+    upgradeSpeed = Math.max(1, Math.min(18, Math.round(Number(value) || 1)));
+    const slider = $("upgrade-speed");
+    const label = $("upgrade-speed-value");
+    if (slider) {
+        slider.value = String(upgradeSpeed);
+        slider.style.setProperty("--speed-fill", ((upgradeSpeed - 1) / 17 * 100) + "%");
+    }
+    if (label) label.textContent = upgradeSpeed + " / 18";
+}
 
 function getUpgradeBet() {
     const value = Number($("upgrade-bet").value);
@@ -2836,6 +2997,7 @@ function setUpgradeControlsDisabled(disabled) {
     $("upgrade-bet").disabled = disabled || upgradeMode !== "money";
     $("upgrade-slider").disabled = disabled || upgradeMode === "gift";
     $("upgrade-button").disabled = disabled || (upgradeMode === "gift" && !getSelectedUpgradeGift());
+    if ($("upgrade-speed")) $("upgrade-speed").disabled = disabled;
     document.querySelectorAll("#screen-upgrade .upgrade-mode-btn, #screen-upgrade .upgrade-gift-choice").forEach(btn => { btn.disabled = disabled; });
     document.querySelectorAll("#screen-upgrade .upgrade-step-btn, #screen-upgrade .upgrade-mini-btn").forEach(btn => {
         btn.disabled = disabled || (upgradeMode === "gift" && !!btn.closest("#upgrade-chance-card"));
@@ -2872,7 +3034,8 @@ async function playUpgrade() {
         const ring=$("upgrade-wheel-ring");
         ring.classList.remove("won","lost","spinning"); ring.style.transition="none"; ring.style.transform="rotate(0deg)"; void ring.offsetWidth;
         const turns=7+Math.floor(Math.random()*3), landingAngle=randomRoll*3.6, finalRotation=turns*360+(360-landingAngle);
-        const spinDuration=5600+Math.floor(Math.random()*700);
+        const speedRatio=(upgradeSpeed-1)/17;
+        const spinDuration=Math.round(8200-(speedRatio*6000)+Math.random()*260);
         $("upgrade-result").textContent="КОЛЕСО ВРАЩАЕТСЯ...";
         ring.classList.add("spinning"); ring.style.transition=`transform ${spinDuration}ms cubic-bezier(.08,.72,.08,1)`;
         requestAnimationFrame(()=>{ring.style.transform=`rotate(${finalRotation}deg)`;});
@@ -3344,7 +3507,8 @@ function renderInventory() {
 
 async function sellItem(i) {
     const item=inventory[i]; if(!item||!item.id)return;
-    const buttons=$("inventory-list").querySelectorAll("button"); buttons.forEach(b=>b.disabled=true);
+    const buttons=$("inventory-list").querySelectorAll("button");
+    const button=buttons[i]; if(button){button.disabled=true;button.textContent="ПРОДАЁМ…";}
     try{
         const d=await apiPost({action:"sell_inventory_item",item_id:String(item.id)});
         if(d.status!=="success") throw new Error(d.message||"Не удалось продать предмет.");
@@ -3352,7 +3516,7 @@ async function sellItem(i) {
         inventory=typeof d.inventory==="string"?JSON.parse(d.inventory||"[]"):(d.inventory||[]);
         inventoryVersion=Number(d.inventory_version)||inventoryVersion;
         updateBalanceUI();saveLocal();renderInventory();notify("success");
-    }catch(e){alert(e.message||"Ошибка продажи.");buttons.forEach(b=>b.disabled=false);}
+    }catch(e){alert(e.message||"Ошибка продажи.");if(button){button.disabled=false;button.textContent="ПРОДАТЬ";}}
 }
 
 
@@ -3583,6 +3747,11 @@ updateUpgradeUI();
 renderRouletteOptions();
 drawRouletteWheel();
 updateTowerProgress();
+</script>
+
+<script>
+// Upgrade speed control initial state
+document.addEventListener("DOMContentLoaded", function(){ if (typeof setUpgradeSpeed === "function") setUpgradeSpeed(9); });
 </script>
 </body>
 </html>
