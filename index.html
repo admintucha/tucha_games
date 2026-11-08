@@ -1007,6 +1007,307 @@ nav button.active { color: #d97706; filter: drop-shadow(0 2px 6px rgba(217, 119,
     .case-detail-card.opening #case-button { animation:none !important; }
 }
 
+
+
+/* =====================================================
+   TUCHA GAMES — DARK GOLD THEME
+   Только оформление: игровая логика и API не изменены.
+   ===================================================== */
+html, body {
+    background: #e8c65f !important;
+    color: #493508 !important;
+}
+body {
+    background:
+        radial-gradient(ellipse at 50% -12%, rgba(255,246,202,.72) 0%, transparent 48%),
+        linear-gradient(180deg, #efd477 0%, #e6c15a 52%, #dcb34a 100%) !important;
+}
+body::before {
+    background: radial-gradient(circle, rgba(255,250,220,.42), transparent 70%) !important;
+}
+header {
+    background: rgba(224, 187, 79, .91) !important;
+    border-bottom-color: rgba(139, 93, 13, .22) !important;
+    box-shadow: 0 5px 18px rgba(104, 69, 8, .08);
+}
+.logo { color: #51370a !important; }
+.logo-text small { color: #9b5c0a !important; }
+.balance {
+    background: linear-gradient(145deg, #fff8df, #f8e8b1) !important;
+    border-color: rgba(157, 107, 18, .35) !important;
+    color: #51370a !important;
+    box-shadow: 0 4px 12px rgba(104, 69, 8, .13) !important;
+}
+.balance-icon { color: #b77912 !important; }
+
+.panel,
+.roulette-stage,
+.roulette-nav-tabs,
+.upgrade-control-card,
+.upgrade-mode-switch,
+.dice-info-box {
+    background-color: rgba(255, 244, 202, .88) !important;
+    border-color: rgba(153, 105, 18, .27) !important;
+    box-shadow: 0 9px 24px rgba(105, 70, 9, .12) !important;
+}
+.game-screen {
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,247,211,.55), transparent 48%),
+        linear-gradient(180deg, #e9c75f 0%, #dfbb51 100%) !important;
+}
+.game-top-bar {
+    background: rgba(226, 190, 83, .94) !important;
+    border-bottom-color: rgba(133, 88, 12, .2) !important;
+}
+.game-back-btn { color: #573b0b !important; }
+
+.games-header,
+.crash-players-status,
+.case-card-name,
+.case-detail-title { color: #493508 !important; }
+.game-card {
+    background: linear-gradient(145deg, #fff8df, #f2dda0) !important;
+    border-color: rgba(255, 248, 220, .9) !important;
+    box-shadow: 0 9px 22px rgba(104, 69, 8, .18) !important;
+}
+.primary:not(.green):not(.red) {
+    background: linear-gradient(135deg, #d99b20 0%, #bd7910 100%) !important;
+    box-shadow: 0 7px 19px rgba(116, 72, 7, .25) !important;
+}
+.primary.gold {
+    background: linear-gradient(135deg, #edbd43, #c98213) !important;
+}
+.btn-crash-blue {
+    background: linear-gradient(180deg, #e8b83e, #bd7910) !important;
+    box-shadow: 0 8px 22px rgba(116, 72, 7, .28) !important;
+}
+.crash-players-status {
+    background: rgba(255, 245, 211, .62) !important;
+}
+.mines-content .grid,
+.tower-container {
+    background: rgba(255, 244, 202, .72) !important;
+    border-color: rgba(151, 102, 16, .28) !important;
+    box-shadow: inset 0 2px 10px rgba(111, 72, 7, .08) !important;
+}
+.cell:not(.revealed-safe):not(.revealed-gold):not(.bomb),
+.tower-cell:not(.safe):not(.bomb) {
+    background: linear-gradient(145deg, #fff9e7, #f0d88f) !important;
+    border-bottom-color: #bd861e !important;
+    box-shadow: 0 5px 12px rgba(112, 74, 8, .16) !important;
+}
+.tower-row {
+    background: rgba(255, 247, 222, .9) !important;
+    border-color: rgba(151, 102, 16, .2) !important;
+}
+.dice-result-wrapper {
+    background: linear-gradient(145deg, #fff9e8, #f0d88f) !important;
+    border-color: rgba(151, 102, 16, .38) !important;
+    box-shadow: 0 9px 22px rgba(104, 69, 8, .14) !important;
+}
+.dice-result-val { color: #493508 !important; }
+.roulette-stage {
+    background: linear-gradient(145deg, rgba(255,248,222,.96), rgba(241,220,157,.92)) !important;
+}
+.roulette-nav-tabs {
+    background: rgba(255, 244, 202, .86) !important;
+}
+.roulette-tab-btn { color: #82601c !important; }
+.roulette-tab-btn.active {
+    background: linear-gradient(135deg, #d99b20, #bd7910) !important;
+}
+.roulette-opt-btn:not(.red-opt):not(.black-opt):not(.green-opt) {
+    background: linear-gradient(145deg, #fff9e8, #f1dfae) !important;
+    color: #51390d !important;
+}
+label, .range-row, .dice-info-label { color: #72521a !important; }
+input[type="number"] {
+    background: #fff8e3 !important;
+    color: #493508 !important;
+    border-color: rgba(151, 102, 16, .35) !important;
+    box-shadow: inset 0 2px 6px rgba(91, 57, 5, .06) !important;
+}
+input[type="range"] { accent-color: #b87912 !important; }
+.case-card {
+    border-color: rgba(194, 139, 35, .48) !important;
+    background: linear-gradient(150deg, #fff8df 0%, #f7e5ae 52%, #e9ca72 100%) !important;
+    box-shadow: 0 5px 0 #bd8b2b, 0 13px 25px rgba(92, 59, 7, .17), inset 0 2px 0 #fff9e8 !important;
+}
+.case-detail-card {
+    background: radial-gradient(ellipse at 50% 0%, #fff9e8 0%, #f6e4b1 55%, #e9ce83 100%) !important;
+    border-color: #d4a846 !important;
+    box-shadow: 0 7px 0 #b98525, 0 18px 38px rgba(92, 59, 7, .2), inset 0 2px 0 #fff9e8 !important;
+}
+.case-back { color: #98620d !important; }
+.upgrade-control-card,
+.upgrade-gift-panel,
+.upgrade-range-card {
+    background: rgba(255, 247, 222, .92) !important;
+    border-color: rgba(157, 111, 28, .28) !important;
+    box-shadow: 0 6px 18px rgba(104, 69, 8, .1) !important;
+}
+.upgrade-control-label { color: #86601b !important; }
+.upgrade-step-btn,
+.upgrade-mini-btn {
+    background: linear-gradient(145deg, #fff9e8, #f0dca7) !important;
+    border-color: rgba(157, 111, 28, .28) !important;
+    color: #634711 !important;
+}
+.upgrade-bet-input,
+.upgrade-chance-number { color: #493508 !important; }
+.upgrade-gift-heading { color: #493e27 !important; }
+
+
+
+/* =====================================================
+   DARKER GOLD + STRONGER 3D DEPTH — VISUAL ONLY
+   ===================================================== */
+html, body { background:#b98a2d !important; }
+body {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(255,229,151,.48) 0%, transparent 43%),
+    radial-gradient(ellipse at 50% 45%, rgba(255,213,104,.18), transparent 68%),
+    linear-gradient(180deg,#d7ad4b 0%,#c99a36 48%,#ad7925 100%) !important;
+  color:#392507 !important;
+}
+header,.game-top-bar {
+  background:linear-gradient(180deg,rgba(207,160,58,.98),rgba(169,119,31,.97)) !important;
+  border-bottom:1px solid rgba(255,226,145,.45) !important;
+  box-shadow:0 5px 0 rgba(111,70,13,.18),0 11px 24px rgba(74,43,5,.22),inset 0 1px 0 rgba(255,239,185,.55) !important;
+}
+.panel,.roulette-stage,.roulette-nav-tabs,.upgrade-control-card,.upgrade-mode-switch,.dice-info-box {
+  background:linear-gradient(145deg,rgba(255,239,190,.97),rgba(232,199,119,.96)) !important;
+  border:1px solid rgba(139,91,18,.35) !important;
+  box-shadow:0 4px 0 rgba(143,99,26,.34),0 12px 25px rgba(73,45,7,.2),inset 0 2px 0 rgba(255,255,230,.82),inset 0 -2px 5px rgba(137,91,17,.1) !important;
+}
+.game-screen {
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,230,159,.34),transparent 46%),linear-gradient(180deg,#d2a746 0%,#bc8a2e 100%) !important;
+}
+.game-card {
+  background:linear-gradient(145deg,#fff2c9 0%,#f0d58e 58%,#dcb65e 100%) !important;
+  border:1px solid rgba(255,239,190,.95) !important;
+  box-shadow:0 4px 0 #a97824,0 10px 0 rgba(116,74,13,.12),0 17px 25px rgba(64,39,5,.24),inset 0 2px 0 #fff9e5,inset 0 -3px 8px rgba(133,82,10,.12) !important;
+  transform:translateY(0); transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.game-card:active { transform:translateY(5px) scale(.985) !important;box-shadow:0 1px 0 #a97824,0 5px 10px rgba(64,39,5,.2),inset 0 2px 0 #fff9e5 !important; }
+.primary:not(.green):not(.red),.btn-crash-blue,.roulette-tab-btn.active {
+  background:linear-gradient(180deg,#f2ca62 0%,#d99d2e 48%,#a96813 100%) !important;
+  border:1px solid rgba(255,235,173,.72) !important;
+  box-shadow:0 4px 0 #80500f,0 8px 15px rgba(77,45,5,.28),inset 0 2px 0 rgba(255,248,211,.7),inset 0 -3px 5px rgba(101,57,4,.22) !important;
+  text-shadow:0 1px 1px rgba(83,48,4,.2);
+  transition:transform .14s ease,filter .14s ease,box-shadow .14s ease;
+}
+.primary:not(.green):not(.red):active,.btn-crash-blue:active {
+  transform:translateY(4px) !important;
+  box-shadow:0 0 0 #80500f,0 3px 7px rgba(77,45,5,.22),inset 0 2px 4px rgba(101,57,4,.2) !important;
+}
+.primary.gold { background:linear-gradient(180deg,#ffe08a,#dfa52f 52%,#a96813) !important; }
+.balance {
+  background:linear-gradient(145deg,#fff5d5,#e8c879) !important;
+  border-color:#bd8a2b !important;
+  box-shadow:0 3px 0 #a87520,0 7px 13px rgba(65,40,6,.2),inset 0 2px 0 #fff !important;
+}
+.mines-content .grid,.tower-container {
+  background:linear-gradient(145deg,rgba(160,111,31,.28),rgba(255,227,157,.38)) !important;
+  border:1px solid rgba(123,78,12,.32) !important;
+  box-shadow:inset 0 5px 14px rgba(73,43,4,.2),0 3px 0 rgba(255,229,165,.35) !important;
+}
+.cell:not(.revealed-safe):not(.revealed-gold):not(.bomb),.tower-cell:not(.safe):not(.bomb) {
+  background:linear-gradient(145deg,#fff4cf 0%,#e9ca7d 58%,#c99a43 100%) !important;
+  border:1px solid rgba(255,244,204,.9) !important;
+  border-bottom:4px solid #9d6b1e !important;
+  box-shadow:0 4px 0 rgba(113,72,13,.38),0 7px 12px rgba(66,40,5,.18),inset 0 2px 0 #fffbe9,inset 0 -3px 6px rgba(116,72,8,.12) !important;
+}
+.dice-result-wrapper,.roulette-opt-btn:not(.red-opt):not(.black-opt):not(.green-opt) {
+  box-shadow:0 4px 0 rgba(133,88,18,.32),0 9px 17px rgba(65,40,5,.17),inset 0 2px 0 #fff9e8 !important;
+}
+.case-card,.case-detail-card {
+  box-shadow:0 5px 0 #95651b,0 13px 25px rgba(67,40,5,.27),inset 0 2px 0 #fff9e8,inset 0 -4px 9px rgba(120,75,8,.13) !important;
+}
+.upgrade-control-card,.upgrade-gift-panel,.upgrade-range-card {
+  background:linear-gradient(145deg,#fff2c9,#e8cb83) !important;
+  box-shadow:0 4px 0 rgba(143,99,26,.3),0 10px 19px rgba(73,45,7,.17),inset 0 2px 0 #fff !important;
+}
+.upgrade-wheel-stage { filter:drop-shadow(0 12px 13px rgba(74,45,6,.25)); }
+.upgrade-wheel-ring { box-shadow:0 7px 0 rgba(92,59,10,.45),0 13px 22px rgba(63,38,5,.3),inset 0 3px 0 rgba(255,255,255,.65) !important; }
+.roulette-wheel-wrapper { filter:drop-shadow(0 12px 13px rgba(55,32,4,.38)); }
+.roulette-wheel-wrapper::before { box-shadow:0 5px 0 rgba(75,43,5,.55),0 10px 18px rgba(52,31,4,.3),inset 0 2px 0 rgba(255,255,255,.65) !important; }
+input[type="number"],.upgrade-bet-input {
+  background:linear-gradient(180deg,#fff9e7,#e9d39b) !important;
+  box-shadow:inset 0 3px 7px rgba(79,48,5,.16),0 2px 0 rgba(255,247,218,.8) !important;
+}
+@media (hover:hover) {
+  .game-card:hover { transform:translateY(-3px);filter:brightness(1.035);box-shadow:0 6px 0 #a97824,0 13px 0 rgba(116,74,13,.1),0 22px 29px rgba(64,39,5,.25),inset 0 2px 0 #fff9e5 !important; }
+  .primary:not(.green):not(.red):hover,.btn-crash-blue:hover { filter:brightness(1.08);transform:translateY(-1px); }
+}
+
+
+/* =====================================================
+   CENTER LIGHT / GOLDEN EDGES — FINAL VISUAL PASS
+   Только фон и глубина оформления; логика не меняется.
+   ===================================================== */
+html, body {
+  background: #bd8c2e !important;
+}
+body {
+  background:
+    radial-gradient(ellipse 78% 62% at 50% 23%,
+      rgba(255,246,205,.98) 0%,
+      rgba(255,231,158,.96) 24%,
+      rgba(241,207,116,.94) 49%,
+      rgba(205,155,57,.92) 76%,
+      rgba(157,103,25,.98) 115%),
+    linear-gradient(135deg,#a87320 0%,#d7ad4b 48%,#9e681d 100%) !important;
+  background-attachment: fixed !important;
+}
+body::before {
+  background:
+    radial-gradient(ellipse at 50% 24%,
+      rgba(255,255,229,.56) 0%,
+      rgba(255,244,194,.26) 32%,
+      transparent 72%) !important;
+  pointer-events: none;
+}
+.game-screen {
+  background:
+    radial-gradient(ellipse 82% 58% at 50% 18%,
+      #ffedb5 0%,
+      #f1d27e 42%,
+      rgba(204,155,61,.96) 76%,
+      #a87324 120%) !important;
+}
+header, .game-top-bar {
+  background: linear-gradient(180deg,
+    rgba(210,166,72,.98) 0%,
+    rgba(171,119,34,.98) 100%) !important;
+  border-bottom-color: rgba(255,231,164,.62) !important;
+  box-shadow:
+    0 5px 0 rgba(105,66,13,.25),
+    0 12px 25px rgba(78,48,7,.25),
+    inset 0 2px 0 rgba(255,244,202,.55) !important;
+}
+.panel, .roulette-stage, .roulette-nav-tabs,
+.upgrade-control-card, .upgrade-mode-switch, .dice-info-box,
+.upgrade-gift-panel, .upgrade-range-card {
+  background: linear-gradient(145deg,
+    rgba(255,249,224,.99) 0%,
+    rgba(250,229,174,.98) 55%,
+    rgba(231,196,112,.98) 100%) !important;
+  box-shadow:
+    0 5px 0 rgba(139,91,21,.3),
+    0 13px 27px rgba(74,45,7,.2),
+    inset 0 2px 0 rgba(255,255,245,.95),
+    inset 0 -3px 7px rgba(133,83,12,.12) !important;
+}
+.game-card, .case-card, .case-detail-card {
+  box-shadow:
+    0 5px 0 #94651c,
+    0 11px 0 rgba(116,74,13,.13),
+    0 19px 30px rgba(64,39,5,.27),
+    inset 0 2px 0 rgba(255,255,240,.98),
+    inset 0 -4px 9px rgba(133,82,10,.15) !important;
+}
+
 </style>
 </head>
 
