@@ -11,7 +11,7 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
     margin: 0; padding: 0; min-height: 100%;
-    background: #ffeb99;
+    background: #fff6cc;
     color: #332900;
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
@@ -31,7 +31,7 @@ body::before {
 header {
     position: sticky; top: 0; z-index: 20; height: 68px;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px; background: rgba(255, 245, 186, 0.85);
+    padding: 10px 16px; background: rgba(255, 251, 228, 0.92);
     border-bottom: 2px solid rgba(255, 215, 0, 0.3);
     backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
 }
@@ -99,7 +99,7 @@ main { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px 14px 110px; 
 /* ===== FULLSCREEN GAME SCREENS ===== */
 .game-screen {
     position: fixed; inset: 0; z-index: 150; display: none; flex-direction: column;
-    background: #ffeb99; overflow-y: auto; overflow-x: hidden;
+    background: #fff6cc; overflow-y: auto; overflow-x: hidden;
 }
 .game-screen.active { display: flex; }
 
@@ -428,7 +428,7 @@ input[type="range"] { width: 100%; accent-color: #f59e0b; margin-bottom: 16px; h
 }
 @keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .deposit-head { display: flex; justify-content: space-between; font-size: 19px; font-weight: 950; color: #332900; }
-.deposit-close { width: 34px; height: 34px; border: 0; border-radius: 10px; background: #ffeb99; font-weight: 950; color: #d97706; }
+.deposit-close { width: 34px; height: 34px; border: 0; border-radius: 10px; background: #fff6cc; font-weight: 950; color: #d97706; }
 
 /* ===== NAV ===== */
 nav {
@@ -1358,6 +1358,21 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
 .upgrade-wheel-ring.preview-spinning{animation:upgradePreviewSpin .85s linear infinite;will-change:transform}
 @media(max-width:360px){.upgrade-wheel-wrap{width:200px;height:200px;flex-basis:200px}.upgrade-wheel-stage{min-height:230px}.upgrade-control-card{padding:8px 7px}.upgrade-step-btn{width:30px;flex-basis:30px}.upgrade-bet-input,.upgrade-chance-number{font-size:18px!important}}
 
+
+/* ===== v13: колесо удачи, 6 кнопок меню ===== */
+nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
+.fw-stage { position: relative; width: 300px; max-width: 100%; margin: 0 auto 14px; }
+.fw-pointer { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 0; height: 0; z-index: 2;
+    border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 28px solid #dc2626; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+#wheel-canvas { display: block; width: 100%; height: auto; border-radius: 50%; box-shadow: 0 8px 22px rgba(217,119,6,.35); transition: transform 4.6s cubic-bezier(.12,.7,.1,1); }
+.fw-result { min-height: 24px; margin-bottom: 10px; font-weight: 950; color: #15803d; }
+.fw-prizes { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.fw-prize { background: #fffdf3; border: 2px solid rgba(245,158,11,.25); border-radius: 12px; padding: 8px 4px; text-align: center; font-size: 12px; font-weight: 900; }
+.fw-prize img { width: 34px; height: 34px; object-fit: contain; display: block; margin: 0 auto 4px; }
+.admin-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.admin-stat { background: #fff; border-radius: 12px; padding: 10px; border: 2px solid rgba(255,215,0,.3); }
+.admin-stat small { display: block; font-size: 10px; color: #8b6b16; font-weight: 800; }
+.admin-stat b { font-size: 17px; }
 </style>
 </head>
 
@@ -1422,9 +1437,6 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
             </div>
             <div class="game-card" onclick="openGameScreen('dice')">
                 <img src="./dicel.png" alt="Дайс">
-            </div>
-            <div class="game-card" onclick="openGameScreen('tower')">
-                <img src="./tower.png" alt="Башня">
             </div>
             <div class="game-card" onclick="openGameScreen('upgrade')">
                 <img src="./apgre.png" alt="Апгрейд">
@@ -1574,6 +1586,22 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
     </section>
 
 
+    <!-- DAILY WHEEL TAB -->
+    <section id="tab-wheel" class="tab">
+        <div class="games-header">🎡 Колесо удачи</div>
+        <div class="panel" style="text-align:center;">
+            <div style="font-size:12px;font-weight:800;color:#80621b;margin-bottom:14px;">Одно бесплатное вращение каждые 24 часа</div>
+            <div class="fw-stage"><div class="fw-pointer"></div><canvas id="wheel-canvas" width="300" height="300"></canvas></div>
+            <div id="wheel-result" class="fw-result"></div>
+            <button id="wheel-btn" class="primary gold" onclick="spinWheel()">ЗАГРУЗКА…</button>
+            <div id="wheel-timer" style="margin-top:10px;font-size:12px;font-weight:900;color:#80621b;min-height:16px;"></div>
+        </div>
+        <div class="panel" style="margin-top:14px;">
+            <div style="font-weight:950;margin-bottom:10px;">Призы колеса</div>
+            <div id="wheel-prizes" class="fw-prizes"></div>
+        </div>
+    </section>
+
     <!-- PROMO CODES TAB -->
     <section id="tab-promos" class="tab">
         <div class="games-header">🎟️ Промокоды</div>
@@ -1630,6 +1658,9 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
     </button>
     <button data-tab="inventory" onclick="switchTab('inventory')">
         <span class="nav-icon">🎒</span> ИНВЕНТАРЬ
+    </button>
+    <button data-tab="wheel" onclick="switchTab('wheel')">
+        <span class="nav-icon">🎡</span> КОЛЕСО
     </button>
     <button data-tab="promos" onclick="switchTab('promos')">
         <span class="nav-icon">🎟️</span> ПРОМО
@@ -1745,37 +1776,6 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
             <input id="dice-bet" type="number" min="0.01" step="0.01" value="0.10">
             
             <button id="btn-dice-action" class="primary gold" onclick="playDice()">СДЕЛАТЬ СТАВКУ</button>
-        </div>
-    </div>
-</div>
-
-<!-- TOWER GAME SCREEN -->
-<div id="screen-tower" class="game-screen">
-    <div class="game-top-bar">
-        <button class="game-back-btn" onclick="closeGameScreen('tower')">← Башня</button>
-        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
-            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
-        </div>
-    </div>
-    
-    <div class="tower-content">
-        <div class="panel">
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:950;">
-                <b>🏰 БАШНЯ</b>
-                <span id="tower-state-label" style="color:#d97706;">Новая игра</span>
-            </div>
-            
-            <div class="tower-hero">
-                <div class="tower-hero-badge">🏰</div>
-                <div><strong>ПОДНИМАЙСЯ ВЫШЕ</strong><span>На каждом этаже выбери безопасный блок</span></div>
-            </div>
-            <div id="tower-progress" class="tower-progress" aria-label="Прогресс башни"></div>
-            <div id="tower-container" class="tower-container"></div>
-            
-            <label style="margin-top:16px; display:block;">Сумма ставки ($)</label>
-            <input id="tower-bet" type="number" min="0.01" step="0.01" value="0.10">
-            
-            <button id="tower-button" class="primary gold" onclick="handleTowerAction()">СТАРТ БАШНИ</button>
         </div>
     </div>
 </div>
@@ -1954,13 +1954,16 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
         <button onclick="$('admin-modal').style.display='none'" style="background: #fff; padding: 8px 14px; border:none; border-radius: 10px; font-weight: 950;">✕</button>
     </div>
 
+    <div class="panel" style="margin-top:6px;">
+        <h4 style="margin:0 0 12px;color:#7c520b;">📊 Дашборд</h4>
+        <div id="admin-dashboard" class="admin-stat-grid">Загрузка…</div>
+    </div>
     <div class="panel" style="margin-top:14px;">
         <h4 style="margin:0 0 12px;color:#7c520b;">🎟️ Управление промокодами</h4>
         <div style="display:grid;gap:8px;">
             <input id="admin-promo-code" type="text" maxlength="24" placeholder="КОД (например TUCHA10)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;text-transform:uppercase;font-weight:900;">
             <select id="admin-promo-type" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;font-weight:900;">
                 <option value="balance">На баланс — бонусные средства</option>
-                <option value="deposit">Промо-пополнение — средства на баланс</option>
             </select>
             <input id="admin-promo-amount" type="number" min="0.01" step="0.01" value="1" placeholder="Сумма награды ($)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;">
             <input id="admin-promo-limit" type="number" min="0" step="1" value="100" placeholder="Лимит активаций (0 = без лимита)" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;">
@@ -1971,10 +1974,26 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
         <div id="admin-promo-status" style="font-size:12px;font-weight:900;margin-top:8px;"></div>
         <div id="admin-promos-list" style="margin-top:10px;">Загрузка промокодов...</div>
     </div>
+    <div class="panel" style="margin-top:14px;">
+        <h4 style="margin:0 0 10px;color:#7c520b;">🧾 Действия админа</h4>
+        <div id="admin-log" style="font-size:11px;font-weight:700;max-height:160px;overflow-y:auto;">…</div>
+    </div>
     <div class="panel">
+        <input id="admin-search" type="search" placeholder="Поиск по нику или ID…" oninput="renderAdminPlayers()" style="width:100%;padding:12px;border:1px solid #e8cf83;border-radius:10px;margin-bottom:10px;font-weight:800;">
         <div id="admin-players-list" style="display: grid; gap: 8px; max-height: 400px; overflow-y: auto;">
             <p style="text-align:center;">Загрузка...</p>
         </div>
+    </div>
+</div>
+
+<!-- ADMIN PLAYER CARD -->
+<div id="admin-player-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1002;display:none;align-items:center;justify-content:center;padding:20px;">
+    <div class="panel" style="width:100%;max-width:460px;max-height:86vh;overflow-y:auto;background:#fff;border-radius:20px;padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <h3 id="admin-player-title" style="margin:0;font-size:18px;">Игрок</h3>
+            <button onclick="$('admin-player-modal').style.display='none'" style="background:#fff6cc;border:none;padding:6px 12px;border-radius:10px;font-weight:950;color:#d97706;">✕</button>
+        </div>
+        <div id="admin-player-body"></div>
     </div>
 </div>
 
@@ -1983,7 +2002,7 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
     <div class="panel" style="width: 100%; max-width: 450px; max-height: 80vh; display: flex; flex-direction: column; background: #fff; border-radius: 20px; padding: 18px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 id="admin-inv-title" style="margin: 0; font-size: 18px; color: #332900;">🎒 Инвентарь игрока</h3>
-            <button onclick="$('admin-inv-modal').style.display='none'" style="background: #ffeb99; border: none; padding: 6px 12px; border-radius: 10px; font-weight: 950; color: #d97706;">✕</button>
+            <button onclick="$('admin-inv-modal').style.display='none'" style="background: #fff6cc; border: none; padding: 6px 12px; border-radius: 10px; font-weight: 950; color: #d97706;">✕</button>
         </div>
         <div id="admin-inv-sub" style="font-size: 13px; font-weight: 800; color: #16a34a; margin-bottom: 10px;"></div>
         <div id="admin-inv-list" class="inventory-grid" style="overflow-y: auto; max-height: 60vh; gap: 8px;"></div>
@@ -1992,7 +2011,7 @@ input:focus, textarea:focus, select:focus { outline:2px solid rgba(37,99,235,.28
 
 <script>
 const tg = window.Telegram?.WebApp;
-try { tg?.ready(); tg?.expand(); tg?.setHeaderColor("#ffeb99"); tg?.setBackgroundColor("#ffeb99"); } catch(e) {}
+try { tg?.ready(); tg?.expand(); tg?.setHeaderColor("#fff6cc"); tg?.setBackgroundColor("#fff6cc"); } catch(e) {}
 const telegramUser = tg?.initDataUnsafe?.user || null;
 const $ = id => document.getElementById(id);
 function money(number) { return (Math.round((Number(number) + Number.EPSILON) * 100) / 100).toFixed(2); }
@@ -2021,7 +2040,6 @@ function displayGiftName(value, imagePath = "") {
     return original;
 }
 
-const ADMIN_PASSWORD = "tucha2026";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAuc6L9YHv-IT77kz6sWEJEYyvKURRojhb8SjjBOS4ViCnK_af/exec";
 
 const userId = telegramUser ? String(telegramUser.id) : "demo_user";
@@ -2065,6 +2083,7 @@ function loadLocal() {
 }
 
 function switchTab(name) {
+    if (name === "wheel") loadWheel();
     document.querySelectorAll(".tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + name));
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
     haptic();
@@ -2076,7 +2095,6 @@ function openGameScreen(gameId) {
     $("main-content").style.display = "none";
     $("screen-" + gameId).classList.add("active");
     if (gameId === 'roulette') drawRouletteWheel();
-    if (gameId === 'tower') resumeTowerRound();
     haptic("medium");
 }
 function closeGameScreen(gameId) {
@@ -2202,6 +2220,12 @@ if (telegramUser) {
     if (telegramUser.photo_url) $("avatar").innerHTML = `<img src="${telegramUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
 }
 
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function logGame(game, bet, win) {
+    if (!isDBConnected() || !telegramUser) return;
+    apiPost({ action: "log_game", game: game, bet: Number(bet) || 0, win: Number(win) || 0 }).catch(() => {});
+}
+
 /* CRASH (RACKET) LOGIC */
 let crashState = "waiting", crashBet = 0, inCrash = false, crashMultiplier = 1, crashTarget = 2;
 let crashTimer = null, crashTick = null, crashHistoryList = [91.9, 86.8, 2.47, 9.75, 1.07];
@@ -2282,7 +2306,7 @@ function crashEnd() {
     crashHistoryList.unshift(Number(crashTarget.toFixed(2)));
     if (crashHistoryList.length > 7) crashHistoryList.pop();
     updateCrashHistoryUI();
-    if (inCrash) { inCrash = false; notify("error"); }
+    if (inCrash) { logGame("crash", crashBet, 0); inCrash = false; notify("error"); }
     $("btn-crash-action").disabled = true;
     $("btn-crash-action").textContent = "РАУНД ЗАВЕРШЁН";
     $("btn-crash-action").style.background = "#94a3b8";
@@ -2296,7 +2320,7 @@ function handleCrashAction() {
         inCrash = false;
         balance += win;
         updateBalanceUI();
-        saveUserData();
+        saveUserData(); logGame("crash", crashBet, win);
         notify("success");
         $("btn-crash-action").disabled = true;
         $("btn-crash-action").textContent = "ВЫИГРЫШ $" + money(win);
@@ -2331,7 +2355,7 @@ function handleMinesAction() {
         const win = Math.floor(mineBet*mineMult*100)/100;
         balance += win;
         updateBalanceUI();
-        saveUserData();
+        saveUserData(); logGame("mines", mineBet, win);
         revealMines();
         finishMines("ВЫИГРЫШ $"+money(win), "green");
         notify("success");
@@ -2364,7 +2388,7 @@ const ICON_BOMB = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" s
 function clickMine(i, c) {
     if(minesState!=="playing"||c.disabled) return;
     if(minePos.includes(i)) {
-        revealMines(); finishMines("ПРОИГРЫШ −$"+money(mineBet), "red"); notify("error"); return;
+        logGame("mines", mineBet, 0); revealMines(); finishMines("ПРОИГРЫШ −$"+money(mineBet), "red"); notify("error"); return;
     }
     const isEm = c.dataset.em==="true";
     if (isEm) { c.className = "cell revealed-gold"; c.innerHTML = ICON_GOLD_CLOUD; }
@@ -2433,213 +2457,10 @@ function playDice() {
                 $("dice-result").style.color = "#ef4444"; $("dice-result-sub").textContent = `ПРОИГРЫШ -$${bet.toFixed(2)}`;
                 notify("error");
             }
-            updateBalanceUI(); saveUserData();
+            updateBalanceUI(); saveUserData(); logGame("dice", bet, isWin ? Math.floor(bet * diceMult * 100) / 100 : 0);
             diceState = "idle"; $("btn-dice-action").disabled = false; $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
         }
     }, 50);
-}
-
-/* TOWER LOGIC — 3D BLOCKS + FIXED FLOOR LAYOUT */
-let towerState = "idle", towerBet = 0, currentLevel = 0, towerRoundId = "";
-let towerLayout = [];
-const towerLevels = [
-    { cells: 5, bombs: 1, mult: 1.18 },
-    { cells: 4, bombs: 1, mult: 1.52 },
-    { cells: 3, bombs: 1, mult: 2.10 },
-    { cells: 3, bombs: 2, mult: 3.60 },
-    { cells: 2, bombs: 1, mult: 7.20 }
-];
-
-function getTowerMultiplier(levelIndex) {
-    return Number(towerLevels[levelIndex]?.mult || 0);
-}
-
-const TOWER_GEM_ART = `<svg viewBox="0 0 64 64" role="img" aria-label="Золотой кристалл">
- <defs>
-  <linearGradient id="towerGemGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbd0"/><stop offset=".38" stop-color="#ffe45d"/><stop offset=".72" stop-color="#f5a900"/><stop offset="1" stop-color="#bd6500"/></linearGradient>
-  <linearGradient id="towerGemLight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-  <radialGradient id="towerGemGlow"><stop stop-color="#fff7a8" stop-opacity=".85"/><stop offset="1" stop-color="#ffc928" stop-opacity="0"/></radialGradient>
- </defs>
- <circle cx="32" cy="34" r="28" fill="url(#towerGemGlow)"/>
- <path d="M32 5 51 22 46 48 32 59 18 48 13 22Z" fill="url(#towerGemGold)" stroke="#fff4aa" stroke-width="2"/>
- <path d="M32 5 32 59 18 48 13 22Z" fill="#f9b817" opacity=".9"/>
- <path d="M32 5 51 22 46 48 32 59Z" fill="#ffd83d" opacity=".74"/>
- <path d="M13 22 32 26 51 22 32 5Z" fill="#fff2a0" opacity=".95"/>
- <path d="M18 48 32 26 46 48 32 59Z" fill="#e58a08" opacity=".58"/>
- <path d="M23 19 31 12 28 24Z" fill="url(#towerGemLight)"/>
- <path d="m51 10 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" fill="#fff6b0"/>
- <path d="m10 35 1.5 3.5L15 40l-3.5 1.5L10 45l-1.5-3.5L5 40l3.5-1.5Z" fill="#fff"/>
-</svg>`;
-const TOWER_BOMB_ART = `<svg viewBox="0 0 64 64" role="img" aria-label="Бомба">
- <defs>
-  <radialGradient id="towerBombBody" cx="30%" cy="22%"><stop stop-color="#fff1ee"/><stop offset=".35" stop-color="#ff7979"/><stop offset=".78" stop-color="#dc2626"/><stop offset="1" stop-color="#7f1d1d"/></radialGradient>
-  <linearGradient id="towerBombFuse" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff3a6"/><stop offset="1" stop-color="#f97316"/></linearGradient>
- </defs>
- <path d="M39 13 47 5 54 12 47 20Z" fill="#78350f"/><path d="M44 13 51 6" stroke="url(#towerBombFuse)" stroke-width="5" stroke-linecap="round"/>
- <path d="m54 5 2-4 2 4 5 1-4 3 1 5-4-3-4 3 1-5-4-3Z" fill="#fbbf24"/>
- <circle cx="31" cy="36" r="23" fill="url(#towerBombBody)" stroke="#7f1d1d" stroke-width="2"/>
- <ellipse cx="23" cy="25" rx="8" ry="5" fill="#fff" opacity=".38" transform="rotate(-30 23 25)"/>
- <path d="M22 42 29 49 42 31" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
-</svg>`;
-
-function updateTowerProgress() {
-    const progress = $("tower-progress");
-    if (!progress) return;
-    progress.innerHTML = towerLevels.map((_, idx) => {
-        const passed = idx < currentLevel;
-        const current = (towerState === "playing" && idx === currentLevel) || (towerState === "idle" && idx === 0);
-        return `<span class="tower-step ${passed ? "passed" : current ? "current" : ""}" title="Этаж ${idx + 1}"></span>`;
-    }).join("");
-}
-
-function buildTower() {
-    const cont = $("tower-container");
-    cont.innerHTML = "";
-    towerLevels.forEach((lvl, idx) => {
-        const row = document.createElement("div");
-        row.className = "tower-row" + (idx === 0 ? " active-row" : "");
-        row.id = "tower-row-" + idx;
-
-        const floorTag = document.createElement("div");
-        floorTag.className = "tower-floor-tag";
-        floorTag.innerHTML = `${String(idx + 1).padStart(2, "0")}<small>ЭТАЖ</small>`;
-
-        const cellsDiv = document.createElement("div");
-        cellsDiv.className = "tower-cells";
-        for (let c = 0; c < lvl.cells; c++) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "tower-cell";
-            btn.disabled = idx !== 0;
-            btn.dataset.row = idx;
-            btn.dataset.cell = c;
-            btn.setAttribute("aria-label", `Этаж ${idx + 1}, блок ${c + 1}`);
-            btn.innerHTML = `<span class="tower-cell-question">?</span>`;
-            btn.onclick = () => clickTowerCell(idx, c);
-            cellsDiv.appendChild(btn);
-        }
-
-        const multDiv = document.createElement("div");
-        multDiv.className = "tower-mult";
-        multDiv.textContent = "x" + getTowerMultiplier(idx).toFixed(2);
-
-        row.appendChild(floorTag);
-        row.appendChild(cellsDiv);
-        row.appendChild(multDiv);
-        cont.appendChild(row);
-    });
-    updateTowerProgress();
-}
-
-function createTowerLayout() {
-    towerLayout = towerLevels.map(level => {
-        const bombs = [];
-        while (bombs.length < level.bombs) {
-            const position = secureRandomInt(level.cells);
-            if (!bombs.includes(position)) bombs.push(position);
-        }
-        return bombs;
-    });
-}
-
-async function resumeTowerRound(){
-    if(!telegramUser||towerState==="playing")return;
-    try{
-        const d=await apiPost({action:"tower_resume"});
-        if(d.status!=="success"||!d.active)return;
-        towerRoundId=String(d.round_id||"");towerBet=Number(d.bet)||0;currentLevel=Number(d.level)||0;towerState="playing";
-        buildTower();
-        for(let i=0;i<towerLevels.length;i++){
-            const row=$("tower-row-"+i);
-            if(i<currentLevel){row.classList.remove("active-row");row.classList.add("passed-row");row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=true);}
-            else if(i===currentLevel){row.classList.add("active-row");row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=false);}
-            else row.querySelectorAll(".tower-cell").forEach(b=>b.disabled=true);
-        }
-        $("tower-state-label").textContent=`ВОЗВРАТ В ИГРУ · ЭТАЖ ${currentLevel+1} ИЗ ${towerLevels.length}`;
-        const button=$("tower-button");
-        if(currentLevel>0){button.disabled=false;button.className="primary green";button.textContent=`ЗАБРАТЬ $${money(towerBet*getTowerMultiplier(currentLevel-1))}`;button.onclick=cashOutTower;}
-        else{button.disabled=true;button.className="primary gold";button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ";button.onclick=handleTowerAction;}
-        updateTowerProgress();
-    }catch(e){console.warn("Не удалось восстановить башню:",e);}
-}
-
-async function handleTowerAction() {
-    if (towerState === "playing") return;
-    const b = Number($("tower-bet").value);
-    if (!Number.isFinite(b) || b < 0.01 || b > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
-    const button=$("tower-button"); button.disabled=true; button.textContent="ЗАПУСК...";
-    try {
-        const d=await apiPost({action:"tower_start",bet:b});
-        if(d.status!=="success") throw new Error(d.message||"Не удалось начать башню.");
-        towerRoundId=String(d.round_id||""); towerBet=Number(d.bet)||b; currentLevel=0; towerLayout=[];
-        balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
-        towerState="playing";
-        $("tower-state-label").textContent="ЭТАЖ 1 ИЗ 5 — ВЫБЕРИ БЛОК";
-        button.disabled=true; button.textContent="ВЫБЕРИ БЛОК НА 1 ЭТАЖЕ"; button.className="primary gold"; button.onclick=handleTowerAction;
-        buildTower(); haptic("medium");
-    } catch(e) {
-        button.disabled=false; button.textContent="СТАРТ БАШНИ";
-        await resumeTowerRound();
-        if(towerState!=="playing") alert(e.message||"Ошибка запуска башни.");
-    }
-}
-
-async function clickTowerCell(rowIdx, cellIdx) {
-    if (towerState !== "playing" || rowIdx !== currentLevel) return;
-    const rowEl=$("tower-row-"+rowIdx), buttons=rowEl.querySelectorAll(".tower-cell");
-    buttons.forEach(b=>b.disabled=true);
-    try {
-        const d=await apiPost({action:"tower_pick",round_id:towerRoundId,cell_index:cellIdx});
-        if(d.status!=="success") throw new Error(d.message||"Не удалось проверить клетку.");
-        towerLayout[rowIdx]=Array.isArray(d.bombs)?d.bombs:[];
-        const bombs=towerLayout[rowIdx], isBomb=bombs.includes(cellIdx);
-        buttons.forEach((button,idx)=>{
-            const hit=bombs.includes(idx);
-            button.classList.remove("safe","bomb");
-            button.classList.add(hit?"reveal-bomb":"reveal-safe");
-            if(idx===cellIdx) button.classList.add("picked");
-            button.innerHTML=`<span class="tower-cell-art">${hit?TOWER_BOMB_ART:TOWER_GEM_ART}</span>`;
-            button.setAttribute("aria-label",hit?"Бомба":"Золотой кристалл");
-            button.style.animationDelay=`${idx*55}ms`;
-        });
-        balance=Number(d.balance); if(!Number.isFinite(balance)) balance=0; updateBalanceUI(); saveLocal();
-        if(d.result==="lost") {
-            towerState="finished";
-            $("tower-state-label").textContent="💥 БАШНЯ ОБРУШИЛАСЬ — ПОПРОБУЙ ЕЩЁ РАЗ";
-            $("tower-button").disabled=false; $("tower-button").textContent="ИГРАТЬ СНОВА"; $("tower-button").className="primary red"; $("tower-button").onclick=handleTowerAction;
-            updateTowerProgress(); notify("error"); return;
-        }
-        rowEl.classList.remove("active-row"); rowEl.classList.add("passed-row");
-        currentLevel=Number(d.level)||currentLevel+1; updateTowerProgress(); haptic("success");
-        if(d.result==="won") {
-            towerState="finished";
-            $("tower-state-label").textContent=`🏆 БАШНЯ ПРОЙДЕНА! ВЫИГРЫШ $${money(d.win)}`;
-            $("tower-button").disabled=false; $("tower-button").textContent="ИГРАТЬ СНОВА"; $("tower-button").className="primary green"; $("tower-button").onclick=handleTowerAction;
-            notify("success"); return;
-        }
-        const nextRow=$("tower-row-"+currentLevel);
-        if(nextRow){nextRow.classList.add("active-row");nextRow.querySelectorAll(".tower-cell").forEach(b=>b.disabled=false);}
-        const currentWin=towerBet*getTowerMultiplier(currentLevel-1);
-        $("tower-state-label").textContent=`✅ ЭТАЖ ПРОЙДЕН! МОЖНО ЗАБРАТЬ $${money(currentWin)} ИЛИ ИДТИ ВЫШЕ`;
-        $("tower-button").disabled=false; $("tower-button").className="primary green"; $("tower-button").textContent=`ЗАБРАТЬ $${money(currentWin)}`; $("tower-button").onclick=cashOutTower;
-    } catch(e) {
-        buttons.forEach(b=>b.disabled=false);
-        alert(e.message||"Ошибка башни.");
-    }
-}
-
-async function cashOutTower() {
-    if(towerState!=="playing"||currentLevel===0||!towerRoundId)return;
-    const button=$("tower-button"); button.disabled=true; button.textContent="ЗАЧИСЛЯЕМ...";
-    try{
-        const d=await apiPost({action:"tower_cashout",round_id:towerRoundId});
-        if(d.status!=="success") throw new Error(d.message||"Не удалось забрать выигрыш.");
-        balance=Number(d.balance); if(!Number.isFinite(balance)) balance=0; updateBalanceUI(); saveLocal();
-        towerState="finished";
-        $("tower-state-label").textContent=`💰 ЗАБРАНО: $${money(d.win)}`;
-        button.disabled=false; button.className="primary green"; button.textContent="ИГРАТЬ СНОВА"; button.onclick=handleTowerAction;
-        updateTowerProgress(); notify("success");
-    }catch(e){button.disabled=false;alert(e.message||"Ошибка вывода.");}
 }
 
 /* UPGRADE LOGIC */
@@ -3166,8 +2987,68 @@ function spinRoulette() {
             notify("error");
         }
         updateBalanceUI();
-        saveUserData();
+        saveUserData(); logGame("roulette", bet, isWin ? Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100 : 0);
     }, 5350);
+}
+
+
+/* ===== КОЛЕСО УДАЧИ ===== */
+let wheelData = [], wheelBusy = false, wheelRot = 0, wheelTimer = null, wheelNextAt = 0;
+const WHEEL_COLORS = ["#fde68a", "#fdba74", "#fcd34d", "#fb923c"];
+function drawWheel() {
+    const cvs = $("wheel-canvas"); if (!cvs || !wheelData.length) return;
+    const ctx = cvs.getContext("2d"), cx = 150, cy = 150, r = 144, n = wheelData.length, arc = Math.PI * 2 / n;
+    ctx.clearRect(0, 0, 300, 300);
+    wheelData.forEach((p, i) => {
+        const a = i * arc - Math.PI / 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a, a + arc); ctx.closePath();
+        ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length]; ctx.fill();
+        ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.stroke();
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(a + arc / 2);
+        ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillStyle = "#4a3500"; ctx.font = "900 15px Inter, sans-serif";
+        ctx.fillText((p.type === "gift" ? "🎁 " : "") + p.name, r - 14, 0); ctx.restore();
+    });
+    ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 4; ctx.stroke();
+}
+function renderWheelPrizes() {
+    $("wheel-prizes").innerHTML = wheelData.map(p => `<div class="fw-prize">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<div style="font-size:26px;">💵</div>`}${esc(p.name)}</div>`).join("");
+}
+function wheelTick() {
+    const btn = $("wheel-btn"), left = wheelNextAt - Date.now();
+    if (wheelBusy) return;
+    if (left <= 0) { btn.disabled = false; btn.textContent = "КРУТИТЬ БЕСПЛАТНО"; $("wheel-timer").textContent = "Колесо готово!"; return; }
+    const h = Math.floor(left / 3600000), m = Math.floor(left % 3600000 / 60000), s = Math.floor(left % 60000 / 1000);
+    btn.disabled = true; btn.textContent = "ЖДЁМ СЛЕДУЮЩИЙ СПИН";
+    $("wheel-timer").textContent = `Следующий спин через ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+async function loadWheel() {
+    if (!telegramUser || wheelBusy) return;
+    try {
+        const d = await apiPost({ action: "wheel_status" });
+        if (d.status !== "success") throw new Error(d.message || "Ошибка");
+        wheelData = d.wheel || []; wheelNextAt = d.can_spin ? 0 : Number(d.next_at) || 0;
+        drawWheel(); renderWheelPrizes();
+        clearInterval(wheelTimer); wheelTick(); wheelTimer = setInterval(wheelTick, 1000);
+    } catch (e) { $("wheel-btn").textContent = "ОШИБКА"; $("wheel-timer").textContent = e.message || "Не удалось загрузить колесо."; }
+}
+async function spinWheel() {
+    if (wheelBusy) return; wheelBusy = true;
+    const btn = $("wheel-btn"); btn.disabled = true; btn.textContent = "КРУТИМ…"; $("wheel-result").textContent = "";
+    try {
+        const d = await apiPost({ action: "wheel_spin" });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось крутить.");
+        const arc = 360 / wheelData.length, center = (d.index + 0.5) * arc;
+        const base = Math.ceil(wheelRot / 360) * 360;
+        wheelRot = base + 5 * 360 + (360 - center) + (Math.random() - 0.5) * arc * 0.6;
+        $("wheel-canvas").style.transform = `rotate(${wheelRot}deg)`; haptic("medium");
+        await new Promise(r => setTimeout(r, 4800));
+        balance = Number(d.balance) || balance;
+        if (d.prize.type === "gift") { try { inventory = JSON.parse(d.inventory || "[]"); } catch (e) {} inventoryVersion = Number(d.inventory_version) || inventoryVersion; renderInventory(); }
+        updateBalanceUI(); saveLocal(); notify("success");
+        $("wheel-result").textContent = d.prize.type === "gift" ? `🎉 Выпал подарок: ${d.prize.name}!` : `🎉 Выиграно ${d.prize.name}!`;
+        wheelNextAt = Number(d.next_at) || Date.now() + 86400000;
+    } catch (e) { $("wheel-result").style.color = "#dc2626"; $("wheel-result").textContent = e.message || "Ошибка"; await loadWheel(); }
+    finally { wheelBusy = false; wheelTick(); }
 }
 
 /* CASES & INVENTORY LOGIC */
@@ -3290,9 +3171,9 @@ async function openCurrentCase() {
     $("case-detail-card").classList.add("opening");
     $("roulettes-container").classList.remove("case-reel-hidden");
     let wraps = $("roulettes-container").querySelectorAll(".roulette-wrap");
-    let proms = [];
+    let proms = []; let caseWinSum = 0;
     for(let i=0;i<caseQty;i++) {
-        let win = choosePrize(curCase.prizes, curCase.weights);
+        let win = choosePrize(curCase.prizes, curCase.weights); caseWinSum += Number(win.price) || 0;
         inventory.push({...win, id:Date.now()+Math.random()});
         let strip = wraps[i].querySelector(".roulette-strip");
         let vals=[]; for(let k=0;k<45;k++) vals.push(k===28?win:choosePrize(curCase.prizes, curCase.weights));
@@ -3311,7 +3192,7 @@ async function openCurrentCase() {
     }
     await Promise.all(proms);
     $("case-detail-card").classList.remove("opening");
-    saveUserData(); renderInventory();
+    saveUserData(); renderInventory(); logGame("case", cost, caseWinSum);
     $("case-result").textContent = `🎉 ВЫИГРАНО: ${caseQty} шт. (упало в инвентарь)`;
     opening=false; setCaseQuantity(caseQty); $("case-button").disabled=false; notify("success");
 }
@@ -3416,47 +3297,101 @@ function checkPayments(sil) {
 
 function onDepositCredited(a) { notify("success"); try{ tg?.showAlert("✅ Пополнен на $"+money(a)); }catch(e){} }
 
-function openAdminPanel() {
-    const entered = prompt("Пароль администратора:");
-    if (entered === null) return;
-    if (entered !== ADMIN_PASSWORD) { alert("Неверный пароль!"); return; }
+
+/* ===== АДМИНКА v13 ===== */
+function adminRenderDashboard(s) {
+    const cell = (l, v) => `<div class="admin-stat"><small>${l}</small><b>${v}</b></div>`;
+    $("admin-dashboard").innerHTML = cell("Игроков", s.players) + cell("Новых сегодня", s.new_today) +
+        cell("Пополнения сегодня", "$" + money(s.deposits_today)) + cell("Пополнения за 7 дней", "$" + money(s.deposits_week)) +
+        cell("Пополнения всего", "$" + money(s.deposits_all)) + cell("Сумма балансов игроков", "$" + money(s.balances_total)) +
+        cell("Заблокировано", s.banned);
+}
+async function adminLoadLog() {
+    const box = $("admin-log"); if (!box) return;
+    try {
+        const d = await apiPost({ action: "admin_log", admin_password: adminPasswordSession });
+        if (d.status !== "success") throw new Error(d.message);
+        box.innerHTML = d.log.length ? d.log.map(l => `<div style="padding:4px 0;border-bottom:1px solid #f3e3a0;">${esc(new Date(l.time).toLocaleString("ru"))} · <b>${esc(l.action)}</b> · ${esc(l.target)} ${esc(l.details)}</div>`).join("") : "Пока пусто.";
+    } catch (e) { box.textContent = e.message || "Ошибка"; }
+}
+async function fetchAllPlayers() {
+    const box = $("admin-players-list"); box.innerHTML = '<p style="text-align:center;">Загрузка...</p>';
+    try {
+        const d = await apiPost({ action: "get_all", admin_password: adminPasswordSession });
+        if (d.status !== "success") throw new Error(d.message || "Сервер не вернул список.");
+        adminPlayersData = d.players || []; renderAdminPlayers();
+        apiPost({ action: "admin_dashboard", admin_password: adminPasswordSession }).then(x => { if (x.status === "success") adminRenderDashboard(x.stats); });
+    } catch (e) { box.innerHTML = '<p style="text-align:center;color:#dc2626;font-weight:900;">' + esc(e.message || e) + '</p>'; }
+}
+function renderAdminPlayers() {
+    const q = String($("admin-search")?.value || "").trim().toLowerCase();
+    const list = adminPlayersData.filter(p => !q || String(p.username).toLowerCase().includes(q) || String(p.userid).includes(q))
+        .sort((a, b) => b.balance - a.balance).slice(0, 60);
+    $("admin-players-list").innerHTML = list.length ? list.map(p => {
+        let n = 0; try { n = JSON.parse(p.inventory || "[]").length; } catch (e) {}
+        return `<div style="background:#fff;padding:12px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;border:2px solid ${p.banned ? "#fca5a5" : "rgba(255,215,0,.3)"};">
+            <div><b>${esc(p.username)}</b>${p.banned ? ' <span style="color:#dc2626;font-size:11px;">БАН</span>' : ""}
+                <div style="font-size:11px;color:#888;">ID: ${esc(p.userid)}</div>
+                <div style="color:green;font-weight:900;">$${Number(p.balance).toFixed(2)}</div></div>
+            <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end;">
+                <button onclick="adminOpenPlayer('${esc(p.userid)}')" style="background:#7c3aed;color:#fff;border:none;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">📋 Профиль</button>
+                <button onclick="adminEditBalance('${esc(p.userid)}','',${Number(p.balance)})" style="background:#2563eb;color:#fff;border:none;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">💰 Баланс</button>
+                <button onclick="adminViewInventory('${esc(p.userid)}')" style="background:#f59e0b;color:#fff;border:none;padding:6px 10px;border-radius:8px;font-weight:900;font-size:12px;">🎒 (${n})</button>
+            </div></div>`;
+    }).join("") : '<p style="text-align:center;color:#80621b;">Никого не найдено.</p>';
+}
+const GAME_NAMES = { crash: "🚀 Ракетка", mines: "💣 Мины", dice: "🎲 Дайс", roulette: "🎰 Рулетка", case: "🎁 Кейс", upgrade: "⬆ Апгрейд", wheel: "🎡 Колесо" };
+async function adminOpenPlayer(id) {
+    const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (!p) return;
+    $("admin-player-title").textContent = p.username; $("admin-player-body").textContent = "Загрузка…"; $("admin-player-modal").style.display = "flex";
+    try {
+        const d = await apiPost({ action: "admin_player", admin_password: adminPasswordSession, target_userid: String(id) });
+        if (d.status !== "success") throw new Error(d.message);
+        const i = d.info, r = i.referral || {};
+        $("admin-player-body").innerHTML = `
+            <div class="admin-stat-grid" style="margin-bottom:10px;">
+                <div class="admin-stat"><small>Баланс</small><b>$${money(p.balance)}</b></div>
+                <div class="admin-stat"><small>Пополнил всего</small><b>$${money(i.deposits_total)}</b></div>
+                <div class="admin-stat"><small>Приглашено</small><b>${r.invited_count || 0}</b></div>
+                <div class="admin-stat"><small>Реф. заработано</small><b>$${money(r.total_earned)}</b></div>
+            </div>
+            <div style="font-size:11px;color:#888;margin-bottom:8px;">ID: ${esc(id)}${p.referred_by ? " · пригласил: " + esc(p.referred_by) : ""}</div>
+            <button onclick="adminToggleBan('${esc(id)}',${!i.banned})" style="width:100%;padding:10px;border:0;border-radius:10px;font-weight:950;color:#fff;background:${i.banned ? "#16a34a" : "#dc2626"};margin-bottom:10px;">${i.banned ? "✅ РАЗБЛОКИРОВАТЬ" : "⛔ ЗАБЛОКИРОВАТЬ"}</button>
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+                <input id="gift-name" placeholder="Подарок" style="min-width:0;flex:2;padding:9px;border:1px solid #e8cf83;border-radius:9px;">
+                <input id="gift-price" type="number" step="0.01" placeholder="$" style="min-width:0;flex:1;padding:9px;border:1px solid #e8cf83;border-radius:9px;">
+                <button onclick="adminGiveGift('${esc(id)}')" style="background:#16a34a;color:#fff;border:0;border-radius:9px;padding:0 12px;font-weight:900;">Выдать</button>
+            </div>
+            <div style="font-weight:950;margin-bottom:6px;">Последние игры</div>
+            ${i.history.length ? i.history.map(h => { const net = h.win - h.bet; return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #f3e3a0;">
+                <span>${GAME_NAMES[h.game] || esc(h.game)}${h.source === "client" ? ' <small style="color:#999;">(клиент)</small>' : ""}<br><small style="color:#999;">${esc(new Date(h.time).toLocaleString("ru"))}</small></span>
+                <span style="text-align:right;">ставка $${money(h.bet)}<br><b style="color:${net >= 0 ? "#16a34a" : "#dc2626"};">${net >= 0 ? "+" : "−"}$${money(Math.abs(net))}</b></span></div>`; }).join("") : '<div style="font-size:12px;color:#80621b;">Игр пока нет.</div>'}`;
+    } catch (e) { $("admin-player-body").textContent = e.message || "Ошибка"; }
+}
+async function adminToggleBan(id, ban) {
+    if (!confirm(ban ? "Заблокировать игрока?" : "Разблокировать игрока?")) return;
+    try { const d = await apiPost({ action: "admin_ban", admin_password: adminPasswordSession, target_userid: String(id), banned: ban }); if (d.status !== "success") throw new Error(d.message);
+        const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (p) p.banned = ban; renderAdminPlayers(); adminOpenPlayer(id); adminLoadLog(); }
+    catch (e) { alert(e.message || "Ошибка"); }
+}
+async function adminGiveGift(id) {
+    const name = $("gift-name").value.trim(), price = Number($("gift-price").value);
+    if (!name || !(price > 0)) return alert("Укажи название и цену.");
+    try { const d = await apiPost({ action: "admin_give_gift", admin_password: adminPasswordSession, target_userid: String(id), name: name, price: price }); if (d.status !== "success") throw new Error(d.message);
+        const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (p) { p.inventory = d.inventory; p.inventory_version = d.inventory_version; }
+        alert("Подарок выдан."); renderAdminPlayers(); adminLoadLog(); }
+    catch (e) { alert(e.message || "Ошибка"); }
+}
+async function openAdminPanel() {
+    const entered = prompt("Пароль администратора:"); if (entered === null) return;
     adminPasswordSession = entered;
-    $("admin-modal").style.display = "flex";
-    fetchAllPlayers();
-    fetchAdminPromos();
+    try {
+        const d = await apiPost({ action: "admin_dashboard", admin_password: entered });
+        if (d.status !== "success") throw new Error(d.message || "Нет доступа.");
+        $("admin-modal").style.display = "flex"; adminRenderDashboard(d.stats);
+        fetchAllPlayers(); fetchAdminPromos(); adminLoadLog();
+    } catch (e) { adminPasswordSession = ""; alert(e.message || "Нет доступа."); }
 }
-
-function fetchAllPlayers() {
-    if (!isDBConnected()) return;
-    $("admin-players-list").innerHTML = '<p style="text-align:center;">Загрузка...</p>';
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "get_all", admin_password: adminPasswordSession }) })
-    .then(r => r.json())
-    .then(d => {
-        if (d.status === "success" && d.players) {
-            adminPlayersData = d.players;
-            $("admin-players-list").innerHTML = d.players.map(p => {
-                let invCount = 0;
-                try { let parsed = typeof p.inventory === 'string' ? JSON.parse(p.inventory) : p.inventory; if (Array.isArray(parsed)) invCount = parsed.length; } catch(e) {}
-                return `
-                <div style="background:#fff; padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; border:2px solid rgba(255,215,0,0.3);">
-                    <div>
-                        <b>${p.username}</b>
-                        <div style="font-size:11px; color:#888;">ID: ${p.userid}</div>
-                        <div style="color:green; font-weight:900;">$${parseFloat(p.balance).toFixed(2)}</div>
-                    </div>
-                    <div style="display:flex; gap:6px; flex-direction:column; align-items:flex-end;">
-                        <button onclick="adminEditBalance('${p.userid}', '${p.username}', ${p.balance})" style="background:#2563eb; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">💰 Баланс</button>
-                        <button onclick="adminViewInventory('${p.userid}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:900; font-size:12px;">🎒 Предметы (${invCount})</button>
-                    </div>
-                </div>
-                `;
-            }).join('');
-        } else {
-            $("admin-players-list").innerHTML = '<p style="text-align:center;color:#dc2626;font-weight:900;">Ошибка: ' + String(d.message || "сервер не вернул список игроков") + '</p>';
-        }
-    }).catch((err) => { $("admin-players-list").innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки: ' + String(err.message || err) + '</p>'; });
-}
-
 
 function adminViewInventory(targetUserId) {
     const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
@@ -3567,14 +3502,12 @@ document.addEventListener("click", function(e) {
 /* INIT */
 loadUserData();
 buildMines();
-buildTower();
 updateCrashHistoryUI();
 startCrashRound();
 updateDiceUI();
 updateUpgradeUI();
 renderRouletteOptions();
 drawRouletteWheel();
-updateTowerProgress();
 </script>
 </body>
 </html>
