@@ -1453,96 +1453,7 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
             <div class="games-header" style="margin-bottom:5px;">Кейсы</div>
             <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!<br><span style="color:#16834a;font-size:11px;font-weight:950;">Улучшенные шансы на более ценные призы</span></div>
             
-            <div class="case-grid">
-                <!-- Mini Case ($0.20) -->
-                <div class="case-card available" onclick="openCase('paid_02', 'Mini Case', 0.20, './casecase.png', [
-                    {name: '$0.10', price: 0.10, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$0.15', price: 0.15, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Мишка', price: 0.20, img: './bear.png'},
-                    {name: 'Бокс', price: 0.50, img: './box.png'},
-                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'}
-                ], [15, 20, 30, 20, 10, 5])">
-                    <img class="case-card-image" src="./casecase.png" alt="Mini Case">
-                    <div class="case-card-name">Mini Case</div>
-                    <div class="case-card-price">$0.20</div>
-                </div>
-
-                <!-- Go Case ($0.50) -->
-                <div class="case-card available" onclick="openCase('paid_05', 'Go Case', 0.50, './casego.png', [
-                    {name: '$0.25', price: 0.25, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$0.40', price: 0.40, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Мишка', price: 0.20, img: './bear.png'},
-                    {name: 'Бокс', price: 0.50, img: './box.png'},
-                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'}
-                ], [10, 15, 10, 35, 20, 10])">
-                    <img class="case-card-image" src="./casego.png" alt="Go Case">
-                    <div class="case-card-name">Go Case</div>
-                    <div class="case-card-price">$0.50</div>
-                </div>
-
-                <!-- Pro Case ($1.00) -->
-                <div class="case-card available" onclick="openCase('paid_10', 'Pro Case', 1.00, './casepro.png', [
-                    {name: '$0.50', price: 0.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$0.80', price: 0.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Ракетка', price: 0.75, img: './rocket.png'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                ], [15, 25, 25, 20, 10])">
-                    <img class="case-card-image" src="./casepro.png" alt="Pro Case">
-                    <div class="case-card-name">Pro Case</div>
-                    <div class="case-card-price">$1.00</div>
-                </div>
-
-                <!-- Rare Case ($1.50) -->
-                <div class="case-card available" onclick="openCase('paid_15', 'Rare Case', 1.50, './caser.png', [
-                    {name: '$0.75', price: 0.75, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$1.20', price: 1.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Супер приз', price: 7.50, img: './caser.png'},
-                ], [20, 30, 25, 15])">
-                    <img class="case-card-image" src="./caser.png" alt="Rare Case">
-                    <div class="case-card-name">Rare Case</div>
-                    <div class="case-card-price">$1.50</div>
-                </div>
-
-                <!-- VIP Case ($2.00) -->
-                <div class="case-card available" onclick="openCase('paid_20', 'VIP Case', 2.00, './casevip.png', [
-                    {name: '$1.00', price: 1.00, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$1.60', price: 1.60, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'},
-                    {name: 'VIP Джекпот', price: 15.00, img: './casevip.png'}
-                ], [20, 30, 20, 10, 5])">
-                    <img class="case-card-image" src="./casevip.png" alt="VIP Case">
-                    <div class="case-card-name">VIP Case</div>
-                    <div class="case-card-price">$2.00</div>
-                </div>
-
-                <!-- Prem Case ($3.00) -->
-                <div class="case-card available" onclick="openCase('paid_30', 'Prem Case', 3.00, './prem.png', [
-                    {name: '$1.50', price: 1.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$2.20', price: 2.20, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Кубок', price: 1.00, img: './trofei.png'},
-                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
-                ], [35, 35, 18, 4])">
-                    <img class="case-card-image" src="./prem.png" alt="Prem Case">
-                    <div class="case-card-name">Prem Case</div>
-                    <div class="case-card-price">$3.00</div>
-                </div>
-
-                <!-- Telegram Case ($5.00) -->
-                <div class="case-card available" onclick="openCase('paid_50', 'Telegram Case', 5.00, './talagram.png', [
-                    {name: '$2.50', price: 2.50, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: '$3.80', price: 3.80, img: 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2316a34a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><line x1=\'12\' y1=\'1\' x2=\'12\' y2=\'23\'></line><path d=\'M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\'></path></svg>'},
-                    {name: 'Супер Кубок', price: 5.00, img: './casepro.png'},
-                    {name: 'Ndtice', price: 7.50, img: './ndtice.png'}
-                ], [35, 35, 20, 4])">
-                    <img class="case-card-image" src="./talagram.png" alt="Telegram Case">
-                    <div class="case-card-name">Telegram Case</div>
-                    <div class="case-card-price">$5.00</div>
-                </div>
+            <div class="case-grid" id="case-grid">
             </div>
         </div>
 
@@ -2054,6 +1965,7 @@ let playerRtp = 1;
 let inventoryVersion = 1;
 let settingsRefreshTimer = null;
 let inventorySaveQueue = Promise.resolve();
+let savesPending = 0, lastLocalChange = 0;
 
 const LOCAL_KEY = "tucha_user_data_" + userId;
 
@@ -2138,7 +2050,7 @@ async function refreshPlayerSettings() {
         if (d.status === "success") {
             applyPlayerRtp(d.rtp); applyReferralData(d.referral);
             const activeRound = (typeof inCrash !== "undefined" && inCrash) || (typeof diceState !== "undefined" && diceState !== "idle") || (typeof towerState !== "undefined" && towerState === "playing") || (typeof minesState !== "undefined" && minesState === "playing") || (typeof upgradeBusy !== "undefined" && upgradeBusy) || (typeof rouletteIsSpinning !== "undefined" && rouletteIsSpinning) || (typeof opening !== "undefined" && opening);
-            if (!activeRound && Number.isFinite(Number(d.balance)) && Math.abs(Number(d.balance) - balance) > 0.001) { balance = Number(d.balance); updateBalanceUI(); saveLocal(); }
+            if (!activeRound && savesPending === 0 && Date.now() - lastLocalChange > 12000 && Number.isFinite(Number(d.balance)) && Math.abs(Number(d.balance) - balance) > 0.001) { balance = Number(d.balance); updateBalanceUI(); saveLocal(); }
         }
     } catch (e) { console.warn("Не удалось обновить настройки игрока:", e); }
 }
@@ -2198,6 +2110,7 @@ function loadUserData() {
 function saveUserData() {
     saveLocal();
     if (!isDBConnected()) return Promise.resolve();
+    savesPending++; lastLocalChange = Date.now();
     inventorySaveQueue = inventorySaveQueue.catch(() => {}).then(async () => {
         // Snapshot is made only when this queued request executes, not when it is enqueued.
         // Thus an old delayed save cannot overwrite a newer inventory snapshot.
@@ -2211,7 +2124,7 @@ function saveUserData() {
                 balance=Number(d.balance??balance); saveLocal(); updateBalanceUI(); renderInventory();
             }else inventoryVersion=Number(d.inventory_version)||inventoryVersion;
         }else console.warn("Не удалось сохранить игру:",d.message);
-    }).catch(e=>console.warn("Ошибка сохранения игры:",e));
+    }).catch(e=>console.warn("Ошибка сохранения игры:",e)).finally(()=>{ savesPending--; lastLocalChange = Date.now(); });
     return inventorySaveQueue;
 }
 
@@ -2469,7 +2382,7 @@ let upgradeChance = 47;
 let upgradeBusy = false;
 let upgradeMode = "money";
 let upgradeGiftIndex = null;
-const UPGRADE_RTP = 95.0; // Серверный RTP; результат всегда определяется сервером.
+const UPGRADE_RTP = 88.0; // Серверный RTP; результат всегда определяется сервером.
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
@@ -3096,7 +3009,7 @@ function caseDollarIcon() {
 
 function prepareCasePrizes(prizes, weights, casePrice) {
     const icon = caseDollarIcon();
-    const floor = Math.max(0.01, Number(casePrice) * 0.75);
+    const floor = Math.max(0.01, Number(casePrice) * 0.4999);
     const clean = [], cleanWeights = [];
     (Array.isArray(prizes) ? prizes : []).forEach((item, i) => {
         const prize = {...item};
@@ -3135,11 +3048,34 @@ function calibrateCaseWeights(prizes, baseWeights, casePrice, targetRtp = 0.88) 
     return base.map((w,i)=>w*Math.exp(alpha*((values[i]-min)/Math.max(0.000001,max-min))));
 }
 
+
+/* ===== КЕЙСЫ: конфиг. Число = приз в $, слово = подарок. Минимальный приз = 50% цены кейса ===== */
+const CASE_GIFTS = { "Мишка": [0.20, "./bear.png"], "Бокс": [0.50, "./box.png"], "Ракетка": [0.75, "./rocket.png"], "Кубок": [1.00, "./trofei.png"], "Ndtice": [7.50, "./ndtice.png"] };
+const CASES_CFG = [
+    { id: "paid_02", name: "Mini Case",     price: 0.20, img: "./casecase.png", prizes: [0.10, 0.12, 0.15, 0.18, "Мишка", 0.25, 0.30, "Бокс", "Ракетка"] },
+    { id: "paid_05", name: "Go Case",       price: 0.50, img: "./casego.png",   prizes: [0.25, 0.30, 0.35, 0.40, "Бокс", 0.60, "Ракетка", 0.90, "Кубок", 2.00] },
+    { id: "paid_10", name: "Pro Case",      price: 1.00, img: "./casepro.png",  prizes: ["Бокс", 0.60, 0.70, "Ракетка", 0.90, "Кубок", 1.30, 1.60, 2.50, 5.00] },
+    { id: "paid_15", name: "Rare Case",     price: 1.50, img: "./caser.png",    prizes: ["Ракетка", 0.85, "Кубок", 1.20, 1.50, 1.80, 2.50, 3.50, "Ndtice"] },
+    { id: "paid_20", name: "VIP Case",      price: 2.00, img: "./casevip.png",  prizes: ["Кубок", 1.20, 1.40, 1.60, 2.00, 2.50, 3.00, 5.00, "Ndtice", 15.00] },
+    { id: "paid_30", name: "Prem Case",     price: 3.00, img: "./prem.png",     prizes: [1.50, 1.80, 2.10, 2.50, 3.00, 4.00, 5.00, "Ndtice", 12.00] },
+    { id: "paid_50", name: "Telegram Case", price: 5.00, img: "./talagram.png", prizes: [2.50, 3.00, 3.50, 4.00, 5.00, 6.00, "Ndtice", 10.00, 20.00] }
+];
+function caseCfgPrizes(c) {
+    return c.prizes.map(x => typeof x === "string"
+        ? { name: x, price: CASE_GIFTS[x][0], img: CASE_GIFTS[x][1] }
+        : { name: "$" + x.toFixed(2), price: x, img: caseDollarIcon() });
+}
+function openCaseIdx(i) { const c = CASES_CFG[i]; const p = caseCfgPrizes(c); openCase(c.id, c.name, c.price, c.img, p, p.map(() => 1)); }
+function renderCases() {
+    $("case-grid").innerHTML = CASES_CFG.map((c, i) => `<div class="case-card available" onclick="openCaseIdx(${i})">
+        <img class="case-card-image" src="${c.img}" alt="${c.name}"><div class="case-card-name">${c.name}</div><div class="case-card-price">$${c.price.toFixed(2)}</div></div>`).join("");
+}
+
 function openCase(id,name,pr,img,prizes,weights) {
     const prepared = prepareCasePrizes(prizes, weights, pr);
     prizes = prepared.prizes;
     weights = prepared.weights;
-    const caseWeights = calibrateCaseWeights(prizes, weights, pr, 0.88);
+    const caseWeights = calibrateCaseWeights(prizes, weights, pr, 0.90);
     curCase={id,name,pr,img,prizes,weights:caseWeights};
     $("cases-list").style.display="none"; $("case-detail").classList.add("active");
     $("detail-case-title").textContent=name; $("case-big-image").src=img;
@@ -3253,6 +3189,7 @@ async function fetchAdminPromos(){
         box.innerHTML=promos.length?promos.map(p=>`<div class="admin-promo-row">
             <div><b>${p.code}</b><div>${p.type==="deposit"?"Промо-пополнение":"Бонус на баланс"} · $${money(p.amount)}</div><div>Использовано: ${p.used}${Number(p.max_uses)>0?"/"+p.max_uses:"/∞"} · ${p.expires_at||"Без срока"}</div></div>
             <button type="button" onclick="adminTogglePromo('${p.code}',${!p.active})" style="border:0;border-radius:9px;padding:8px 10px;font-weight:900;color:white;background:${p.active?"#dc2626":"#16a34a"}">${p.active?"ОТКЛЮЧИТЬ":"ВКЛЮЧИТЬ"}</button>
+            <button type="button" onclick="adminDeletePromo('${p.code}')" style="border:0;border-radius:9px;padding:8px 10px;margin-left:6px;font-weight:900;color:white;background:#475569">🗑</button>
         </div>`).join(""):'<div style="font-size:12px;color:#80621b;">Промокодов пока нет.</div>';
     }catch(e){box.textContent=e.message||"Ошибка загрузки.";}
 }
@@ -3267,6 +3204,14 @@ async function adminCreatePromo(){
         status.style.color="#15803d";status.textContent="Промокод создан.";
         $("admin-promo-code").value="";fetchAdminPromos();
     }catch(e){status.style.color="#dc2626";status.textContent=e.message||"Ошибка создания.";}
+}
+async function adminDeletePromo(code){
+    if(!confirm("Удалить промокод "+code+" навсегда?"))return;
+    try{
+        const d=await apiPost({action:"admin_delete_promo",admin_password:adminPasswordSession,code:code});
+        if(d.status!=="success")throw new Error(d.message||"Не удалось удалить.");
+        fetchAdminPromos();
+    }catch(e){alert(e.message||"Ошибка удаления.");}
 }
 async function adminTogglePromo(code,active){
     try{
@@ -3500,6 +3445,7 @@ document.addEventListener("click", function(e) {
 })();
 
 /* INIT */
+renderCases();
 loadUserData();
 buildMines();
 updateCrashHistoryUI();
