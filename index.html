@@ -1388,7 +1388,7 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 .tc-pill.r { text-align: right; }
 .tc-pill.r b { color: #0f172a; font-size: 18px; }
 
-.tc-track { position: absolute; left: 0; top: 0; height: 100%; display: flex; transition: transform .5s cubic-bezier(.3,.7,.2,1); }
+.tc-track { position: absolute; left: 0; top: 0; height: 100%; display: flex; transition: transform .28s cubic-bezier(.3,.7,.2,1); }
 .tc-grass { flex: 0 0 96px; position: relative; overflow: hidden; background: repeating-linear-gradient(0deg, #4ade80 0 38px, #34d399 38px 76px); }
 .tc-start { border-right: 8px solid #fff; box-shadow: inset -8px 0 0 #ef4444; }
 .tc-deco { position: absolute; font-size: 24px; filter: drop-shadow(0 3px 2px rgba(0,0,0,.2)); }
@@ -1408,11 +1408,11 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 .tc-car.down svg { transform: rotate(180deg); }
 .tc-car.up { animation-direction: reverse, normal; }
 .tc-car.gone { opacity: 0 !important; }
-.tc-car.hit { animation: tcSmash .55s linear forwards; z-index: 8; opacity: 1 !important; }
+.tc-car.hit { animation: tcSmash .3s linear forwards; z-index: 8; opacity: 1 !important; }
 .tc-car svg { display: block; }
 
-.tc-hero { position: absolute; top: 92px; width: 72px; margin-left: -36px; z-index: 9; transition: left .45s linear; }
-.tc-hop.hop { animation: tcHop .46s ease-out; }
+.tc-hero { position: absolute; top: 92px; width: 72px; margin-left: -36px; z-index: 9; transition: left .26s linear; }
+.tc-hop.hop { animation: tcHop .28s ease-out; }
 .tc-bob { animation: tcBob 1.8s ease-in-out infinite; }
 .tc-hero svg { display: block; width: 72px; height: 66px; overflow: visible; }
 .tc-hero .f-dead { display: none; }
@@ -3584,9 +3584,9 @@ document.addEventListener("click", function(e) {
 
 /* ===== ТУЧА НА ДОРОГЕ: каждый прыжок решает сервер ===== */
 const TC_LANE_W = 84, TC_GRASS = 96;
-// first = множитель 1-й полосы; на 4-й полосе во ВСЕХ режимах всегда x2.00 (TC_ANCHOR_*). Те же числа на сервере.
-const TC_ANCHOR_STEP = 4, TC_ANCHOR_MULT = 2.0;
-const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.15}, medium: {name: "Средне", chance: 65, first: 1.10}, hard: {name: "Хардкор", chance: 60, first: 1.05}};
+// first = множитель 1-й полосы; anchor = полоса, где ровно x2.00 (Легко 7, Средне 5, Хардкор 3). Те же числа на сервере.
+const TC_ANCHOR_MULT = 2.0;
+const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.08, anchor: 7}, medium: {name: "Средне", chance: 65, first: 1.12, anchor: 5}, hard: {name: "Хардкор", chance: 60, first: 1.20, anchor: 3}};
 const TC_CAR_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7", "#ec4899", "#f97316", "#14b8a6"];
 let tc = {state: "idle", busy: false, step: 0, mode: "medium", bet: 0.5, cfg: null, lanes: 20, maxBet: 100, maxWin: 500};
 
@@ -3627,7 +3627,7 @@ function tcCfg() {
     if (tc.cfg) return tc.cfg;
     const o = {};
     Object.keys(TC_FALLBACK).forEach(k => {
-        const m = TC_FALLBACK[k], g = Math.pow(TC_ANCHOR_MULT / m.first, 1 / (TC_ANCHOR_STEP - 1)), a = [];
+        const m = TC_FALLBACK[k], g = Math.pow(TC_ANCHOR_MULT / m.first, 1 / (m.anchor - 1)), a = [];
         for (let s = 1; s <= tc.lanes; s++) a.push(Math.min(50, Math.round(m.first * Math.pow(g, s - 1) * 100) / 100));
         o[k] = {name: m.name, chance: m.chance, mults: a};
     });
@@ -3780,7 +3780,7 @@ async function tcJump() {
     document.querySelectorAll(`#tc-track .tc-lane[data-i="${target}"] .tc-car`).forEach(c => c.classList.add("gone"));
     tcMoveHero(target);
     try {
-        const [d] = await Promise.all([tcCall({action: "tucha_step", request_id: tcUuid()}), tcSleep(480)]);
+        const d = await tcCall({action: "tucha_step", request_id: tcUuid()});
         balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
         if (d.crashed) { await tcCrash(target); }
         else if (d.finished) { tc.step = target; tcMarkLanes(); tcHud(); await tcWin(d.payout, d.mult, true); }
@@ -3797,16 +3797,16 @@ async function tcCrash(lane) {
         car.className = "tc-car down hit"; car.innerHTML = tcCarSVG("#ef4444"); l.appendChild(car);
         const chip = l.querySelector(".tc-chip"); chip.className = "tc-chip bad"; chip.textContent = "💥";
     }
-    await tcSleep(160); // машина долетает до тучи
+    await tcSleep(90); // машина долетает до тучи
     $("tc-hero").classList.add("dead"); haptic("heavy"); notify("error");
     tcToast("БАМ! Туча попала под машину · −$" + money(tc.bet), "lose");
-    await tcSleep(1500);
+    await tcSleep(650);
     tcResetRound();
 }
 async function tcWin(payout, mult, auto) {
     tcConfetti(); notify("success"); haptic("heavy");
     tcToast((auto ? "МАКСИМУМ! " : "ЗАБРАЛ! ") + "+$" + money(payout) + " · x" + Number(mult).toFixed(2), "win");
-    await tcSleep(1900);
+    await tcSleep(900);
     tcResetRound();
 }
 async function tcCash() {
