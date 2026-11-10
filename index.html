@@ -1711,8 +1711,22 @@ main { color:#292929 !important; }
 .ice-bet-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 42px 54px;gap:7px}.ice-bet-row input{min-width:0;width:100%;height:46px;border:2px solid #efdf78;border-radius:13px;background:#fffdf0;padding:0 12px;font-size:22px;font-weight:1000;color:#302600}.ice-bet-row button,.ice-quick-bets button{border:1px solid #eadb68;border-radius:12px;background:#fff6bd;color:#554600;font-size:14px;font-weight:1000;box-shadow:0 3px 0 #e5d45a}.ice-bet-row button:active,.ice-quick-bets button:active{transform:translateY(2px);box-shadow:none}.ice-quick-bets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.ice-quick-bets button{padding:9px 4px;font-size:12px}
 .ice-slider{width:100%;accent-color:#e6c500;height:10px;margin:8px 0}.ice-slider-labels{display:flex;justify-content:space-between;color:#9a8840;font-size:9px;font-weight:900}.ice-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ice-stats>div{padding:12px 8px;border-radius:17px;background:#fff;border:2px solid #f0df65;text-align:center;box-shadow:0 5px 14px rgba(165,139,0,.08)}.ice-stats small{display:block;color:#94812e;font-size:9px;font-weight:1000;letter-spacing:.6px}.ice-stats b{display:block;color:#302600;font-size:23px;font-weight:1000;margin-top:4px}
 .ice-play-btn{width:100%;height:54px;border:0;border-radius:16px;background:linear-gradient(180deg,#ffe94d,#ffd51d);color:#302600;font-size:16px;font-weight:1000;box-shadow:0 6px 0 #d7b900,0 10px 18px rgba(180,150,0,.15);transition:transform .12s}.ice-play-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d7b900}.ice-play-btn:disabled{opacity:.65}.ice-footnote{text-align:center;color:#a18e43;font-size:9px;font-weight:800}
-@keyframes iceFlight{0%{left:50%;top:3%;transform:translate(-50%,-50%) scale(.7)}18%{left:23%;top:25%;transform:translate(-50%,-50%) scale(1.02)}38%{left:72%;top:38%;transform:translate(-50%,-50%) scale(.95)}58%{left:35%;top:63%;transform:translate(-50%,-50%) scale(1.08)}78%{left:67%;top:78%;transform:translate(-50%,-50%) scale(.98)}100%{left:var(--ice-land-x,25%);top:var(--ice-land-y,28%);transform:translate(-50%,-50%) scale(1)}}
-.ice-board.is-running .ice-ball{animation:iceFlight 2.4s cubic-bezier(.16,.72,.16,1) forwards}
+/* Ice Upgrade: responsive centered zone markers + real-time puck physics */
+.ice-board{transition:transform .7s cubic-bezier(.18,.75,.2,1),box-shadow .7s ease;transform-origin:center center}
+.ice-board.is-zooming{transform:scale(1.075);box-shadow:0 16px 38px rgba(35,29,5,.38),inset 0 0 0 5px rgba(255,255,255,.12)}
+.ice-zone{transition:clip-path .42s cubic-bezier(.2,.75,.2,1),filter .35s ease}
+.ice-avatar,.ice-cloud-icon{left:var(--ice-avatar-x,23.5%);top:var(--ice-avatar-y,50%);right:auto;bottom:auto;width:var(--ice-avatar-size,82px);height:var(--ice-avatar-size,82px);font-size:calc(var(--ice-avatar-size,82px)*.57);transform:translate(-50%,-50%);transition:left .42s cubic-bezier(.2,.75,.2,1),top .42s cubic-bezier(.2,.75,.2,1),width .42s cubic-bezier(.2,.75,.2,1),height .42s cubic-bezier(.2,.75,.2,1),font-size .42s ease,box-shadow .3s ease}
+.ice-avatar{z-index:4}.ice-cloud-icon{z-index:4;border-radius:50%;}
+.ice-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+.ice-direction-arrow{position:absolute;z-index:7;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border:2px solid rgba(255,255,255,.7);border-radius:50%;display:grid;place-items:center;opacity:0;transform:scale(.55) rotate(0deg);transition:opacity .25s ease,transform .25s ease;background:rgba(255,255,255,.13);box-shadow:0 3px 12px #0005;pointer-events:none}
+.ice-direction-arrow span{font-size:29px;line-height:1;color:#fff;text-shadow:0 2px 5px #0009;transform:translateX(2px)}
+.ice-board.is-running .ice-direction-arrow{opacity:1;transform:scale(1) rotate(var(--ice-arrow-angle,0deg))}
+.ice-ball{will-change:left,top,transform;transition:filter .2s ease;}
+.ice-board.is-running .ice-ball{opacity:1;filter:drop-shadow(0 0 7px rgba(255,255,255,.65))}
+.ice-board.is-zooming .ice-ball{filter:drop-shadow(0 0 13px rgba(255,255,255,.95))}
+.ice-board.is-win .ice-avatar{box-shadow:0 0 0 6px #35e58b,0 5px 18px #0006}
+.ice-board.is-lose .ice-cloud-icon{box-shadow:0 0 0 6px #ff625d,0 6px 20px #0008}
+@media(max-width:360px){.ice-direction-arrow{width:48px;height:48px;margin:-24px 0 0 -24px}.ice-direction-arrow span{font-size:24px}}
 @media(max-width:360px){.ice-wrap{padding-left:10px;padding-right:10px}.ice-board{width:100%}}
 /* Faster immediate movement feedback in Tucha Road */
 .tc-track{transition:transform .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hero{transition:left .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hop.hop{animation-duration:.22s!important}
@@ -2235,6 +2249,7 @@ main { color:#292929 !important; }
                 <div class="ice-diagonal" id="ice-diagonal"></div>
                 <div class="ice-avatar" id="ice-avatar"><span class="ice-avatar-fallback">👤</span></div>
                 <div class="ice-cloud-icon" aria-label="Tucha">☁</div>
+                <div class="ice-direction-arrow" id="ice-direction-arrow"><span>➤</span></div>
                 <div class="ice-ball" id="ice-ball"></div>
                 <div class="ice-result-mark" id="ice-result-mark">✓</div>
             </div>
@@ -4234,11 +4249,24 @@ async function tcCash() {
 let iceChance = 47, iceBusy = false;
 function iceGetBet(){ return Math.round((Number($("ice-bet")?.value || 0) + Number.EPSILON) * 100) / 100; }
 function iceUpdate(){
-    const input=$("ice-bet"), slider=$("ice-slider"), board=$("ice-board"); if(!input||!slider||!board)return;
+    const input=$("ice-bet"),slider=$("ice-slider"),board=$("ice-board"); if(!input||!slider||!board)return;
     iceChance=Math.min(95,Math.max(1,Math.round(Number(slider.value)||47)));
     $("ice-chance-label").textContent=iceChance+"%";
     $("ice-your-zone").textContent=iceChance+"%"; $("ice-cloud-zone").textContent=(100-iceChance)+"%";
-    const skew=Math.min(iceChance,100-iceChance);board.style.setProperty("--ice-top",(iceChance+skew)+"%");board.style.setProperty("--ice-bottom",(iceChance-skew)+"%");
+    const skew=Math.min(iceChance,100-iceChance);
+    const top=iceChance+skew,bottom=iceChance-skew;
+    board.style.setProperty("--ice-top",top+"%");board.style.setProperty("--ice-bottom",bottom+"%");
+    // The two icons stay centered in their changing triangular/trapezoid zones.
+    const yourSize=Math.max(22,Math.min(94,94*Math.sqrt(iceChance/47)));
+    const cloudChance=100-iceChance;
+    const cloudSize=Math.max(22,Math.min(94,94*Math.sqrt(cloudChance/53)));
+    board.style.setProperty("--ice-avatar-x",(iceChance/2)+"%");
+    board.style.setProperty("--ice-cloud-x",(50+iceChance/2)+"%");
+    board.style.setProperty("--ice-avatar-size",yourSize+"px");
+    board.style.setProperty("--ice-cloud-size",cloudSize+"px");
+    const avatar=$("ice-avatar"),cloud=board.querySelector(".ice-cloud-icon");
+    if(avatar){avatar.style.left=(iceChance/2)+"%";avatar.style.top="50%";avatar.style.width=yourSize+"px";avatar.style.height=yourSize+"px";}
+    if(cloud){cloud.style.left=(50+iceChance/2)+"%";cloud.style.top="50%";cloud.style.width=cloudSize+"px";cloud.style.height=cloudSize+"px";cloud.style.fontSize=(cloudSize*.57)+"px";}
     $("ice-mult").textContent="x"+(88/iceChance).toFixed(2);
     $("ice-payout").textContent="$"+money(iceGetBet()*(88/iceChance));
     $("ice-play").disabled=iceBusy;
@@ -4253,20 +4281,88 @@ function iceLoadAvatar(){
     if(photo)box.innerHTML='<img src="'+String(photo).replace(/["'<>]/g,'')+'" alt="Ваш Telegram avatar">';
     else box.innerHTML='<span class="ice-avatar-fallback">👤</span>';
 }
-function iceResetBoard(){const b=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark");if(!b)return;b.classList.remove("is-running","is-win","is-lose");ball.style.animation="none";ball.style.left="50%";ball.style.top="4%";ball.style.opacity="0";mark.textContent="✓";void b.offsetWidth;}
-function iceOpen(){iceBusy=false;iceLoadAvatar();iceResetBoard();$("ice-status").className="ice-status";$("ice-status").textContent="Настрой свою зону и сделай ставку";$("ice-play").textContent="ИГРАТЬ";iceUpdate();}
+function iceResetBoard(){
+    const b=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark"),arrow=$("ice-direction-arrow");if(!b)return;
+    b.classList.remove("is-running","is-win","is-lose","is-zooming");
+    ball.style.animation="none";ball.style.left="50%";ball.style.top="50%";ball.style.transform="translate(-50%,-50%) rotate(0deg)";ball.style.opacity="0";
+    if(arrow){arrow.style.setProperty("--ice-arrow-angle","0deg");arrow.style.transform="scale(.55) rotate(0deg)";}
+    mark.textContent="✓";void b.offsetWidth;
+}
+function iceOpen(){
+    iceBusy=false;iceLoadAvatar();iceResetBoard();
+    $("ice-status").className="ice-status";$("ice-status").textContent="Настрой свою зону и сделай ставку";
+    $("ice-play").textContent="ИГРАТЬ";iceUpdate();
+}
 function iceAnimateResult(win,chance){
     return new Promise(resolve=>{
-        const board=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark");
-        // The server chooses the winning side. The ball's final position is animated into that side.
-        const x=win?Math.max(8,Math.min(42,chance*.42)):Math.max(58,Math.min(92,58+(100-chance)*.34));
-        const y=win?Math.max(22,Math.min(82,24+Math.random()*52)):Math.max(20,Math.min(84,18+Math.random()*64));
-        board.style.setProperty("--ice-land-x",x+"%");board.style.setProperty("--ice-land-y",y+"%");
-        board.classList.remove("is-win","is-lose");board.classList.add("is-running");
-        ball.style.animation="none";ball.style.opacity="1";void ball.offsetWidth;ball.style.animation="iceFlight 2.4s cubic-bezier(.16,.72,.16,1) forwards";
-        const finish=()=>{board.classList.remove("is-running");board.classList.add(win?"is-win":"is-lose");mark.textContent=win?"✓":"×";resolve();};
-        ball.addEventListener("animationend",finish,{once:true});
-        setTimeout(()=>{if(board.classList.contains("is-running"))finish();},2700);
+        const board=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark"),arrow=$("ice-direction-arrow");
+        const rect=board.getBoundingClientRect(),size=rect.width||350;
+        const radius=Math.max(9,Math.min(15,size*.034));
+        const pad=radius+7;
+        let x=size*.5,y=size*.5;
+        // Random launch direction, followed by damped wall bounces.
+        const angle=Math.random()*Math.PI*2;
+        let speed=size*(.0038+Math.random()*.0018);
+        let vx=Math.cos(angle)*speed,vy=Math.sin(angle)*speed;
+        let rotation=0,spin=(Math.random()>.5?1:-1)*(520+Math.random()*700);
+        const started=performance.now(),duration=6200,slowAt=started+3900;
+        let last=started,raf=0,finished=false;
+        const boundaryAt=(py)=>{
+            const pct=py/size*100;
+            const skew=Math.min(chance,100-chance);
+            return chance+skew-2*skew*pct/100;
+        };
+        const chooseTarget=()=>{
+            const py=size*(.24+Math.random()*.52),line=boundaryAt(py);
+            // Aim at the middle of the server-selected side, including very narrow 1% zones.
+            const px=win ? (line*.5) : (line+(100-line)*.5);
+            return {x:Math.max(1,Math.min(size-1,px/100*size)),y:py};
+        };
+        const target=chooseTarget();
+        let guided=false;
+        board.classList.remove("is-win","is-lose","is-zooming");board.classList.add("is-running");
+        ball.style.animation="none";ball.style.opacity="1";ball.style.left="50%";ball.style.top="50%";void ball.offsetWidth;
+        const finish=()=>{
+            if(finished)return;finished=true;cancelAnimationFrame(raf);
+            x=target.x;y=target.y;ball.style.left=(x/size*100)+"%";ball.style.top=(y/size*100)+"%";
+            board.classList.add("is-zooming");
+            setTimeout(()=>{
+                board.classList.remove("is-running","is-zooming");board.classList.add(win?"is-win":"is-lose");
+                mark.textContent=win?"✓":"×";resolve();
+            },720);
+        };
+        const frame=(now)=>{
+            if(finished)return;
+            const dt=Math.min(32,now-last);last=now;
+            const elapsed=now-started,progress=Math.min(1,elapsed/duration);
+            if(elapsed<slowAt){
+                x+=vx*dt;y+=vy*dt;
+                if(x<pad){x=pad;vx=Math.abs(vx)*.94;}
+                if(x>size-pad){x=size-pad;vx=-Math.abs(vx)*.94;}
+                if(y<pad){y=pad;vy=Math.abs(vy)*.94;}
+                if(y>size-pad){y=size-pad;vy=-Math.abs(vy)*.94;}
+                // Gradual friction makes the puck visibly lose speed.
+                const friction=Math.pow(.99925,dt);vx*=friction;vy*=friction;
+                speed=Math.hypot(vx,vy);
+                if(speed<size*.0009){const a=Math.atan2(vy,vx);vx=Math.cos(a)*size*.001;vy=Math.sin(a)*size*.001;}
+            }else{
+                if(!guided){guided=true;board.classList.add("is-zooming");}
+                const t=Math.min(1,(elapsed-slowAt)/(duration-slowAt));
+                const ease=t*t*(3-2*t);
+                const sway=Math.sin(t*Math.PI*3)*(1-t)*size*.045;
+                x=x+(target.x+sway-x)*Math.min(1,.045+ease*.22);
+                y=y+(target.y-y)*Math.min(1,.045+ease*.22);
+                spin*=.94;
+            }
+            rotation+=spin*dt/1000;spin*=Math.pow(.999,dt);
+            ball.style.left=(x/size*100)+"%";ball.style.top=(y/size*100)+"%";
+            ball.style.transform="translate(-50%,-50%) rotate("+rotation+"deg) scale("+(1+Math.sin(progress*Math.PI)*.12)+")";
+            if(arrow){const a=Math.atan2(vy,vx)*180/Math.PI;arrow.style.setProperty("--ice-arrow-angle",a+"deg");arrow.style.transform="scale(1) rotate("+a+"deg)";}
+            if(elapsed>=duration|| (guided&&Math.hypot(target.x-x,target.y-y)<1.8)){finish();return;}
+            raf=requestAnimationFrame(frame);
+        };
+        raf=requestAnimationFrame(frame);
+        setTimeout(()=>{if(!finished)finish();},duration+1100);
     });
 }
 async function playIceUpgrade(){
