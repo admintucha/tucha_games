@@ -3781,7 +3781,7 @@ async function tcJump() {
     tcMoveHero(target);
     try {
         const d = await tcCall({action: "tucha_step", request_id: tcUuid()});
-        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
+        if (d.balance !== undefined) { balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal(); } // при обычном прыжке баланс не меняется
         if (d.crashed) { await tcCrash(target); }
         else if (d.finished) { tc.step = target; tcMarkLanes(); tcHud(); await tcWin(d.payout, d.mult, true); }
         else { tc.step = d.active.step; tcMarkLanes(); tcHud(); tcToast("Есть! Полоса " + tc.step + " пройдена · x" + Number(d.mult).toFixed(2), ""); notify("success"); }
