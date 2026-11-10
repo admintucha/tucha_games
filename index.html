@@ -1679,44 +1679,36 @@ main { color:#292929 !important; }
 [style*="border:1px solid #f1d36b"],[style*="border: 1px solid #f1d36b"] { border-color:#eee36a !important; }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 
-
-/* ===== PvP FIX: avatars, readable history and robust yellow UI ===== */
-#screen-pvp { background:linear-gradient(180deg,#fff9b8 0%,#fffde2 100%) !important; color:#292929 !important; }
-#screen-pvp .pv-wrap { gap:11px; }
-#screen-pvp .pv-wheel-card { padding:13px 10px 12px; border-radius:22px; background:#fff !important; border:1px solid #eee36a; }
-#screen-pvp .pv-wheelbox { width:min(300px, calc(100vw - 64px)); height:auto; aspect-ratio:1; }
-#screen-pvp .pv-wheelbox canvas { width:100% !important; height:100% !important; }
-#screen-pvp .pv-pointer { top:-7px; border-top-color:#ef5350 !important; pointer-events:none; }
-#screen-pvp .pv-center { width:96px; height:96px; background:radial-gradient(circle at 35% 25%,#fff,#fff4a0 76%,#ffe34b) !important; border:4px solid #fff !important; box-shadow:0 2px 12px #9b831b55; }
-#screen-pvp .pv-center small { color:#81721a !important; }
-#screen-pvp .pv-center b { color:#292929 !important; }
-#screen-pvp .pv-round-pill { background:#fff !important; color:#71651c !important; border:1px solid #e9dc57 !important; white-space:nowrap; }
-#screen-pvp .pv-round-pill b { color:#292929 !important; font-variant-numeric:tabular-nums; }
-#screen-pvp .pv-timer { color:#292929 !important; }
-#screen-pvp .pv-box { background:#fff !important; border:1px solid #eee36a !important; box-shadow:0 5px 16px rgba(176,153,0,.08); }
-#screen-pvp .pv-box-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:9px; font-size:11px; font-weight:950; color:#665b20; }
-#screen-pvp .pv-list { gap:7px; }
-#screen-pvp .pv-row { display:flex; align-items:center; gap:9px; min-height:48px; padding:7px 9px; border:1px solid #f0e9a5; border-radius:13px; background:#fffceb !important; color:#292929 !important; }
-#screen-pvp .pv-row.me { outline:2px solid #e6cf22 !important; }
-#screen-pvp .pv-row.won { background:#edfff2 !important; outline:2px solid #53c878 !important; }
-#screen-pvp .pv-avatar { width:34px; height:34px; flex:0 0 34px; display:flex; align-items:center; justify-content:center; border-radius:50%; overflow:hidden; background:linear-gradient(135deg,#ffe45b,#ffbd30); color:#302600; border:2px solid #fff; box-shadow:0 1px 4px #0002; font-size:12px; font-weight:950; text-transform:uppercase; }
-#screen-pvp .pv-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-#screen-pvp .pv-avatar-fallback { width:100%; height:100%; align-items:center; justify-content:center; }
-#screen-pvp .pv-row .n { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
-#screen-pvp .pv-row .a { color:#947c00 !important; white-space:nowrap; font-size:13px; }
-#screen-pvp .pv-row .p { color:#776b2b !important; min-width:43px; }
-#screen-pvp .pv-wheel-players { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:8px; min-height:42px; margin:10px auto 2px; padding:0 4px; }
-#screen-pvp .pv-wheel-player { display:flex; align-items:center; gap:5px; max-width:118px; padding:4px 8px 4px 4px; border:1px solid #eee36a; border-radius:999px; background:#fff9c9; color:#4b4214; font-size:10px; font-weight:900; }
-#screen-pvp .pv-wheel-player .pv-avatar { width:27px; height:27px; flex-basis:27px; }
-#screen-pvp .pv-wheel-player-name { max-width:75px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-#screen-pvp .pv-wheel-empty { color:#8b803b; font-size:11px; font-weight:800; }
-#screen-pvp .pv-history-row { min-height:56px; }
-#screen-pvp .pv-history-round { display:block; color:#82752b; font-size:10px; font-weight:900; margin-top:2px; }
-#screen-pvp .pv-history-result { color:#16834a !important; font-weight:950; white-space:nowrap; }
-#screen-pvp .pv-empty { color:#8b803b !important; padding:12px 6px; }
-@media(max-width:360px) { #screen-pvp .pv-wheelbox { width: min(270px, calc(100vw - 64px)); } #screen-pvp .pv-center { width:84px;height:84px; } }
-
 </style>
+
+<style>
+/* ICE UPGRADE — yellow TUCHA theme */
+#screen-ice-upgrade{background:linear-gradient(180deg,#fff7b8 0%,#fffde5 58%,#fff3a0 100%)!important;color:#302600}
+#screen-ice-upgrade .game-top-bar{background:rgba(255,251,218,.96)!important;border-bottom:2px solid #f0df55!important}
+#screen-ice-upgrade .game-back-btn{color:#302600!important}
+.ice-wrap{max-width:540px;margin:0 auto;padding:14px 14px 30px;display:flex;flex-direction:column;gap:12px}
+.ice-heading{text-align:center;padding:3px 0 2px}.ice-heading span{display:block;color:#a48a00;font-size:10px;font-weight:1000;letter-spacing:3px}.ice-heading b{display:block;font-size:26px;font-weight:1000;letter-spacing:.5px;color:#302600}.ice-heading small{display:block;color:#88751c;font-size:12px;font-weight:800;margin-top:3px}
+.ice-arena-card,.ice-control-card{background:rgba(255,255,255,.92);border:2px solid #f0df65;border-radius:22px;padding:14px;box-shadow:0 7px 18px rgba(165,139,0,.10)}
+.ice-arena{width:min(76vw,290px);height:min(76vw,290px);position:relative;margin:4px auto 12px;display:grid;place-items:center}
+.ice-wheel{position:absolute;inset:8px;border-radius:50%;background:conic-gradient(from 0deg,#20c878 0deg var(--ice-angle),#f05b58 var(--ice-angle) 360deg);border:8px solid #fff;box-shadow:0 9px 22px rgba(49,55,36,.18),inset 0 0 0 2px rgba(255,255,255,.8);overflow:hidden;transform:rotate(0deg)}
+.ice-wheel::before{content:"";position:absolute;inset:10px;border-radius:50%;border:2px dashed rgba(255,255,255,.6)}
+.ice-wheel-ticks{position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(rgba(255,255,255,.42) 0deg 1deg,transparent 1deg 15deg);mask:radial-gradient(circle,transparent 0 68%,#000 69% 100%);-webkit-mask:radial-gradient(circle,transparent 0 68%,#000 69% 100%)}
+.ice-puck{position:absolute;left:50%;top:9px;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#626262,#151515 65%,#050505);border:3px solid #fff;box-shadow:0 4px 8px rgba(0,0,0,.35);display:grid;place-items:center;color:#aaa;font-size:15px}
+.ice-pointer{position:absolute;z-index:5;top:0;left:50%;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:26px solid #292929;filter:drop-shadow(0 2px 2px rgba(0,0,0,.22))}
+.ice-hub{position:absolute;z-index:4;width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#fff,#fff7c6 75%,#ffe77a);border:5px solid #fff;box-shadow:0 4px 15px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#302600}
+.ice-hub span{font-size:10px;font-weight:1000;letter-spacing:2px;color:#9a8100}.ice-hub b{font-size:26px;font-weight:1000;line-height:1.1}.ice-hub small{font-size:8px;font-weight:1000;color:#88751c;letter-spacing:1px}
+.ice-legend{display:flex;justify-content:center;gap:20px;font-size:10px;font-weight:1000;color:#6c5c20}.ice-legend span{display:flex;align-items:center;gap:6px}.ice-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}.ice-legend i.green{background:#20c878}.ice-legend i.red{background:#f05b58}
+.ice-status{min-height:22px;margin-top:9px;text-align:center;font-size:12px;font-weight:950;color:#796500}.ice-status.win{color:#149456}.ice-status.lose{color:#d3423e}
+.ice-control-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:#796500;font-size:11px;font-weight:1000;letter-spacing:.6px}.ice-control-head span{color:#9b8a42}.ice-bet-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 42px 54px;gap:7px}.ice-bet-row input{min-width:0;width:100%;height:46px;border:2px solid #efdf78;border-radius:13px;background:#fffdf0;padding:0 12px;font-size:22px;font-weight:1000;color:#302600}.ice-bet-row button,.ice-quick-bets button{border:1px solid #eadb68;border-radius:12px;background:#fff6bd;color:#554600;font-size:14px;font-weight:1000;box-shadow:0 3px 0 #e5d45a}.ice-bet-row button:active,.ice-quick-bets button:active{transform:translateY(2px);box-shadow:none}.ice-quick-bets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.ice-quick-bets button{padding:9px 4px;font-size:12px}
+.ice-slider{width:100%;accent-color:#e6c500;height:10px;margin:8px 0}.ice-slider-labels{display:flex;justify-content:space-between;color:#9a8840;font-size:9px;font-weight:900}
+.ice-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ice-stats>div{padding:12px 8px;border-radius:17px;background:#fff;border:2px solid #f0df65;text-align:center;box-shadow:0 5px 14px rgba(165,139,0,.08)}.ice-stats small{display:block;color:#94812e;font-size:9px;font-weight:1000;letter-spacing:.6px}.ice-stats b{display:block;color:#302600;font-size:23px;font-weight:1000;margin-top:4px}
+.ice-play-btn{width:100%;height:54px;border:0;border-radius:16px;background:linear-gradient(180deg,#ffe94d,#ffd51d);color:#302600;font-size:16px;font-weight:1000;box-shadow:0 6px 0 #d7b900,0 10px 18px rgba(180,150,0,.15);transition:transform .12s,filter .12s}.ice-play-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d7b900}.ice-play-btn:disabled{opacity:.65}.ice-footnote{text-align:center;color:#a18e43;font-size:9px;font-weight:800}
+@keyframes iceWheelPreview{to{transform:rotate(360deg)}}.ice-wheel.preview{animation:iceWheelPreview .55s linear infinite;will-change:transform}
+@media(max-width:360px){.ice-wrap{padding-left:10px;padding-right:10px}.ice-arena{width:260px;height:260px}.ice-hub{width:98px;height:98px}}
+/* Faster immediate movement feedback in Tucha Road */
+.tc-track{transition:transform .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hero{transition:left .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hop.hop{animation-duration:.22s!important}
+</style>
+
 </head>
 
 <body>
@@ -1792,6 +1784,9 @@ main { color:#292929 !important; }
             </div>
             <div class="game-card pvp-game-card" onclick="openGameScreen('pvp')" aria-label="PvP Джекпот">
                 <img src="./pvptu.png" alt="PvP Джекпот">
+            </div>
+            <div class="game-card" onclick="openGameScreen('ice-upgrade')" aria-label="Ice Upgrade">
+                <img src="./aicpvp.png" alt="Ice Upgrade">
             </div>
         </div>
     </section>
@@ -2029,7 +2024,6 @@ main { color:#292929 !important; }
                 <canvas id="pv-canvas" width="300" height="300"></canvas>
                 <div class="pv-center"><small>БАНК РАУНДА</small><b id="pv-pot">$0.00</b></div>
             </div>
-            <div class="pv-wheel-players" id="pv-wheel-players"><span class="pv-wheel-empty">Игроки появятся здесь после ставок</span></div>
             <div class="pv-timer" id="pv-timer">—</div>
         </div>
         <div class="pv-bet">
@@ -2214,6 +2208,52 @@ main { color:#292929 !important; }
 
         <div id="upgrade-result" class="upgrade-result">Настрой ставку и шанс, затем нажми «АПГРЕЙД»</div>
         <button id="upgrade-button" class="primary upgrade-action" onclick="playUpgrade()">АПГРЕЙД</button>
+    </div>
+</div>
+
+<!-- ICE UPGRADE GAME SCREEN -->
+<div id="screen-ice-upgrade" class="game-screen">
+    <div class="game-top-bar">
+        <button class="game-back-btn" onclick="closeGameScreen('ice-upgrade')">← Ice Upgrade</button>
+        <div class="balance clickable" onclick="openDeposit()" style="padding:6px 12px;">
+            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
+        </div>
+    </div>
+    <div class="ice-wrap">
+        <div class="ice-heading"><span>ICE ARENA</span><b>ICE UPGRADE</b><small>Поймай зелёный сектор!</small></div>
+        <div class="ice-arena-card">
+            <div class="ice-arena" id="ice-arena">
+                <div class="ice-wheel" id="ice-wheel" style="--ice-chance:47%;--ice-angle:169.2deg;">
+                    <div class="ice-wheel-ticks"></div>
+                    <div class="ice-puck" id="ice-puck"><span>●</span></div>
+                </div>
+                <div class="ice-pointer"><i></i></div>
+                <div class="ice-hub"><span>ICE</span><b id="ice-hub-chance">47%</b><small>ШАНС</small></div>
+            </div>
+            <div class="ice-legend"><span><i class="green"></i> ПОБЕДА</span><span><i class="red"></i> ПРОИГРЫШ</span></div>
+            <div class="ice-status" id="ice-status">Настрой шанс и сделай ставку</div>
+        </div>
+        <div class="ice-control-card">
+            <div class="ice-control-head"><b>СТАВКА</b><span>USD · $</span></div>
+            <div class="ice-bet-row">
+                <input id="ice-bet" type="number" inputmode="decimal" min="0.01" step="0.01" value="0.50" oninput="iceUpdate()">
+                <button onclick="iceBetAdjust(0.5)">½</button>
+                <button onclick="iceBetAdjust(2)">×2</button>
+                <button onclick="iceBetMax()">MAX</button>
+            </div>
+            <div class="ice-quick-bets"><button onclick="iceSetBet(0.10)">$0.10</button><button onclick="iceSetBet(0.50)">$0.50</button><button onclick="iceSetBet(1)">$1</button><button onclick="iceSetBet(5)">$5</button></div>
+        </div>
+        <div class="ice-control-card">
+            <div class="ice-control-head"><b>ВЕРОЯТНОСТЬ</b><b id="ice-chance-label">47%</b></div>
+            <input id="ice-slider" class="ice-slider" type="range" min="1" max="95" step="1" value="47" oninput="iceSetChance(this.value)">
+            <div class="ice-slider-labels"><span>1% · СЛОЖНО</span><span>95% · ЛЕГКО</span></div>
+        </div>
+        <div class="ice-stats">
+            <div><small>МНОЖИТЕЛЬ</small><b id="ice-mult">x1.87</b></div>
+            <div><small>ВЫПЛАТА ПРИ ПОБЕДЕ</small><b id="ice-payout">$0.94</b></div>
+        </div>
+        <button id="ice-play" class="ice-play-btn" onclick="playIceUpgrade()">БРОСИТЬ ШАЙБУ</button>
+        <div class="ice-footnote">Результат определяется сервером. Анимация только показывает результат.</div>
     </div>
 </div>
 
@@ -2447,6 +2487,7 @@ function openGameScreen(gameId) {
     $("screen-" + gameId).classList.add("active");
     if (gameId === 'roulette') drawRouletteWheel();
     if (gameId === 'tucha') tuchaOpen();
+    if (gameId === 'ice-upgrade') iceOpen();
     if (gameId === 'pvp') pvOpen();
     haptic("medium");
 }
@@ -3018,6 +3059,32 @@ function setUpgradeControlsDisabled(disabled) {
     });
 }
 
+function upgradeReadRotation(el) {
+    const tr = getComputedStyle(el).transform;
+    if (!tr || tr === "none") return 0;
+    const m = tr.match(/matrix\(([^)]+)\)/);
+    if (!m) return 0;
+    const a = m[1].split(",").map(Number);
+    return Math.atan2(a[1], a[0]) * 180 / Math.PI;
+}
+async function upgradeStopSpin(el, isWin, chance, duration) {
+    const current = upgradeReadRotation(el);
+    el.classList.remove("preview-spinning");
+    el.style.animation = "none";
+    el.style.transition = "none";
+    el.style.transform = `rotate(${current}deg)`;
+    void el.offsetWidth;
+    const roll = isWin ? Math.random() * Math.max(1, chance) : chance + Math.random() * Math.max(1, 100 - chance);
+    const landing = roll * 3.6;
+    const turns = 3 + Math.floor(Math.random() * 2);
+    const finalRotation = current + turns * 360 + (360 - landing);
+    el.classList.add("spinning");
+    el.style.transition = `transform ${duration || 1750}ms cubic-bezier(.10,.72,.12,1)`;
+    requestAnimationFrame(() => { el.style.transform = `rotate(${finalRotation}deg)`; });
+    await new Promise(resolve => setTimeout(resolve, (duration || 1750) + 60));
+    el.classList.remove("spinning");
+}
+
 async function playUpgrade() {
     if (upgradeBusy || upgradeState === "spinning") return;
     let bet=0, chance=upgradeChance, stakeGift=getSelectedUpgradeGift(), target=null;
@@ -3050,21 +3117,10 @@ async function playUpgrade() {
         if(d.status!=="success") throw new Error(d.message||"Сервер не принял апгрейд.");
         const isWin=!!d.win;
         chance=Number(d.chance)||chance;
-        const randomRoll=isWin?Math.random()*Math.max(1,chance):(chance+Math.random()*Math.max(1,100-chance));
-        const landingAngle=randomRoll*3.6;
-        ring.classList.remove("preview-spinning");
-        ring.style.animation="none";
-        ring.style.transition="none"; ring.style.transform="rotate(0deg)"; void ring.offsetWidth;
-        const turns=3+Math.floor(Math.random()*2);
-        const finalRotation=turns*360+(360-landingAngle);
-        const spinDuration=1850+Math.floor(Math.random()*250);
-        $("upgrade-result").textContent="КОЛЕСО ВРАЩАЕТСЯ…";
-        ring.classList.add("spinning");
-        ring.style.transition=`transform ${spinDuration}ms cubic-bezier(.10,.72,.12,1)`;
-        requestAnimationFrame(()=>{ring.style.transform=`rotate(${finalRotation}deg)`;});
+        $("upgrade-result").textContent="ШАЙБА ЗАМЕДЛЯЕТСЯ…";
         haptic("medium");
-        await new Promise(resolve=>setTimeout(resolve,spinDuration+80));
-        ring.classList.remove("spinning"); ring.classList.add(isWin?"won":"lost");
+        await upgradeStopSpin(ring,isWin,chance,1650+Math.floor(Math.random()*250));
+        ring.classList.add(isWin?"won":"lost");
 
         balance=Number(d.balance)||0;
         if(Array.isArray(d.inventory)) inventory=d.inventory;
@@ -4107,14 +4163,23 @@ async function tcStart() {
     if (!Number.isFinite(bet) || bet < 0.01) { tcToast("Минимальная ставка — $0.01", "lose"); notify("error"); return; }
     if (bet > tc.maxBet) { tcToast("Максимальная ставка — $" + tc.maxBet, "lose"); notify("error"); return; }
     if (bet > balance) { tcToast("Недостаточно средств", "lose"); notify("error"); return; }
-    tc.busy = true; tcUI();
+    const oldBalance = balance;
+    // Мгновенный отклик интерфейса: показываем старт и списываем ставку локально,
+    // сервер всё равно подтверждает и окончательно проверяет операцию.
+    tc.busy = true; tc.bet = bet; tc.state = "playing"; tc.step = 0;
+    balance = Math.round((balance - bet) * 100) / 100;
+    updateBalanceUI(); tcBuildTrack(); tcUI();
+    tcToast("Старт! Готовься прыгать…", ""); haptic("medium");
     try {
         const d = await tcCall({action: "tucha_start", request_id: tcUuid(), mode: tc.mode, bet: bet});
-        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
+        balance = Number(d.balance); if (!Number.isFinite(balance)) balance = oldBalance - bet;
         tc.bet = d.active.bet; tc.state = "playing"; tc.step = 0;
-        tcMarkLanes(); tcToast("Поехали! Жми «Прыгнуть» или тапни по оранжевой полосе", ""); haptic("medium");
-    } catch (e) { tcToast(e.message || "Не удалось начать", "lose"); notify("error"); await tcLoad(); }
-    finally { tc.busy = false; tcUI(); }
+        updateBalanceUI(); saveLocal(); tcMarkLanes(); tcToast("Поехали! Жми «Прыгнуть» или тапни по оранжевой полосе", "");
+    } catch (e) {
+        tc.state = "idle"; tc.step = 0; balance = oldBalance; updateBalanceUI();
+        tcToast(e.message || "Не удалось начать", "lose"); notify("error");
+        try { await tcLoad(); } catch (_) { balance = oldBalance; updateBalanceUI(); }
+    } finally { tc.busy = false; tcUI(); }
 }
 
 async function tcJump() {
@@ -4123,6 +4188,7 @@ async function tcJump() {
     const target = tc.step + 1;
     document.querySelectorAll(`#tc-track .tc-lane[data-i="${target}"] .tc-car`).forEach(c => c.classList.add("gone"));
     tcMoveHero(target);
+    tcToast("Прыжок! ☁️", "");
     try {
         const d = await tcCall({action: "tucha_step", request_id: tcUuid()});
         if (d.balance !== undefined) { balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal(); } // при обычном прыжке баланс не меняется
@@ -4150,7 +4216,7 @@ async function tcCrash(lane) {
 async function tcWin(payout, mult, auto) {
     tcConfetti(); notify("success"); haptic("heavy");
     tcToast((auto ? "МАКСИМУМ! " : "ЗАБРАЛ! ") + "+$" + money(payout) + " · x" + Number(mult).toFixed(2), "win");
-    await tcSleep(900);
+    await tcSleep(320);
     tcResetRound();
 }
 async function tcCash() {
@@ -4164,18 +4230,75 @@ async function tcCash() {
     finally { tc.busy = false; tcUI(); }
 }
 
+/* ===== ICE UPGRADE — server-authoritative result, immediate animation ===== */
+let iceChance = 47, iceBusy = false;
+function iceGetBet(){ return Math.round((Number($("ice-bet")?.value || 0) + Number.EPSILON) * 100) / 100; }
+function iceUpdate(){
+    const inp=$("ice-bet"); if(!inp) return;
+    const c=Math.min(95,Math.max(1,Math.round(Number($("ice-slider").value)||47)));
+    iceChance=c; $("ice-chance-label").textContent=c+"%"; $("ice-hub-chance").textContent=c+"%";
+    $("ice-wheel").style.setProperty("--ice-chance",c+"%"); $("ice-wheel").style.setProperty("--ice-angle",(c*3.6)+"deg");
+    $("ice-mult").textContent="x"+(88/c).toFixed(2);
+    $("ice-payout").textContent="$"+money(iceGetBet()*(88/c));
+    $("ice-play").disabled=iceBusy;
+}
+function iceSetChance(v){ if(iceBusy)return; iceChance=Math.min(95,Math.max(1,Math.round(Number(v)||1))); $("ice-slider").value=iceChance; iceUpdate(); }
+function iceSetBet(v){ if(iceBusy)return; $("ice-bet").value=Number(v).toFixed(2); iceUpdate(); haptic("light"); }
+function iceBetAdjust(f){ if(iceBusy)return; iceSetBet(Math.max(.01,Math.min(balance,iceGetBet()*f))); }
+function iceBetMax(){ iceSetBet(Math.max(.01,balance)); }
+function iceOpen(){ iceBusy=false; $("ice-wheel").classList.remove("preview"); $("ice-wheel").style.transition="none"; $("ice-wheel").style.transform="rotate(0deg)"; iceUpdate(); }
+function iceReadRotation(el){
+    const tr=getComputedStyle(el).transform; if(!tr||tr==="none")return 0;
+    const m=tr.match(/matrix\(([^)]+)\)/); if(!m)return 0;
+    const a=m[1].split(",").map(Number); return Math.atan2(a[1],a[0])*180/Math.PI;
+}
+async function iceStopAtResult(el,isWin,chance){
+    const current=iceReadRotation(el); el.classList.remove("preview"); el.style.animation="none"; el.style.transition="none"; el.style.transform=`rotate(${current}deg)`; void el.offsetWidth;
+    const roll=isWin?Math.random()*Math.max(1,chance):chance+Math.random()*Math.max(1,100-chance);
+    const target=roll*3.6, turns=4+Math.floor(Math.random()*2), end=current+turns*360+(360-target), duration=2050;
+    el.style.transition=`transform ${duration}ms cubic-bezier(.08,.72,.12,1)`;
+    requestAnimationFrame(()=>{el.style.transform=`rotate(${end}deg)`;});
+    await new Promise(resolve=>setTimeout(resolve,duration+70));
+}
+async function playIceUpgrade(){
+    if(iceBusy)return;
+    const bet=iceGetBet(), chance=iceChance;
+    if(!Number.isFinite(bet)||bet<.01){$("ice-status").textContent="Минимальная ставка — $0.01";$("ice-status").className="ice-status lose";return;}
+    if(bet>balance){$("ice-status").textContent="Недостаточно средств";$("ice-status").className="ice-status lose";return;}
+    iceBusy=true; iceUpdate();
+    const wheel=$("ice-wheel"), status=$("ice-status"), button=$("ice-play");
+    wheel.classList.remove("preview"); wheel.style.transition="none"; wheel.style.transform="rotate(0deg)"; void wheel.offsetWidth;
+    wheel.classList.add("preview"); status.className="ice-status"; status.textContent="Шайба летит…"; button.textContent="ШАЙБА В ПУТИ…"; haptic("medium");
+    try{
+        const d=await apiPost({action:"upgrade_play",request_id:(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+"-ice"),mode:"money",bet:bet,chance:chance});
+        if(!d||d.status!=="success")throw new Error((d&&d.message)||"Сервер не принял ставку.");
+        const win=!!d.win, actualChance=Number(d.chance)||chance;
+        status.textContent="Шайба замедляется…";
+        await iceStopAtResult(wheel,win,actualChance);
+        balance=Number(d.balance); if(!Number.isFinite(balance))throw new Error("Сервер не вернул баланс.");
+        updateBalanceUI(); saveLocal();
+        status.className="ice-status "+(win?"win":"lose");
+        status.textContent=win?`ПОБЕДА! +$${money(d.payout)} · x${(88/actualChance).toFixed(2)}`:`НЕ ПОПАЛА! −$${money(bet)}`;
+        $("ice-hub-chance").textContent=win?"WIN":"MISS"; notify(win?"success":"error"); haptic(win?"heavy":"medium");
+    }catch(e){
+        wheel.classList.remove("preview"); wheel.style.animation="none"; wheel.style.transition="none"; wheel.style.transform="rotate(0deg)";
+        status.className="ice-status lose"; status.textContent=e.message||"Ошибка соединения";
+    }finally{ iceBusy=false; button.textContent="БРОСИТЬ ШАЙБУ"; iceUpdate(); }
+}
+
 /* ===== PvP ДЖЕКПОТ: realtime через WebSocket ===== */
 // !!! ВСТАВЬ СЮДА АДРЕС СВОЕГО СЕРВЕРА С RENDER (начинается с wss://) !!!
 const PVP_WS_URL = "wss://tucha-pvp.onrender.com";
 let pv = {ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null, tick: null, busy: false, busyT: null, drawKey: "", wonShown: ""};
 
-function pvEsc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function pvEsc(s) { return String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
 function pvNow() { return Date.now() + pv.off; }
 function pvToast(text, kind) { const t = $("pv-status"); if (!t) return; t.textContent = text; t.className = "pv-status" + (kind ? " " + kind : ""); }
-function pvGetBet() { const el = $("pv-bet"); return Math.round((parseFloat(String(el ? el.value : "").replace(",", ".")) || 0) * 100) / 100; }
-function pvSetBet(v) { const el = $("pv-bet"); if (el) el.value = money(v); pvUI(); haptic("light"); }
+function pvGetBet() { return Math.round((parseFloat(String($("pv-bet").value).replace(",", ".")) || 0) * 100) / 100; }
+function pvSetBet(v) { $("pv-bet").value = money(v); pvUI(); haptic("light"); }
 function pvBetMul(f) { pvSetBet(Math.max(0.1, pvGetBet() * f)); }
 function pvBetMax() { pvSetBet(Math.max(0.1, Math.min(balance, 100))); }
+
 function pvOpen() {
     pv.open = true; pv.tries = 0; pv.drawKey = ""; pv.wonShown = "";
     if (!pv.tick) pv.tick = setInterval(pvTickFn, 250);
@@ -4195,7 +4318,7 @@ function pvConnect() {
     let ws;
     try { ws = new WebSocket(PVP_WS_URL); } catch (e) { pvToast("Неверный адрес сервера", "lose"); return; }
     pv.ws = ws; pv.ready = false;
-    ws.onopen = () => { pv.tries = 0; ws.send(JSON.stringify({type:"auth", initData:tg.initData})); };
+    ws.onopen = () => { pv.tries = 0; ws.send(JSON.stringify({type: "auth", initData: tg.initData})); };
     ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (x) { return; } pvOnMsg(m); };
     ws.onclose = () => {
         pv.ready = false; if (pv.ws === ws) pv.ws = null;
@@ -4206,13 +4329,12 @@ function pvConnect() {
     ws.onerror = () => {};
 }
 function pvOnMsg(m) {
-    if (!m || typeof m !== "object") return;
     if (m.type === "ready") { pv.ready = true; pvToast("Онлайн ✓ Делай ставку", ""); pvUI(); }
     else if (m.type === "balance") { balance = Number(m.balance) || 0; updateBalanceUI(); saveLocal(); }
     else if (m.type === "state") pvApplyState(m);
     else if (m.type === "bet_ok") { pv.busy = false; clearTimeout(pv.busyT); notify("success"); pvUI(); }
-    else if (m.type === "info") pvToast(m.message || "Информация от сервера", "");
-    else if (m.type === "error") { pv.busy = false; clearTimeout(pv.busyT); pvToast(m.message || "Ошибка ставки", "lose"); notify("error"); pvUI(); }
+    else if (m.type === "info") pvToast(m.message, "");
+    else if (m.type === "error") { pv.busy = false; clearTimeout(pv.busyT); pvToast(m.message, "lose"); notify("error"); pvUI(); }
 }
 function pvBet() {
     if (pv.busy || !pv.ready || !pv.ws || pv.ws.readyState !== 1) return;
@@ -4222,141 +4344,75 @@ function pvBet() {
     if (a > balance) { pvToast("Недостаточно средств", "lose"); notify("error"); return; }
     pv.busy = true; pvUI(); haptic("medium");
     pv.busyT = setTimeout(() => { pv.busy = false; pvUI(); }, 30000);
-    try { pv.ws.send(JSON.stringify({type:"bet", amount:a})); }
-    catch (e) { pv.busy = false; clearTimeout(pv.busyT); pvToast("Не удалось отправить ставку", "lose"); pvUI(); }
+    pv.ws.send(JSON.stringify({type: "bet", amount: a}));
 }
 
-/* --- readable round number: use the server's global sequence when provided --- */
-function pvRoundNumber(r) {
-    if (!r) return "—";
-    const candidates = [r.roundNumber,r.round_number,r.roundNo,r.round_no,r.number,r.sequence,r.index];
-    for (const v of candidates) {
-        const n = Number(v);
-        if (v !== null && v !== undefined && String(v).trim() !== "" && Number.isSafeInteger(n) && n > 0) return n;
-    }
-    if (typeof r.id === "number" && Number.isSafeInteger(r.id) && r.id > 0) return r.id;
-    // Fallback for older server payloads with UUID IDs: a stable local counter.
-    // The true all-time/global number must be sent by the server as roundNumber/number.
-    const id = String(r.id ?? "");
-    if (!id) return "—";
-    try {
-        const lastId = localStorage.getItem("tucha_pvp_last_round_id");
-        let count = Number(localStorage.getItem("tucha_pvp_local_round_count")) || 0;
-        if (lastId !== id) { count += 1; localStorage.setItem("tucha_pvp_last_round_id", id); localStorage.setItem("tucha_pvp_local_round_count", String(count)); }
-        return count || "—";
-    } catch (e) { return "—"; }
-}
-function pvAvatarUrl(p) {
-    if (!p || typeof p !== "object") return "";
-    const v = p.avatar_url || p.avatarUrl || p.photo_url || p.photoUrl || p.avatar || p.photo || p.image || p.picture || "";
-    if (typeof v !== "string") return "";
-    const u = v.trim();
-    return /^https:\/\//i.test(u) ? u : "";
-}
-function pvInitials(name) {
-    const s = String(name || "?").trim();
-    return pvEsc((s.split(/\s+/).slice(0,2).map(x => Array.from(x)[0] || "").join("") || "?").slice(0,2));
-}
-function pvAvatarHTML(p, extraClass) {
-    const name = String((p && (p.name || p.username)) || "Игрок");
-    const url = pvAvatarUrl(p);
-    const fallback = `<span class="pv-avatar-fallback"${url ? ' style="display:none"' : ''}>${pvInitials(name)}</span>`;
-    const img = url ? `<img src="${pvEsc(url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : "";
-    return `<span class="pv-avatar ${extraClass || ""}" title="${pvEsc(name)}">${img}${fallback}</span>`;
-}
-function pvFinalRot(f) { const n = Number(f); return 360 * 6 + 360 - (Number.isFinite(n) ? n : 0) * 360; }
+/* --- состояние раунда --- */
+function pvFinalRot(f) { return 360 * 6 + 360 - f * 360; } // колесо крутится так, чтобы точка f оказалась под указателем
 function pvSetRot(deg, ms) {
     const c = $("pv-canvas"); if (!c) return;
     c.style.transition = ms > 0 ? "transform " + ms + "ms cubic-bezier(.12,.62,.08,1)" : "none";
     c.style.transform = "rotate(" + deg + "deg)";
 }
 function pvApplyState(m) {
-    const r = m && m.round;
-    if (!r || typeof r !== "object") return;
-    const prev = pv.st, pp = prev ? prev.phase : null;
-    pv.off = Number(r.now) ? Number(r.now) - Date.now() : 0;
-    pv.st = r; pv.hist = Array.isArray(m.history) ? m.history : pv.hist;
+    const prev = pv.st, r = m.round, pp = prev ? prev.phase : null;
+    pv.off = r.now - Date.now(); pv.st = r; pv.hist = m.history || [];
     pvDraw(r);
-    const fraction = r.result && Number.isFinite(Number(r.result.fraction)) ? Number(r.result.fraction) : null;
     if (r.phase === "spin" && pp !== "spin") {
-        const rem = Math.max(0, Number(r.spinEndsAt || 0) - pvNow());
-        if (fraction !== null && rem > 500) { pvSetRot(0,0); void $("pv-canvas").offsetWidth; pvSetRot(pvFinalRot(fraction),rem); }
-        else if (fraction !== null) pvSetRot(pvFinalRot(fraction),0);
+        const rem = Math.max(0, r.spinEndsAt - pvNow());
+        if (pp && rem > 500) { pvSetRot(0, 0); void $("pv-canvas").offsetWidth; pvSetRot(pvFinalRot(r.result.fraction), rem); }
+        else pvSetRot(pvFinalRot(r.result.fraction), 0);
         haptic("medium");
     } else if (r.phase === "result" && pp !== "result") {
-        if (fraction !== null) pvSetRot(pvFinalRot(fraction),0);
-        pvShowWinner(r);
+        pvSetRot(pvFinalRot(r.result.fraction), 0); pvShowWinner(r);
     } else if ((r.phase === "waiting" || r.phase === "countdown") && (pp === "spin" || pp === "result")) {
-        pvSetRot(0,0); pv.wonShown = "";
+        pvSetRot(0, 0); pv.wonShown = "";
     }
-    // Old markup had no #pv-fee element; guard optional server fee instead of throwing.
-    const feeEl = $("pv-fee"); if (feeEl && r.fee !== undefined) feeEl.textContent = String(r.fee);
+    $("pv-fee").textContent = r.fee;
     pvRenderLists(); pvUI(); pvTickFn();
 }
 function pvShowWinner(r) {
-    if (!r || !r.result || !r.result.winner) return;
-    const roundKey = String(r.id ?? pvRoundNumber(r));
-    if (pv.wonShown === roundKey) return;
-    pv.wonShown = roundKey;
-    const winner = r.result.winner;
-    const me = String(winner.userid ?? winner.userId ?? "") === String(userId);
-    const winnerName = winner.name || winner.username || "Игрок";
-    const payout = Number(r.result.payout) || 0;
-    pvToast(me ? "🎉 ТЫ ВЫИГРАЛ +$" + money(payout) + "!" : "Победил " + winnerName + " · +$" + money(payout), me ? "win" : "");
+    if (pv.wonShown === r.id || !r.result) return;
+    pv.wonShown = r.id;
+    const me = String(r.result.winner.userid) === String(userId);
+    pvToast(me ? "🎉 ТЫ ВЫИГРАЛ +$" + money(r.result.payout) + "!" : "Победил " + r.result.winner.name + " · +$" + money(r.result.payout), me ? "win" : "");
     if (me) { notify("success"); haptic("heavy"); } else haptic("light");
 }
 function pvDraw(r) {
     const c = $("pv-canvas"); if (!c) return;
-    const players = Array.isArray(r.players) ? r.players : [];
-    const total = Number(r.total) || players.reduce((sum,p) => sum + (Number(p.amount) || 0),0);
-    const key = String(r.id ?? "") + "|" + players.map(p => String(p.userid ?? p.userId ?? p.name) + ":" + p.amount).join(",");
-    const pot = $("pv-pot"); if (pot) pot.textContent = "$" + money(total);
-    const roundEl = $("pv-round"); if (roundEl) roundEl.textContent = "#" + pvRoundNumber(r);
-    const countEl = $("pv-player-count"); if (countEl) countEl.textContent = players.length + (players.length === 1 ? " игрок" : " игроков");
+    const key = r.id + "|" + r.players.map(p => p.userid + ":" + p.amount).join(",");
+    $("pv-pot").textContent = "$" + money(r.total);
+    const roundEl = $("pv-round"); if (roundEl) roundEl.textContent = String(r.id ?? "—").replace(/[^a-zA-Z0-9#_-]/g, "").slice(-8);
+    const countEl = $("pv-player-count"); if (countEl) countEl.textContent = r.players.length + (r.players.length === 1 ? " игрок" : " игроков");
     if (key === pv.drawKey) return; pv.drawKey = key;
     const S = 300, dpr = Math.min(2, window.devicePixelRatio || 1);
-    c.width = S*dpr; c.height = S*dpr; c.style.width = S+"px"; c.style.height = S+"px";
-    const x = c.getContext("2d"); if (!x) return;
-    x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,S,S);
-    const cx=S/2, R=S/2-6;
-    if (!players.length || total <= 0) { x.beginPath(); x.arc(cx,cx,R,0,Math.PI*2); x.fillStyle="#e9e4c6"; x.fill(); }
+    c.width = S * dpr; c.height = S * dpr; c.style.width = S + "px"; c.style.height = S + "px";
+    const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, S, S);
+    const cx = S / 2, R = S / 2 - 6;
+    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, 7); x.fillStyle = "#475569"; x.fill(); }
     else {
-        let a=-Math.PI/2;
-        players.forEach((p,i) => {
-            const amount=Math.max(0,Number(p.amount)||0), sw=amount/total*Math.PI*2;
-            if (!sw) return;
-            x.beginPath(); x.moveTo(cx,cx); x.arc(cx,cx,R,a,a+sw); x.closePath();
-            x.fillStyle = /^#[0-9a-f]{3,8}$/i.test(String(p.color||"")) ? p.color : ["#ef4444","#2563eb","#16a34a","#f59e0b","#9333ea","#0d9488"][i%6];
-            x.fill(); x.strokeStyle="#fff"; x.lineWidth=2; x.stroke(); a+=sw;
+        let a = -Math.PI / 2;
+        r.players.forEach(p => {
+            const sw = p.amount / r.total * Math.PI * 2;
+            x.beginPath(); x.moveTo(cx, cx); x.arc(cx, cx, R, a, a + sw); x.closePath();
+            x.fillStyle = p.color; x.fill(); x.strokeStyle = "#fff"; x.lineWidth = 2; x.stroke();
+            a += sw;
         });
     }
-    x.beginPath(); x.arc(cx,cx,R,0,Math.PI*2); x.lineWidth=6; x.strokeStyle="#f0df49"; x.stroke();
+    x.beginPath(); x.arc(cx, cx, R, 0, 7); x.lineWidth = 6; x.strokeStyle = "#fde68a"; x.stroke();
 }
 function pvRenderLists() {
-    const r=pv.st, box=$("pv-players"), hist=$("pv-hist"), wheelPlayers=$("pv-wheel-players");
-    if (!box || !hist) return;
-    const players = r && Array.isArray(r.players) ? r.players : [];
-    if (!players.length) box.innerHTML='<div class="pv-empty">Пока никто не поставил. Будь первым!</div>';
+    const r = pv.st, box = $("pv-players"), hist = $("pv-hist"); if (!box || !hist) return;
+    if (!r || !r.players.length) box.innerHTML = '<div class="pv-empty">Пока никто не поставил. Будь первым!</div>';
     else {
-        const wid = r && r.result && r.result.winner ? String(r.result.winner.userid ?? r.result.winner.userId ?? "") : "";
-        box.innerHTML = players.map(p => {
-            const uid=String(p.userid ?? p.userId ?? ""), pct=(Number(r.total)>0 ? Math.round((Number(p.amount)||0)/Number(r.total)*1000)/10 : 0);
-            const cls="pv-row"+(uid===String(userId)?" me":"")+(wid && wid===uid && r.phase==="result"?" won":"");
-            return `<div class="${cls}">${pvAvatarHTML(p)}<span class="n">${pvEsc(p.name || p.username || "Игрок")}${uid===String(userId)?" (ты)":""}</span><span class="a">$${money(p.amount)}</span><span class="p">${pct}%</span></div>`;
+        const wid = r.result ? String(r.result.winner.userid) : "";
+        box.innerHTML = r.players.map(p => {
+            const pct = r.total > 0 ? Math.round(p.amount / r.total * 1000) / 10 : 0;
+            const cls = "pv-row" + (String(p.userid) === String(userId) ? " me" : "") + (wid && wid === String(p.userid) && r.phase === "result" ? " won" : "");
+            return `<div class="${cls}"><span class="pv-dot" style="background:${p.color}"></span><span class="n">${pvEsc(p.name)}${String(p.userid) === String(userId) ? " (ты)" : ""}</span><span class="a">$${money(p.amount)}</span><span class="p">${pct}%</span></div>`;
         }).join("");
     }
-    if (wheelPlayers) {
-        wheelPlayers.innerHTML = players.length ? players.slice(0,12).map(p => `<div class="pv-wheel-player">${pvAvatarHTML(p)}<span class="pv-wheel-player-name">${pvEsc(p.name || p.username || "Игрок")}</span></div>`).join("") : '<span class="pv-wheel-empty">Игроки появятся здесь после ставок</span>';
-    }
-    const history = Array.isArray(pv.hist) ? pv.hist : [];
-    hist.innerHTML = history.length ? history.slice(0,20).map((h,i) => {
-        const hn=h.winner || h.player || h;
-        const name=hn.name || hn.username || h.name || "Игрок";
-        const rawRoundNo=h.roundNumber ?? h.round_number ?? h.roundNo ?? h.round_no ?? h.number ?? h.id ?? "";
-        const numericRoundNo=Number(rawRoundNo), roundLabel=(rawRoundNo !== "" && Number.isSafeInteger(numericRoundNo) && numericRoundNo > 0) ? "Раунд #"+numericRoundNo : "Завершённый раунд";
-        const payout=Number(h.payout ?? h.prize ?? 0), pot=Number(h.total ?? h.pot ?? 0);
-        return `<div class="pv-row pv-history-row">${pvAvatarHTML(hn)}<span class="n">${pvEsc(name)}<span class="pv-history-round">${pvEsc(roundLabel)}</span></span><span class="pv-history-result">+$${money(payout)}</span>${pot>0?`<span class="p">банк $${money(pot)}</span>`:""}</div>`;
-    }).join("") : '<div class="pv-empty">История появится после завершения первого раунда</div>';
+    hist.innerHTML = pv.hist.length ? pv.hist.map(h => `<div class="pv-row"><span class="n">🏆 ${pvEsc(h.name)}</span><span class="a">+$${money(h.payout)}</span><span class="p">из $${money(h.total)}</span></div>`).join("") : '<div class="pv-empty">Раундов ещё не было</div>';
 }
 function pvTickFn() {
     const r = pv.st, t = $("pv-timer"); if (!t) return;
