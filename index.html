@@ -1373,6 +1373,93 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 .admin-stat { background: #fff; border-radius: 12px; padding: 10px; border: 2px solid rgba(255,215,0,.3); }
 .admin-stat small { display: block; font-size: 10px; color: #8b6b16; font-weight: 800; }
 .admin-stat b { font-size: 17px; }
+/* ===== ТУЧА НА ДОРОГЕ ===== */
+#screen-tucha { background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 38%, #fef08a 100%) !important; }
+#screen-tucha .game-top-bar { background: rgba(255,255,255,.82) !important; border-bottom: 2px solid rgba(56,189,248,.35) !important; }
+#screen-tucha .game-back-btn { color: #0c4a6e !important; }
+.tc-wrap { width: 100%; max-width: 560px; margin: 0 auto; padding: 12px 12px 30px; display: flex; flex-direction: column; gap: 12px; }
+
+.tc-scene { position: relative; height: 290px; border-radius: 26px; overflow: hidden; border: 4px solid #fff; background: #4ade80;
+    box-shadow: 0 8px 0 rgba(14,116,144,.28), 0 18px 30px rgba(14,116,144,.3); }
+.tc-hud { position: absolute; left: 10px; right: 10px; top: 10px; z-index: 12; display: flex; justify-content: space-between; pointer-events: none; }
+.tc-pill { background: rgba(255,255,255,.92); border-radius: 16px; padding: 6px 14px; box-shadow: 0 4px 0 rgba(14,116,144,.22); }
+.tc-pill small { display: block; font-size: 9px; font-weight: 900; letter-spacing: 1px; color: #0369a1; }
+.tc-pill b { font-size: 22px; font-weight: 950; color: #ea580c; line-height: 1.05; }
+.tc-pill.r { text-align: right; }
+.tc-pill.r b { color: #0f172a; font-size: 18px; }
+
+.tc-track { position: absolute; left: 0; top: 0; height: 100%; display: flex; transition: transform .5s cubic-bezier(.3,.7,.2,1); }
+.tc-grass { flex: 0 0 96px; position: relative; overflow: hidden; background: repeating-linear-gradient(0deg, #4ade80 0 38px, #34d399 38px 76px); }
+.tc-start { border-right: 8px solid #fff; box-shadow: inset -8px 0 0 #ef4444; }
+.tc-deco { position: absolute; font-size: 24px; filter: drop-shadow(0 3px 2px rgba(0,0,0,.2)); }
+.tc-flag { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 44px; animation: tcBob 1.6s ease-in-out infinite; }
+.tc-lane { flex: 0 0 84px; position: relative; overflow: hidden; background: linear-gradient(180deg, #6b7fa6, #52648a); border-right: 3px dashed rgba(255,255,255,.8); transition: background .4s; }
+.tc-lane.done { background: linear-gradient(180deg, #fde68a, #fbbf24); border-right-color: rgba(255,255,255,.95); }
+
+.tc-chip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); min-width: 58px; padding: 7px 8px; border-radius: 999px; z-index: 4;
+    background: rgba(15,23,42,.72); color: #fff; font-weight: 900; font-size: 12px; white-space: nowrap; text-align: center; border: 2px solid rgba(255,255,255,.4); cursor: default; }
+.tc-chip.next { background: linear-gradient(180deg, #fb923c, #ea580c); border-color: #fff; cursor: pointer; animation: tcPulse 1s ease-in-out infinite; }
+.tc-chip.done { background: #fff; color: #15803d; border-color: #16a34a; }
+.tc-chip.bad { background: #ef4444; border-color: #fff; }
+
+.tc-car { position: absolute; left: 50%; top: 0; margin-left: -17px; z-index: 2; animation: tcDrive var(--d, 3s) linear var(--dl, 0s) infinite; filter: drop-shadow(0 4px 3px rgba(0,0,0,.3)); transition: opacity .25s; }
+.tc-car.down { animation-direction: normal; }
+.tc-car.down svg { transform: rotate(180deg); }
+.tc-car.up { animation-direction: reverse; }
+.tc-car.gone { opacity: 0; }
+.tc-car.hit { animation: tcSmash .42s ease-in forwards; z-index: 8; }
+.tc-car svg { display: block; }
+
+.tc-hero { position: absolute; top: 92px; width: 72px; margin-left: -36px; z-index: 9; transition: left .45s linear; }
+.tc-hop.hop { animation: tcHop .46s ease-out; }
+.tc-bob { animation: tcBob 1.8s ease-in-out infinite; }
+.tc-hero svg { display: block; width: 72px; height: 66px; overflow: visible; }
+.tc-hero .f-dead { display: none; }
+.tc-hero.dead .f-ok { display: none; }
+.tc-hero.dead .f-dead { display: block; }
+.tc-hero.dead .tc-hop { transform: scale(1.25,.45); transform-origin: 50% 100%; transition: transform .15s; }
+.tc-hero.dead .tc-bob { animation: none; }
+.tc-coin { position: absolute; left: 28px; top: 10px; font-size: 20px; pointer-events: none; animation: tcCoin .95s ease-out forwards; }
+
+.tc-toast { min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 12px; border-radius: 16px;
+    font-weight: 900; font-size: 14px; color: #0c4a6e; background: rgba(255,255,255,.8); border: 2px solid rgba(56,189,248,.35); }
+.tc-toast.win { background: #dcfce7; color: #15803d; border-color: #4ade80; }
+.tc-toast.lose { background: #fee2e2; color: #b91c1c; border-color: #f87171; }
+
+.tc-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tc-mode { border: 3px solid #fff; border-radius: 18px; padding: 9px 4px; background: rgba(255,255,255,.75); color: #0f172a; font-weight: 900; font-size: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 4px 0 rgba(14,116,144,.2); }
+.tc-mode small { font-size: 10px; font-weight: 800; color: #475569; }
+.tc-mode.active { background: linear-gradient(180deg, #fb923c, #ea580c); color: #fff; box-shadow: 0 4px 0 #9a3412; }
+.tc-mode.active small { color: #ffedd5; }
+.tc-mode:disabled { opacity: .6; }
+
+.tc-bet { background: rgba(255,255,255,.8); border: 3px solid #fff; border-radius: 20px; padding: 10px 12px; box-shadow: 0 4px 0 rgba(14,116,144,.2); }
+.tc-bet-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tc-bet-top span { font-size: 11px; font-weight: 900; letter-spacing: 1px; color: #0369a1; }
+.tc-chips { display: flex; gap: 6px; }
+.tc-chips button { border: 2px solid #fb923c; background: #fff7ed; color: #c2410c; border-radius: 999px; padding: 4px 10px; font-weight: 900; font-size: 12px; }
+.tc-bet-row { display: flex; gap: 8px; align-items: center; }
+.tc-bet-row input { flex: 1; min-width: 0; border: 2px solid #bae6fd; border-radius: 14px; padding: 10px 12px; font-size: 18px; font-weight: 900; color: #0f172a; background: #fff; }
+.tc-bet-row button { border: 2px solid #bae6fd; background: #fff; border-radius: 14px; padding: 10px 12px; font-weight: 900; color: #0369a1; }
+.tc-bet button:disabled, .tc-bet input:disabled { opacity: .55; }
+
+.tc-go, .tc-jump, .tc-cash { border: none; border-radius: 20px; padding: 16px 10px; font-size: 17px; font-weight: 950; color: #fff; letter-spacing: .2px; }
+.tc-go { width: 100%; background: linear-gradient(180deg, #fb923c, #ea580c); box-shadow: 0 6px 0 #9a3412, 0 14px 22px rgba(234,88,12,.35); }
+.tc-jump { background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 6px 0 #075985, 0 14px 22px rgba(2,132,199,.35); }
+.tc-cash { background: linear-gradient(180deg, #4ade80, #16a34a); box-shadow: 0 6px 0 #166534, 0 14px 22px rgba(22,163,74,.35); }
+.tc-go:active, .tc-jump:active, .tc-cash:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.3); }
+.tc-go:disabled, .tc-jump:disabled, .tc-cash:disabled { opacity: .55; pointer-events: none; }
+.tc-play { display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+@keyframes tcDrive { from { transform: translateY(-90px); } to { transform: translateY(300px); } }
+@keyframes tcSmash { from { transform: translateY(-90px); } to { transform: translateY(330px); } }
+@keyframes tcHop { 0% { transform: translateY(0) scale(1.1,.88); } 30% { transform: translateY(-50px) scale(.92,1.1); } 70% { transform: translateY(-34px) scale(.96,1.05); } 90% { transform: translateY(0) scale(1.12,.86); } 100% { transform: translateY(0) scale(1,1); } }
+@keyframes tcBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes tcPulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.12); } }
+@keyframes tcCoin { from { transform: translate(0,0) scale(.6); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tc-car { animation-duration: 8s; } }
+
 </style>
 </head>
 
@@ -1443,6 +1530,9 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
             </div>
             <div class="game-card" onclick="openGameScreen('roulette')">
                 <img src="./rulet.png" alt="Рулетка">
+            </div>
+            <div class="game-card" onclick="openGameScreen('tucha')">
+                <img src="./tuchadjamp.png" alt="Tucha Road">
             </div>
         </div>
     </section>
@@ -1609,6 +1699,51 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
     <div class="crash-bottom-ui">
         <button id="btn-crash-action" class="btn-crash-blue" onclick="handleCrashAction()">Сделать ставку 🚀</button>
         <div id="crash-players-info" class="crash-players-status">Ставок пока нет</div>
+    </div>
+</div>
+
+<!-- TUCHA ROAD GAME SCREEN -->
+<div id="screen-tucha" class="game-screen">
+    <div class="game-top-bar">
+        <button class="game-back-btn" onclick="closeGameScreen('tucha')">← Туча</button>
+        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
+            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
+        </div>
+    </div>
+    <div class="tc-wrap">
+        <div class="tc-scene" id="tc-scene">
+            <div class="tc-hud">
+                <div class="tc-pill"><small>МНОЖИТЕЛЬ</small><b id="tc-mult">x1.00</b></div>
+                <div class="tc-pill r"><small>ПОЛОСА</small><b id="tc-lane">0/20</b></div>
+            </div>
+            <div class="tc-track" id="tc-track"></div>
+        </div>
+        <div class="tc-toast" id="tc-toast">Выбери сложность и ставку ☁️</div>
+        <div class="tc-modes">
+            <button class="tc-mode" id="tc-mode-easy" onclick="tcSetMode('easy')"></button>
+            <button class="tc-mode active" id="tc-mode-medium" onclick="tcSetMode('medium')"></button>
+            <button class="tc-mode" id="tc-mode-hard" onclick="tcSetMode('hard')"></button>
+        </div>
+        <div class="tc-bet">
+            <div class="tc-bet-top">
+                <span>СТАВКА, $</span>
+                <div class="tc-chips">
+                    <button onclick="tcSetBet(0.1)">0.1</button><button onclick="tcSetBet(0.5)">0.5</button>
+                    <button onclick="tcSetBet(1)">1</button><button onclick="tcSetBet(5)">5</button>
+                </div>
+            </div>
+            <div class="tc-bet-row">
+                <input id="tc-bet" type="text" inputmode="decimal" value="0.50" oninput="tcUI()">
+                <button onclick="tcBetMul(0.5)">½</button>
+                <button onclick="tcBetMul(2)">×2</button>
+                <button onclick="tcBetMax()">MAX</button>
+            </div>
+        </div>
+        <button class="tc-go" id="tc-go" onclick="tcStart()">Перейти дорогу</button>
+        <div class="tc-play" id="tc-play">
+            <button class="tc-jump" id="tc-jump" onclick="tcJump()">Прыгнуть</button>
+            <button class="tc-cash" id="tc-cash" onclick="tcCash()">Забрать</button>
+        </div>
     </div>
 </div>
 
@@ -2007,6 +2142,7 @@ function openGameScreen(gameId) {
     $("main-content").style.display = "none";
     $("screen-" + gameId).classList.add("active");
     if (gameId === 'roulette') drawRouletteWheel();
+    if (gameId === 'tucha') tuchaOpen();
     haptic("medium");
 }
 function closeGameScreen(gameId) {
@@ -3443,6 +3579,240 @@ document.addEventListener("click", function(e) {
     b.addEventListener("click",()=>{toggleTuchaSounds();b.textContent=tuchaSoundsEnabled?"🔊":"🔇";});
     document.body.appendChild(b);
 })();
+
+/* ===== ТУЧА НА ДОРОГЕ: каждый прыжок решает сервер ===== */
+const TC_LANE_W = 84, TC_GRASS = 96;
+const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.12}, medium: {name: "Средне", chance: 65, first: 1.38}, hard: {name: "Хардкор", chance: 60, first: 1.50}};
+const TC_CAR_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7", "#ec4899", "#f97316", "#14b8a6"];
+let tc = {state: "idle", busy: false, step: 0, mode: "medium", bet: 0.5, cfg: null, lanes: 20, maxBet: 100, maxWin: 500};
+
+const TC_SHAPES = '<circle cx="30" cy="46" r="17"/><circle cx="50" cy="32" r="22"/><circle cx="71" cy="46" r="17"/><rect x="22" y="44" width="58" height="26" rx="13"/>';
+const TC_SVG = `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="tcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bae6fd"/></linearGradient></defs>
+<ellipse cx="50" cy="86" rx="24" ry="4" fill="rgba(0,0,0,.22)"/>
+<rect x="33" y="68" width="11" height="16" rx="5.5" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
+<rect x="57" y="68" width="11" height="16" rx="5.5" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
+<g fill="#38bdf8" stroke="#38bdf8" stroke-width="7" stroke-linejoin="round">${TC_SHAPES}</g>
+<g fill="url(#tcg)">${TC_SHAPES}</g>
+<g class="f-ok">
+<circle cx="40" cy="50" r="4.5" fill="#0f172a"/><circle cx="60" cy="50" r="4.5" fill="#0f172a"/>
+<circle cx="41.6" cy="48.4" r="1.6" fill="#fff"/><circle cx="61.6" cy="48.4" r="1.6" fill="#fff"/>
+<ellipse cx="31" cy="58" rx="5" ry="3.2" fill="#fda4af"/><ellipse cx="69" cy="58" rx="5" ry="3.2" fill="#fda4af"/>
+<path d="M43 57 Q50 66 57 57" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g class="f-dead" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none">
+<path d="M35 45 l9 9 M44 45 l-9 9 M56 45 l9 9 M65 45 l-9 9"/>
+<path d="M42 62 q4 -5 8 0 q4 5 8 0"/>
+</g>
+</svg>`;
+function tcCarSVG(c) {
+    return `<svg viewBox="0 0 36 72" width="34" height="68"><rect x="3" y="2" width="30" height="68" rx="11" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+<rect x="7" y="17" width="22" height="14" rx="4" fill="#d6f2ff"/><rect x="7" y="44" width="22" height="12" rx="4" fill="#bfe6fb"/>
+<circle cx="10" cy="7" r="3" fill="#fff7a8"/><circle cx="26" cy="7" r="3" fill="#fff7a8"/><circle cx="10" cy="66" r="2.6" fill="#fca5a5"/><circle cx="26" cy="66" r="2.6" fill="#fca5a5"/></svg>`;
+}
+
+function tcUuid() { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + "-" + Math.random().toString(36).slice(2)); }
+function tcSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function tcCall(payload) {
+    const d = await apiPost(payload);
+    if (!d || d.status !== "success") throw new Error((d && d.message) || "Ошибка сервера.");
+    return d;
+}
+// Пока сервер не ответил — показываем те же цифры по той же формуле. После ответа берём числа сервера.
+function tcCfg() {
+    if (tc.cfg) return tc.cfg;
+    const o = {};
+    Object.keys(TC_FALLBACK).forEach(k => {
+        const m = TC_FALLBACK[k], g = Math.pow(100 / m.chance, 0.8), a = [];
+        for (let s = 1; s <= tc.lanes; s++) a.push(Math.min(50, Math.round(m.first * Math.pow(g, s - 1) * 100) / 100));
+        o[k] = {name: m.name, chance: m.chance, mults: a};
+    });
+    return o;
+}
+function tcMults() { return tcCfg()[tc.mode].mults; }
+function tcMultNow() { return tc.step > 0 ? tcMults()[tc.step - 1] : 1; }
+function tcHeroX(step) { return step <= 0 ? TC_GRASS / 2 : TC_GRASS + (step - 0.5) * TC_LANE_W; }
+function tcGetBet() { return Math.round((parseFloat(String($("tc-bet").value).replace(",", ".")) || 0) * 100) / 100; }
+function tcPotential() { return Math.min(tc.maxWin, Math.round(tc.bet * tcMultNow() * 100) / 100); }
+
+function tcToast(text, kind) { const t = $("tc-toast"); if (!t) return; t.textContent = text; t.className = "tc-toast" + (kind ? " " + kind : ""); }
+function tcHud() { $("tc-mult").textContent = "x" + tcMultNow().toFixed(2); $("tc-lane").textContent = tc.step + "/" + tc.lanes; }
+
+function tcBuildTrack() {
+    const track = $("tc-track"); if (!track) return;
+    const N = tc.lanes, mults = tcMults();
+    let h = '<div class="tc-grass tc-start"><span class="tc-deco" style="left:10px;top:34px">🌳</span><span class="tc-deco" style="left:52px;top:214px">🌼</span><span class="tc-deco" style="left:12px;top:168px">🍄</span><span class="tc-deco" style="left:48px;top:96px">🌷</span></div>';
+    for (let i = 1; i <= N; i++) {
+        const done = i <= tc.step, next = tc.state === "playing" && i === tc.step + 1;
+        let cars = "";
+        if (!done) {
+            const n = 1 + (i % 2);
+            for (let c = 0; c < n; c++) {
+                const dur = (2.4 + Math.random() * 2.6).toFixed(2), del = (-Math.random() * 4).toFixed(2);
+                const col = TC_CAR_COLORS[Math.floor(Math.random() * TC_CAR_COLORS.length)];
+                cars += `<div class="tc-car ${i % 2 ? "up" : "down"}" style="--d:${dur}s;--dl:${del}s">${tcCarSVG(col)}</div>`;
+            }
+        }
+        h += `<div class="tc-lane${done ? " done" : ""}" data-i="${i}">${cars}<div class="tc-chip${done ? " done" : ""}${next ? " next" : ""}" onclick="tcLaneTap(${i})">${done ? "✓ " : ""}x${mults[i - 1].toFixed(2)}</div></div>`;
+    }
+    h += '<div class="tc-grass"><span class="tc-flag">🏁</span><span class="tc-deco" style="left:14px;top:30px">🌳</span><span class="tc-deco" style="left:50px;top:230px">🌼</span></div>';
+    track.innerHTML = h;
+    track.style.width = (TC_GRASS * 2 + N * TC_LANE_W) + "px";
+    const hero = document.createElement("div");
+    hero.id = "tc-hero"; hero.className = "tc-hero";
+    hero.innerHTML = `<div class="tc-hop" id="tc-hop"><div class="tc-bob">${TC_SVG}</div></div>`;
+    hero.style.left = tcHeroX(tc.step) + "px";
+    track.appendChild(hero);
+    tcScroll(false, tc.step); tcHud();
+}
+function tcMarkLanes() {
+    const mults = tcMults();
+    document.querySelectorAll("#tc-track .tc-lane").forEach(l => {
+        const i = Number(l.dataset.i), chip = l.querySelector(".tc-chip");
+        const done = i <= tc.step, next = tc.state === "playing" && i === tc.step + 1;
+        l.classList.toggle("done", done);
+        if (done) { l.querySelectorAll(".tc-car").forEach(c => { c.classList.add("gone"); setTimeout(() => c.remove(), 280); }); }
+        chip.className = "tc-chip" + (done ? " done" : "") + (next ? " next" : "");
+        chip.textContent = (done ? "✓ " : "") + "x" + mults[i - 1].toFixed(2);
+    });
+}
+function tcScroll(anim, step) {
+    const sc = $("tc-scene"), tr = $("tc-track"); if (!sc || !tr) return;
+    const w = sc.clientWidth || 340, trackW = TC_GRASS * 2 + tc.lanes * TC_LANE_W;
+    const x = Math.max(0, Math.min(trackW - w, tcHeroX(step) - w * 0.3));
+    if (!anim) tr.style.transition = "none";
+    tr.style.transform = `translateX(${-x}px)`;
+    if (!anim) { void tr.offsetWidth; tr.style.transition = ""; }
+}
+function tcMoveHero(step) {
+    const hero = $("tc-hero"); if (!hero) return;
+    hero.style.left = tcHeroX(step) + "px";
+    tcScroll(true, step);
+    const h = $("tc-hop"); h.classList.remove("hop"); void h.offsetWidth; h.classList.add("hop");
+}
+function tcConfetti() {
+    const hero = $("tc-hero"); if (!hero) return;
+    for (let i = 0; i < 16; i++) {
+        const s = document.createElement("span");
+        s.className = "tc-coin"; s.textContent = ["🪙", "⭐", "✨", "💛"][i % 4];
+        s.style.setProperty("--x", (Math.random() * 190 - 95) + "px");
+        s.style.setProperty("--y", (-40 - Math.random() * 120) + "px");
+        hero.appendChild(s); setTimeout(() => s.remove(), 1000);
+    }
+}
+
+function tcRenderModes() {
+    const cfg = tcCfg();
+    [["easy", "🌿"], ["medium", "🔥"], ["hard", "💀"]].forEach(([k, ic]) => {
+        const b = $("tc-mode-" + k); if (!b) return;
+        const m = cfg[k];
+        b.innerHTML = `<span>${ic} ${m.name}</span><small>шанс ${m.chance}% · x${m.mults[0].toFixed(2)}</small>`;
+        b.classList.toggle("active", tc.mode === k);
+        b.disabled = tc.state === "playing" || tc.busy;
+    });
+}
+function tcUI() {
+    const playing = tc.state === "playing";
+    $("tc-go").style.display = playing ? "none" : "";
+    $("tc-play").style.display = playing ? "grid" : "none";
+    $("tc-go").disabled = tc.busy;
+    $("tc-go").textContent = "Перейти дорогу за $" + money(tcGetBet());
+    $("tc-jump").disabled = tc.busy || tc.step >= tc.lanes;
+    $("tc-jump").textContent = tc.step < tc.lanes ? "Прыгнуть → x" + tcMults()[tc.step].toFixed(2) : "Финиш";
+    $("tc-cash").disabled = tc.busy || tc.step < 1;
+    $("tc-cash").textContent = tc.step < 1 ? "Забрать" : "Забрать $" + money(tcPotential());
+    document.querySelectorAll(".tc-bet button, .tc-bet input").forEach(el => { el.disabled = playing || tc.busy; });
+    tcRenderModes();
+}
+
+function tcSetMode(k) {
+    if (tc.state === "playing" || tc.busy || !tcCfg()[k]) return;
+    tc.mode = k; haptic("light");
+    tcMarkLanes(); tcHud(); tcUI();
+}
+function tcSetBet(v) { $("tc-bet").value = money(v); tcUI(); haptic("light"); }
+function tcBetMul(f) { tcSetBet(Math.max(0.01, tcGetBet() * f)); }
+function tcBetMax() { tcSetBet(Math.max(0.01, Math.min(balance, tc.maxBet))); }
+function tcLaneTap(i) { if (i === tc.step + 1) tcJump(); }
+
+async function tcLoad() {
+    try {
+        const d = await tcCall({action: "tucha_state"});
+        tc.cfg = d.config; tc.lanes = d.lanes || 20; tc.maxBet = d.max_bet || 100; tc.maxWin = d.max_win || 500;
+        balance = Number(d.balance); if (!Number.isFinite(balance)) balance = 0;
+        updateBalanceUI();
+        if (d.active) {
+            tc.state = "playing"; tc.mode = d.active.mode; tc.step = d.active.step; tc.bet = d.active.bet;
+            $("tc-bet").value = money(tc.bet);
+            tcToast("Игра продолжается: прыгай дальше или забирай ☁️", "");
+        } else { tc.state = "idle"; tc.step = 0; }
+        tcBuildTrack(); tcUI();
+    } catch (e) { tcToast(e.message || "Нет связи с сервером", "lose"); }
+}
+function tuchaOpen() { tcBuildTrack(); tcUI(); tcLoad(); }
+function tcResetRound() { tc.state = "idle"; tc.step = 0; tcBuildTrack(); tcUI(); }
+
+async function tcStart() {
+    if (tc.busy || tc.state !== "idle") return;
+    const bet = tcGetBet();
+    if (!Number.isFinite(bet) || bet < 0.01) { tcToast("Минимальная ставка — $0.01", "lose"); notify("error"); return; }
+    if (bet > tc.maxBet) { tcToast("Максимальная ставка — $" + tc.maxBet, "lose"); notify("error"); return; }
+    if (bet > balance) { tcToast("Недостаточно средств", "lose"); notify("error"); return; }
+    tc.busy = true; tcUI();
+    try {
+        const d = await tcCall({action: "tucha_start", request_id: tcUuid(), mode: tc.mode, bet: bet});
+        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
+        tc.bet = d.active.bet; tc.state = "playing"; tc.step = 0;
+        tcMarkLanes(); tcToast("Поехали! Жми «Прыгнуть» или тапни по оранжевой полосе", ""); haptic("medium");
+    } catch (e) { tcToast(e.message || "Не удалось начать", "lose"); notify("error"); await tcLoad(); }
+    finally { tc.busy = false; tcUI(); }
+}
+
+async function tcJump() {
+    if (tc.busy || tc.state !== "playing" || tc.step >= tc.lanes) return;
+    tc.busy = true; tcUI(); haptic("medium");
+    const target = tc.step + 1;
+    tcMoveHero(target);
+    try {
+        const [d] = await Promise.all([tcCall({action: "tucha_step", request_id: tcUuid()}), tcSleep(480)]);
+        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
+        if (d.crashed) { await tcCrash(target); }
+        else if (d.finished) { tc.step = target; tcMarkLanes(); tcHud(); await tcWin(d.payout, d.mult, true); }
+        else { tc.step = d.active.step; tcMarkLanes(); tcHud(); tcToast("Есть! Полоса " + tc.step + " пройдена · x" + Number(d.mult).toFixed(2), ""); notify("success"); }
+    } catch (e) { tcToast(e.message || "Ошибка", "lose"); await tcLoad(); }
+    finally { tc.busy = false; tcUI(); }
+}
+
+async function tcCrash(lane) {
+    const l = document.querySelector(`#tc-track .tc-lane[data-i="${lane}"]`);
+    if (l) {
+        l.querySelectorAll(".tc-car").forEach(c => c.remove());
+        const car = document.createElement("div");
+        car.className = "tc-car hit"; car.innerHTML = tcCarSVG("#ef4444"); l.appendChild(car);
+        const chip = l.querySelector(".tc-chip"); chip.className = "tc-chip bad"; chip.textContent = "💥";
+    }
+    await tcSleep(230);
+    $("tc-hero").classList.add("dead"); haptic("heavy"); notify("error");
+    tcToast("БАМ! Туча попала под машину · −$" + money(tc.bet), "lose");
+    await tcSleep(1600);
+    tcResetRound();
+}
+async function tcWin(payout, mult, auto) {
+    tcConfetti(); notify("success"); haptic("heavy");
+    tcToast((auto ? "МАКСИМУМ! " : "ЗАБРАЛ! ") + "+$" + money(payout) + " · x" + Number(mult).toFixed(2), "win");
+    await tcSleep(1900);
+    tcResetRound();
+}
+async function tcCash() {
+    if (tc.busy || tc.state !== "playing" || tc.step < 1) return;
+    tc.busy = true; tcUI();
+    try {
+        const d = await tcCall({action: "tucha_cashout", request_id: tcUuid()});
+        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
+        await tcWin(d.payout, d.mult, false);
+    } catch (e) { tcToast(e.message || "Ошибка", "lose"); await tcLoad(); }
+    finally { tc.busy = false; tcUI(); }
+}
 
 /* INIT */
 renderCases();
