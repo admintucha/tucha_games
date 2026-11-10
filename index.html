@@ -4208,7 +4208,10 @@ function pvApplyState(m) {
     } else if ((r.phase === "waiting" || r.phase === "countdown") && (pp === "spin" || pp === "result")) {
         pvSetRot(0, 0); pv.wonShown = "";
     }
-    $("pv-fee").textContent = r.fee;
+    
+    // Проверка наличия элемента перед записью (чтобы не ломать скрипт)
+    if ($("pv-fee")) $("pv-fee").textContent = r.fee;
+    
     pvRenderLists(); pvUI(); pvTickFn();
 }
 function pvShowWinner(r) {
