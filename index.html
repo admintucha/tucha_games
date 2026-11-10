@@ -1402,12 +1402,13 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 .tc-chip.done { background: #fff; color: #15803d; border-color: #16a34a; }
 .tc-chip.bad { background: #ef4444; border-color: #fff; }
 
-.tc-car { position: absolute; left: 50%; top: 0; margin-left: -17px; z-index: 2; animation: tcDrive var(--d, 3s) linear var(--dl, 0s) infinite; filter: drop-shadow(0 4px 3px rgba(0,0,0,.3)); transition: opacity .25s; }
-.tc-car.down { animation-direction: normal; }
+.tc-car { position: absolute; left: 50%; top: 0; margin-left: -17px; z-index: 2; will-change: transform; backface-visibility: hidden;
+    animation: tcDrive var(--d, 3s) linear var(--dl, 0s) infinite, tcFade .5s ease-out backwards; transition: opacity .2s; }
+.tc-car.down { animation-direction: normal, normal; }
 .tc-car.down svg { transform: rotate(180deg); }
-.tc-car.up { animation-direction: reverse; }
-.tc-car.gone { opacity: 0; }
-.tc-car.hit { animation: tcSmash .42s ease-in forwards; z-index: 8; }
+.tc-car.up { animation-direction: reverse, normal; }
+.tc-car.gone { opacity: 0 !important; }
+.tc-car.hit { animation: tcSmash .55s linear forwards; z-index: 8; opacity: 1 !important; }
 .tc-car svg { display: block; }
 
 .tc-hero { position: absolute; top: 92px; width: 72px; margin-left: -36px; z-index: 9; transition: left .45s linear; }
@@ -1454,6 +1455,7 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 
 @keyframes tcDrive { from { transform: translateY(-90px); } to { transform: translateY(300px); } }
 @keyframes tcSmash { from { transform: translateY(-90px); } to { transform: translateY(330px); } }
+@keyframes tcFade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes tcHop { 0% { transform: translateY(0) scale(1.1,.88); } 30% { transform: translateY(-50px) scale(.92,1.1); } 70% { transform: translateY(-34px) scale(.96,1.05); } 90% { transform: translateY(0) scale(1.12,.86); } 100% { transform: translateY(0) scale(1,1); } }
 @keyframes tcBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @keyframes tcPulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.12); } }
@@ -3582,7 +3584,9 @@ document.addEventListener("click", function(e) {
 
 /* ===== ТУЧА НА ДОРОГЕ: каждый прыжок решает сервер ===== */
 const TC_LANE_W = 84, TC_GRASS = 96;
-const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.12}, medium: {name: "Средне", chance: 65, first: 1.38}, hard: {name: "Хардкор", chance: 60, first: 1.50}};
+// first = множитель 1-й полосы; на 4-й полосе во ВСЕХ режимах всегда x2.00 (TC_ANCHOR_*). Те же числа на сервере.
+const TC_ANCHOR_STEP = 4, TC_ANCHOR_MULT = 2.0;
+const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.15}, medium: {name: "Средне", chance: 65, first: 1.10}, hard: {name: "Хардкор", chance: 60, first: 1.05}};
 const TC_CAR_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7", "#ec4899", "#f97316", "#14b8a6"];
 let tc = {state: "idle", busy: false, step: 0, mode: "medium", bet: 0.5, cfg: null, lanes: 20, maxBet: 100, maxWin: 500};
 
@@ -3623,7 +3627,7 @@ function tcCfg() {
     if (tc.cfg) return tc.cfg;
     const o = {};
     Object.keys(TC_FALLBACK).forEach(k => {
-        const m = TC_FALLBACK[k], g = Math.pow(100 / m.chance, 0.8), a = [];
+        const m = TC_FALLBACK[k], g = Math.pow(TC_ANCHOR_MULT / m.first, 1 / (TC_ANCHOR_STEP - 1)), a = [];
         for (let s = 1; s <= tc.lanes; s++) a.push(Math.min(50, Math.round(m.first * Math.pow(g, s - 1) * 100) / 100));
         o[k] = {name: m.name, chance: m.chance, mults: a};
     });
@@ -3647,10 +3651,11 @@ function tcBuildTrack() {
         let cars = "";
         if (!done) {
             const n = 1 + (i % 2);
+            const dur = 2.6 + Math.random() * 2.2, off = Math.random() * dur; // одна скорость на полосу → машины не налезают друг на друга
             for (let c = 0; c < n; c++) {
-                const dur = (2.4 + Math.random() * 2.6).toFixed(2), del = (-Math.random() * 4).toFixed(2);
+                const del = (-(off + c * dur / n)).toFixed(2);
                 const col = TC_CAR_COLORS[Math.floor(Math.random() * TC_CAR_COLORS.length)];
-                cars += `<div class="tc-car ${i % 2 ? "up" : "down"}" style="--d:${dur}s;--dl:${del}s">${tcCarSVG(col)}</div>`;
+                cars += `<div class="tc-car ${i % 2 ? "up" : "down"}" style="--d:${dur.toFixed(2)}s;--dl:${del}s">${tcCarSVG(col)}</div>`;
             }
         }
         h += `<div class="tc-lane${done ? " done" : ""}" data-i="${i}">${cars}<div class="tc-chip${done ? " done" : ""}${next ? " next" : ""}" onclick="tcLaneTap(${i})">${done ? "✓ " : ""}x${mults[i - 1].toFixed(2)}</div></div>`;
@@ -3772,6 +3777,7 @@ async function tcJump() {
     if (tc.busy || tc.state !== "playing" || tc.step >= tc.lanes) return;
     tc.busy = true; tcUI(); haptic("medium");
     const target = tc.step + 1;
+    document.querySelectorAll(`#tc-track .tc-lane[data-i="${target}"] .tc-car`).forEach(c => c.classList.add("gone"));
     tcMoveHero(target);
     try {
         const [d] = await Promise.all([tcCall({action: "tucha_step", request_id: tcUuid()}), tcSleep(480)]);
@@ -3788,13 +3794,13 @@ async function tcCrash(lane) {
     if (l) {
         l.querySelectorAll(".tc-car").forEach(c => c.remove());
         const car = document.createElement("div");
-        car.className = "tc-car hit"; car.innerHTML = tcCarSVG("#ef4444"); l.appendChild(car);
+        car.className = "tc-car down hit"; car.innerHTML = tcCarSVG("#ef4444"); l.appendChild(car);
         const chip = l.querySelector(".tc-chip"); chip.className = "tc-chip bad"; chip.textContent = "💥";
     }
-    await tcSleep(230);
+    await tcSleep(160); // машина долетает до тучи
     $("tc-hero").classList.add("dead"); haptic("heavy"); notify("error");
     tcToast("БАМ! Туча попала под машину · −$" + money(tc.bet), "lose");
-    await tcSleep(1600);
+    await tcSleep(1500);
     tcResetRound();
 }
 async function tcWin(payout, mult, auto) {
