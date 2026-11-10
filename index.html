@@ -3911,7 +3911,7 @@ async function tcCash() {
 
 /* ===== PvP ДЖЕКПОТ: realtime через WebSocket ===== */
 // !!! ВСТАВЬ СЮДА АДРЕС СВОЕГО СЕРВЕРА С RENDER (начинается с wss://) !!!
-const PVP_WS_URL = "wss://ВСТАВЬ-АДРЕС.onrender.com";
+const PVP_WS_URL = "wss://tucha-pvp.onrender.com";
 let pv = {ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null, tick: null, busy: false, busyT: null, drawKey: "", wonShown: ""};
 
 function pvEsc(s) { return String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
