@@ -1373,95 +1373,6 @@ nav button { font-size: 9px; padding-left: 2px; padding-right: 2px; }
 .admin-stat { background: #fff; border-radius: 12px; padding: 10px; border: 2px solid rgba(255,215,0,.3); }
 .admin-stat small { display: block; font-size: 10px; color: #8b6b16; font-weight: 800; }
 .admin-stat b { font-size: 17px; }
-/* ===== ТУЧА НА ДОРОГЕ ===== */
-#screen-tucha { background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 38%, #fef08a 100%) !important; }
-#screen-tucha .game-top-bar { background: rgba(255,255,255,.82) !important; border-bottom: 2px solid rgba(56,189,248,.35) !important; }
-#screen-tucha .game-back-btn { color: #0c4a6e !important; }
-.tc-wrap { width: 100%; max-width: 560px; margin: 0 auto; padding: 12px 12px 30px; display: flex; flex-direction: column; gap: 12px; }
-
-.tc-scene { position: relative; height: 290px; border-radius: 26px; overflow: hidden; border: 4px solid #fff; background: #4ade80;
-    box-shadow: 0 8px 0 rgba(14,116,144,.28), 0 18px 30px rgba(14,116,144,.3); }
-.tc-hud { position: absolute; left: 10px; right: 10px; top: 10px; z-index: 12; display: flex; justify-content: space-between; pointer-events: none; }
-.tc-pill { background: rgba(255,255,255,.92); border-radius: 16px; padding: 6px 14px; box-shadow: 0 4px 0 rgba(14,116,144,.22); }
-.tc-pill small { display: block; font-size: 9px; font-weight: 900; letter-spacing: 1px; color: #0369a1; }
-.tc-pill b { font-size: 22px; font-weight: 950; color: #ea580c; line-height: 1.05; }
-.tc-pill.r { text-align: right; }
-.tc-pill.r b { color: #0f172a; font-size: 18px; }
-
-.tc-track { position: absolute; left: 0; top: 0; height: 100%; display: flex; transition: transform .28s cubic-bezier(.3,.7,.2,1); }
-.tc-grass { flex: 0 0 96px; position: relative; overflow: hidden; background: repeating-linear-gradient(0deg, #4ade80 0 38px, #34d399 38px 76px); }
-.tc-start { border-right: 8px solid #fff; box-shadow: inset -8px 0 0 #ef4444; }
-.tc-deco { position: absolute; font-size: 24px; filter: drop-shadow(0 3px 2px rgba(0,0,0,.2)); }
-.tc-flag { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 44px; animation: tcBob 1.6s ease-in-out infinite; }
-.tc-lane { flex: 0 0 84px; position: relative; overflow: hidden; background: linear-gradient(180deg, #6b7fa6, #52648a); border-right: 3px dashed rgba(255,255,255,.8); transition: background .4s; }
-.tc-lane.done { background: linear-gradient(180deg, #fde68a, #fbbf24); border-right-color: rgba(255,255,255,.95); }
-
-.tc-chip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); min-width: 58px; padding: 7px 8px; border-radius: 999px; z-index: 4;
-    background: rgba(15,23,42,.72); color: #fff; font-weight: 900; font-size: 12px; white-space: nowrap; text-align: center; border: 2px solid rgba(255,255,255,.4); cursor: default; }
-.tc-chip.next { background: linear-gradient(180deg, #fb923c, #ea580c); border-color: #fff; cursor: pointer; animation: tcPulse 1s ease-in-out infinite; }
-.tc-chip.done { background: #fff; color: #15803d; border-color: #16a34a; }
-.tc-chip.bad { background: #ef4444; border-color: #fff; }
-
-.tc-car { position: absolute; left: 50%; top: 0; margin-left: -17px; z-index: 2; will-change: transform; backface-visibility: hidden;
-    animation: tcDrive var(--d, 3s) linear var(--dl, 0s) infinite, tcFade .5s ease-out backwards; transition: opacity .2s; }
-.tc-car.down { animation-direction: normal, normal; }
-.tc-car.down svg { transform: rotate(180deg); }
-.tc-car.up { animation-direction: reverse, normal; }
-.tc-car.gone { opacity: 0 !important; }
-.tc-car.hit { animation: tcSmash .3s linear forwards; z-index: 8; opacity: 1 !important; }
-.tc-car svg { display: block; }
-
-.tc-hero { position: absolute; top: 92px; width: 72px; margin-left: -36px; z-index: 9; transition: left .26s linear; }
-.tc-hop.hop { animation: tcHop .28s ease-out; }
-.tc-bob { animation: tcBob 1.8s ease-in-out infinite; }
-.tc-hero svg { display: block; width: 72px; height: 66px; overflow: visible; }
-.tc-hero .f-dead { display: none; }
-.tc-hero.dead .f-ok { display: none; }
-.tc-hero.dead .f-dead { display: block; }
-.tc-hero.dead .tc-hop { transform: scale(1.25,.45); transform-origin: 50% 100%; transition: transform .15s; }
-.tc-hero.dead .tc-bob { animation: none; }
-.tc-coin { position: absolute; left: 28px; top: 10px; font-size: 20px; pointer-events: none; animation: tcCoin .95s ease-out forwards; }
-
-.tc-toast { min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 12px; border-radius: 16px;
-    font-weight: 900; font-size: 14px; color: #0c4a6e; background: rgba(255,255,255,.8); border: 2px solid rgba(56,189,248,.35); }
-.tc-toast.win { background: #dcfce7; color: #15803d; border-color: #4ade80; }
-.tc-toast.lose { background: #fee2e2; color: #b91c1c; border-color: #f87171; }
-
-.tc-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tc-mode { border: 3px solid #fff; border-radius: 18px; padding: 9px 4px; background: rgba(255,255,255,.75); color: #0f172a; font-weight: 900; font-size: 14px;
-    display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 4px 0 rgba(14,116,144,.2); }
-.tc-mode small { font-size: 10px; font-weight: 800; color: #475569; }
-.tc-mode.active { background: linear-gradient(180deg, #fb923c, #ea580c); color: #fff; box-shadow: 0 4px 0 #9a3412; }
-.tc-mode.active small { color: #ffedd5; }
-.tc-mode:disabled { opacity: .6; }
-
-.tc-bet { background: rgba(255,255,255,.8); border: 3px solid #fff; border-radius: 20px; padding: 10px 12px; box-shadow: 0 4px 0 rgba(14,116,144,.2); }
-.tc-bet-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.tc-bet-top span { font-size: 11px; font-weight: 900; letter-spacing: 1px; color: #0369a1; }
-.tc-chips { display: flex; gap: 6px; }
-.tc-chips button { border: 2px solid #fb923c; background: #fff7ed; color: #c2410c; border-radius: 999px; padding: 4px 10px; font-weight: 900; font-size: 12px; }
-.tc-bet-row { display: flex; gap: 8px; align-items: center; }
-.tc-bet-row input { flex: 1; min-width: 0; border: 2px solid #bae6fd; border-radius: 14px; padding: 10px 12px; font-size: 18px; font-weight: 900; color: #0f172a; background: #fff; }
-.tc-bet-row button { border: 2px solid #bae6fd; background: #fff; border-radius: 14px; padding: 10px 12px; font-weight: 900; color: #0369a1; }
-.tc-bet button:disabled, .tc-bet input:disabled { opacity: .55; }
-
-.tc-go, .tc-jump, .tc-cash { border: none; border-radius: 20px; padding: 16px 10px; font-size: 17px; font-weight: 950; color: #fff; letter-spacing: .2px; }
-.tc-go { width: 100%; background: linear-gradient(180deg, #fb923c, #ea580c); box-shadow: 0 6px 0 #9a3412, 0 14px 22px rgba(234,88,12,.35); }
-.tc-jump { background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 6px 0 #075985, 0 14px 22px rgba(2,132,199,.35); }
-.tc-cash { background: linear-gradient(180deg, #4ade80, #16a34a); box-shadow: 0 6px 0 #166534, 0 14px 22px rgba(22,163,74,.35); }
-.tc-go:active, .tc-jump:active, .tc-cash:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.3); }
-.tc-go:disabled, .tc-jump:disabled, .tc-cash:disabled { opacity: .55; pointer-events: none; }
-.tc-play { display: none; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-@keyframes tcDrive { from { transform: translateY(-90px); } to { transform: translateY(300px); } }
-@keyframes tcSmash { from { transform: translateY(-90px); } to { transform: translateY(330px); } }
-@keyframes tcFade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes tcHop { 0% { transform: translateY(0) scale(1.1,.88); } 30% { transform: translateY(-50px) scale(.92,1.1); } 70% { transform: translateY(-34px) scale(.96,1.05); } 90% { transform: translateY(0) scale(1.12,.86); } 100% { transform: translateY(0) scale(1,1); } }
-@keyframes tcBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes tcPulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.12); } }
-@keyframes tcCoin { from { transform: translate(0,0) scale(.6); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .tc-car { animation-duration: 8s; } }
-
 
 /* ===== PvP ДЖЕКПОТ ===== */
 #screen-pvp { background: radial-gradient(ellipse 90% 60% at 50% 0%, #5b21b6 0%, #2e1065 55%, #1e1b4b 100%) !important; }
@@ -1681,57 +1592,40 @@ main { color:#292929 !important; }
 
 </style>
 
-<style>
-/* ICE UPGRADE — diagonal chance arena matching reference videos */
-#screen-ice-upgrade{background:linear-gradient(180deg,#fff3a6 0%,#fffbe0 60%,#ffec83 100%)!important;color:#302600}
-#screen-ice-upgrade .game-top-bar{background:rgba(255,249,204,.96)!important;border-bottom:2px solid #eddb54!important}
-#screen-ice-upgrade .game-back-btn{color:#302600!important}
-.ice-wrap{max-width:540px;margin:0 auto;padding:12px 14px 30px;display:flex;flex-direction:column;gap:12px}
-.ice-heading{text-align:center;padding:2px 0}.ice-heading span{display:block;color:#9c8200;font-size:10px;font-weight:1000;letter-spacing:3px}.ice-heading b{display:block;font-size:25px;font-weight:1000;color:#302600}.ice-heading small{display:block;color:#88751c;font-size:12px;font-weight:800;margin-top:3px}
-.ice-arena-card,.ice-control-card{background:rgba(255,255,255,.94);border:2px solid #f0df65;border-radius:22px;padding:13px;box-shadow:0 7px 18px rgba(165,139,0,.10)}
-.ice-board{--ice-top:94%;--ice-bottom:0%;width:min(88vw,350px);aspect-ratio:1/1;position:relative;overflow:hidden;margin:2px auto 12px;border-radius:20px;background:#242426;box-shadow:0 9px 24px rgba(35,29,5,.24),inset 0 0 0 5px rgba(255,255,255,.08);isolation:isolate}
-.ice-zone{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:clip-path .18s ease}
-.ice-zone-win{background:linear-gradient(135deg,#fff16a,#e7d63d 70%,#d4c12b);clip-path:polygon(0 0,var(--ice-top) 0,var(--ice-bottom) 100%,0 100%);z-index:1}
-.ice-zone-lose{background:linear-gradient(145deg,#39393d,#171719);clip-path:polygon(var(--ice-top) 0,100% 0,100% 100%,var(--ice-bottom) 100%);z-index:0}
-.ice-diagonal{position:absolute;z-index:3;left:0;top:0;width:140%;height:4px;background:rgba(255,255,255,.78);transform-origin:left center;transform:rotate(135deg);pointer-events:none;box-shadow:0 1px 5px #0004}
-.ice-avatar{width:clamp(66px,21vw,94px);height:clamp(66px,21vw,94px);border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,.94);box-shadow:0 5px 15px #0004;background:#fff;display:grid;place-items:center;position:absolute;left:18%;top:28%;z-index:4}
-.ice-avatar img{width:100%;height:100%;object-fit:cover}.ice-avatar-fallback{font-size:34px;color:#7a6b22}
-.ice-cloud-icon{position:absolute;right:17%;bottom:22%;z-index:4;width:clamp(70px,22vw,98px);height:clamp(70px,22vw,98px);border-radius:50%;display:grid;place-items:center;background:#09090b;color:#fff;font-size:clamp(38px,12vw,54px);box-shadow:0 6px 16px #0006;border:3px solid rgba(255,255,255,.1)}
-.ice-ball{position:absolute;z-index:8;left:50%;top:4%;width:38px;height:38px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 30% 24%,#fff 0 8%,#e8edf0 22%,#aeb7bf 55%,#525a63 82%,#222 100%);border:3px solid #fff;box-shadow:0 7px 16px #0008, inset -4px -5px 8px #0004;opacity:0;pointer-events:none}
-.ice-ball:after{content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid #ffffff9c}
-.ice-board.is-running .ice-ball{opacity:1}
-.ice-board.is-running .ice-zone-win,.ice-board.is-running .ice-zone-lose{filter:saturate(1.08)}
-.ice-board.is-win .ice-zone-win{filter:brightness(1.16);box-shadow:inset 0 0 0 5px #32df88}
-.ice-board.is-lose .ice-zone-lose{filter:brightness(1.22);box-shadow:inset 0 0 0 5px #ff5d59}
-.ice-result-mark{position:absolute;z-index:9;left:50%;top:50%;transform:translate(-50%,-50%) scale(.5);opacity:0;width:66px;height:66px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#159c5d;font-size:34px;font-weight:1000;box-shadow:0 7px 22px #0004;transition:.25s}
-.ice-board.is-win .ice-result-mark,.ice-board.is-lose .ice-result-mark{opacity:1;transform:translate(-50%,-50%) scale(1)}.ice-board.is-lose .ice-result-mark{color:#e34b48}
-.ice-zones-caption{display:flex;justify-content:space-between;gap:8px;font-size:10px;font-weight:1000;margin:0 3px;color:#76621a}.ice-zones-caption span{display:flex;align-items:center;gap:5px}.ice-zones-caption i{width:9px;height:9px;border-radius:50%;display:inline-block;background:#f0db39}.ice-zones-caption span:last-child i{background:#29292c}
-.ice-status{min-height:22px;margin-top:9px;text-align:center;font-size:12px;font-weight:950;color:#796500}.ice-status.win{color:#149456}.ice-status.lose{color:#d3423e}
-.ice-control-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:#796500;font-size:11px;font-weight:1000;letter-spacing:.6px}.ice-control-head span{color:#9b8a42}
-.ice-bet-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 42px 54px;gap:7px}.ice-bet-row input{min-width:0;width:100%;height:46px;border:2px solid #efdf78;border-radius:13px;background:#fffdf0;padding:0 12px;font-size:22px;font-weight:1000;color:#302600}.ice-bet-row button,.ice-quick-bets button{border:1px solid #eadb68;border-radius:12px;background:#fff6bd;color:#554600;font-size:14px;font-weight:1000;box-shadow:0 3px 0 #e5d45a}.ice-bet-row button:active,.ice-quick-bets button:active{transform:translateY(2px);box-shadow:none}.ice-quick-bets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.ice-quick-bets button{padding:9px 4px;font-size:12px}
-.ice-slider{width:100%;accent-color:#e6c500;height:10px;margin:8px 0}.ice-slider-labels{display:flex;justify-content:space-between;color:#9a8840;font-size:9px;font-weight:900}.ice-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ice-stats>div{padding:12px 8px;border-radius:17px;background:#fff;border:2px solid #f0df65;text-align:center;box-shadow:0 5px 14px rgba(165,139,0,.08)}.ice-stats small{display:block;color:#94812e;font-size:9px;font-weight:1000;letter-spacing:.6px}.ice-stats b{display:block;color:#302600;font-size:23px;font-weight:1000;margin-top:4px}
-.ice-play-btn{width:100%;height:54px;border:0;border-radius:16px;background:linear-gradient(180deg,#ffe94d,#ffd51d);color:#302600;font-size:16px;font-weight:1000;box-shadow:0 6px 0 #d7b900,0 10px 18px rgba(180,150,0,.15);transition:transform .12s}.ice-play-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d7b900}.ice-play-btn:disabled{opacity:.65}.ice-footnote{text-align:center;color:#a18e43;font-size:9px;font-weight:800}
-/* Ice Upgrade: responsive centered zone markers + real-time puck physics */
-.ice-board{transition:transform .7s cubic-bezier(.18,.75,.2,1),box-shadow .7s ease;transform-origin:center center}
-.ice-board.is-zooming{transform:scale(1.075);box-shadow:0 16px 38px rgba(35,29,5,.38),inset 0 0 0 5px rgba(255,255,255,.12)}
-.ice-zone{transition:clip-path .42s cubic-bezier(.2,.75,.2,1),filter .35s ease}
-.ice-avatar,.ice-cloud-icon{left:var(--ice-avatar-x,23.5%);top:var(--ice-avatar-y,50%);right:auto;bottom:auto;width:var(--ice-avatar-size,82px);height:var(--ice-avatar-size,82px);font-size:calc(var(--ice-avatar-size,82px)*.57);transform:translate(-50%,-50%);transition:left .42s cubic-bezier(.2,.75,.2,1),top .42s cubic-bezier(.2,.75,.2,1),width .42s cubic-bezier(.2,.75,.2,1),height .42s cubic-bezier(.2,.75,.2,1),font-size .42s ease,box-shadow .3s ease}
-.ice-avatar{z-index:4}.ice-cloud-icon{z-index:4;border-radius:50%;}
-.ice-avatar img{display:block;width:100%;height:100%;object-fit:cover}
-.ice-direction-arrow{position:absolute;z-index:7;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border:2px solid rgba(255,255,255,.7);border-radius:50%;display:grid;place-items:center;opacity:0;transform:scale(.55) rotate(0deg);transition:opacity .25s ease,transform .25s ease;background:rgba(255,255,255,.13);box-shadow:0 3px 12px #0005;pointer-events:none}
-.ice-direction-arrow span{font-size:29px;line-height:1;color:#fff;text-shadow:0 2px 5px #0009;transform:translateX(2px)}
-.ice-board.is-running .ice-direction-arrow{opacity:1;transform:scale(1) rotate(var(--ice-arrow-angle,0deg))}
-.ice-ball{will-change:left,top,transform;transition:filter .2s ease;}
-.ice-board.is-running .ice-ball{opacity:1;filter:drop-shadow(0 0 7px rgba(255,255,255,.65))}
-.ice-board.is-zooming .ice-ball{filter:drop-shadow(0 0 13px rgba(255,255,255,.95))}
-.ice-board.is-win .ice-avatar{box-shadow:0 0 0 6px #35e58b,0 5px 18px #0006}
-.ice-board.is-lose .ice-cloud-icon{box-shadow:0 0 0 6px #ff625d,0 6px 20px #0008}
-@media(max-width:360px){.ice-direction-arrow{width:48px;height:48px;margin:-24px 0 0 -24px}.ice-direction-arrow span{font-size:24px}}
-@media(max-width:360px){.ice-wrap{padding-left:10px;padding-right:10px}.ice-board{width:100%}}
-/* Faster immediate movement feedback in Tucha Road */
-.tc-track{transition:transform .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hero{transition:left .18s cubic-bezier(.18,.75,.25,1)!important}.tc-hop.hop{animation-duration:.22s!important}
-</style>
 
+<style>
+/* === v20: скорость апгрейда + PvP аватарки === */
+.upgrade-speed{display:flex;align-items:center;gap:6px;margin:10px 0}
+.upgrade-speed span{font-size:10px;font-weight:950;letter-spacing:.8px;color:#75658f}
+.upgrade-speed button{flex:1;border:2px solid #eadc50;background:#fffbd4;color:#665900;border-radius:12px;padding:8px 4px;font-weight:900;font-size:12px}
+.upgrade-speed button.active{background:linear-gradient(180deg,#ffed4d,#ffda21);color:#292929;box-shadow:0 3px 0 #dfb800}
+.pv-wheelbox{font-size:min(300px,78vw)}
+#pv-spin{position:absolute;inset:0;will-change:transform}
+#pv-avs{position:absolute;inset:0;pointer-events:none}
+.pv-av{position:absolute;border-radius:50%;border:2px solid #fff;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:950;box-shadow:0 2px 6px rgba(0,0,0,.35);will-change:transform}
+.pv-av img{width:100%;height:100%;object-fit:cover;display:block}
+.pv-av.me{z-index:4;border-color:#fde047;box-shadow:0 0 0 3px #fde047,0 0 14px 5px rgba(250,204,21,.85);animation:pvPulse 1.4s ease-in-out infinite}
+.pv-av.dim{opacity:.45}
+@keyframes pvPulse{50%{box-shadow:0 0 0 3px #fff,0 0 20px 8px rgba(250,204,21,.95)}}
+</style>
+<style>
+/* === v21: Dice зелёный/красный, быстрые ставки, тосты === */
+#dice-slider{-webkit-appearance:none;appearance:none;width:100%;height:18px;margin:0;border-radius:999px;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.18);
+ background:linear-gradient(90deg,#4ade80 0,#16a34a var(--dfill,50%),#f87171 var(--dfill,50%),#dc2626 100%) !important}
+#dice-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;border-radius:50%;background:#fff;border:5px solid #f59e0b;box-shadow:0 3px 9px rgba(0,0,0,.35);cursor:pointer}
+#dice-slider::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:5px solid #f59e0b;box-shadow:0 3px 9px rgba(0,0,0,.35)}
+.dice-slider-wrap{position:relative;margin:34px 0 8px !important}
+.dice-marker{position:absolute;top:-26px;left:50%;transform:translateX(-50%);padding:2px 7px;border-radius:9px;background:#64748b;color:#fff;font-size:11px;font-weight:950;pointer-events:none;transition:left .05s linear;opacity:0}
+.dice-marker::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-top-color:inherit;border-bottom:0;border-top-color:#64748b}
+.dice-marker.show{opacity:1}.dice-marker.win{background:#16a34a}.dice-marker.win::after{border-top-color:#16a34a}.dice-marker.lose{background:#dc2626}.dice-marker.lose::after{border-top-color:#dc2626}
+.dice-zones{display:flex;font-size:11px;font-weight:950;margin:2px 0 14px;letter-spacing:.3px}
+.dice-zones span{white-space:nowrap}.dice-zones .zg{color:#16a34a}.dice-zones .zr{color:#dc2626;margin-left:auto}
+.qb{display:flex;gap:6px;margin:0 0 8px}
+.qb button{flex:1;border:2px solid #eadc50;background:#fffbd4;color:#665900;border-radius:11px;padding:7px 2px;font-weight:950;font-size:12px}
+.qb button:active{transform:scale(.95)}
+#tg-toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-90px);z-index:9999;max-width:88vw;padding:11px 16px;border-radius:14px;background:#1f2937;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .25s ease;text-align:center;pointer-events:none}
+#tg-toast.on{transform:translate(-50%,0)}
+</style>
 </head>
 
 <body>
@@ -1802,14 +1696,8 @@ main { color:#292929 !important; }
             <div class="game-card" onclick="openGameScreen('roulette')">
                 <img src="./rulet.png" alt="Рулетка">
             </div>
-            <div class="game-card" onclick="openGameScreen('tucha')">
-                <img src="./tuchadjamp.png" alt="Tucha Road">
-            </div>
             <div class="game-card pvp-game-card" onclick="openGameScreen('pvp')" aria-label="PvP Джекпот">
                 <img src="./pvptu.png" alt="PvP Джекпот">
-            </div>
-            <div class="game-card" onclick="openGameScreen('ice-upgrade')" aria-label="Ice Upgrade">
-                <img src="./aicpvp.png" alt="Ice Upgrade">
             </div>
         </div>
     </section>
@@ -1982,51 +1870,6 @@ main { color:#292929 !important; }
     </div>
 </div>
 
-<!-- TUCHA ROAD GAME SCREEN -->
-<div id="screen-tucha" class="game-screen">
-    <div class="game-top-bar">
-        <button class="game-back-btn" onclick="closeGameScreen('tucha')">← Туча</button>
-        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
-            <span class="balance-icon">$</span><span class="global-balance">0.10</span>
-        </div>
-    </div>
-    <div class="tc-wrap">
-        <div class="tc-scene" id="tc-scene">
-            <div class="tc-hud">
-                <div class="tc-pill"><small>МНОЖИТЕЛЬ</small><b id="tc-mult">x1.00</b></div>
-                <div class="tc-pill r"><small>ПОЛОСА</small><b id="tc-lane">0/20</b></div>
-            </div>
-            <div class="tc-track" id="tc-track"></div>
-        </div>
-        <div class="tc-toast" id="tc-toast">Выбери сложность и ставку ☁️</div>
-        <div class="tc-modes">
-            <button class="tc-mode" id="tc-mode-easy" onclick="tcSetMode('easy')"></button>
-            <button class="tc-mode active" id="tc-mode-medium" onclick="tcSetMode('medium')"></button>
-            <button class="tc-mode" id="tc-mode-hard" onclick="tcSetMode('hard')"></button>
-        </div>
-        <div class="tc-bet">
-            <div class="tc-bet-top">
-                <span>СТАВКА, $</span>
-                <div class="tc-chips">
-                    <button onclick="tcSetBet(0.1)">0.1</button><button onclick="tcSetBet(0.5)">0.5</button>
-                    <button onclick="tcSetBet(1)">1</button><button onclick="tcSetBet(5)">5</button>
-                </div>
-            </div>
-            <div class="tc-bet-row">
-                <input id="tc-bet" type="text" inputmode="decimal" value="0.50" oninput="tcUI()">
-                <button onclick="tcBetMul(0.5)">½</button>
-                <button onclick="tcBetMul(2)">×2</button>
-                <button onclick="tcBetMax()">MAX</button>
-            </div>
-        </div>
-        <button class="tc-go" id="tc-go" onclick="tcStart()">Перейти дорогу</button>
-        <div class="tc-play" id="tc-play">
-            <button class="tc-jump" id="tc-jump" onclick="tcJump()">Прыгнуть</button>
-            <button class="tc-cash" id="tc-cash" onclick="tcCash()">Забрать</button>
-        </div>
-    </div>
-</div>
-
 <!-- PVP JACKPOT SCREEN -->
 <div id="screen-pvp" class="game-screen">
     <div class="game-top-bar">
@@ -2044,7 +1887,7 @@ main { color:#292929 !important; }
         <div class="pv-wheel-card">
             <div class="pv-wheelbox">
                 <div class="pv-pointer"></div>
-                <canvas id="pv-canvas" width="300" height="300"></canvas>
+                <div id="pv-spin"><canvas id="pv-canvas" width="300" height="300"></canvas><div id="pv-avs"></div></div>
                 <div class="pv-center"><small>БАНК РАУНДА</small><b id="pv-pot">$0.00</b></div>
             </div>
             <div class="pv-timer" id="pv-timer">—</div>
@@ -2063,6 +1906,7 @@ main { color:#292929 !important; }
             </div>
         </div>
         <button class="pv-go" id="pv-go" onclick="pvBet()">ИГРАТЬ</button>
+        <div class="pv-note">Комиссия раунда: <b id="pv-fee">—</b> · победитель забирает остальной банк</div>
         <div class="pv-box"><div class="pv-box-heading"><span>ИГРОКИ РАУНДА</span><span id="pv-player-count">0 игроков</span></div><div id="pv-players" class="pv-list"></div></div>
         <div class="pv-box"><div class="pv-box-heading"><span>ИСТОРИЯ РАУНДОВ</span><span>ПОСЛЕДНИЕ</span></div><div id="pv-hist" class="pv-list"></div></div>
     </div>
@@ -2125,8 +1969,10 @@ main { color:#292929 !important; }
             <div style="font-weight:950; margin-bottom:10px;">Настройте шанс:</div>
             
             <div class="dice-slider-wrap">
+                <div id="dice-marker" class="dice-marker">50</div>
                 <input id="dice-slider" type="range" min="1" max="95" value="50" oninput="updateDiceUI()">
             </div>
+            <div class="dice-zones"><span class="zg" id="dice-zone-win">ВЫИГРЫШ 0 – 50</span><span class="zr" id="dice-zone-lose">ПРОИГРЫШ 50 – 100</span></div>
             
             <div class="dice-info-row">
                 <div class="dice-info-box">
@@ -2230,45 +2076,12 @@ main { color:#292929 !important; }
         </div>
 
         <div id="upgrade-result" class="upgrade-result">Настрой ставку и шанс, затем нажми «АПГРЕЙД»</div>
+        <div class="upgrade-speed" id="upgrade-speed"><span>СКОРОСТЬ</span>
+            <button data-s="slow" onclick="setUpgradeSpeed('slow')">Медленно</button>
+            <button data-s="normal" class="active" onclick="setUpgradeSpeed('normal')">Обычно</button>
+            <button data-s="fast" onclick="setUpgradeSpeed('fast')">Быстро</button>
+        </div>
         <button id="upgrade-button" class="primary upgrade-action" onclick="playUpgrade()">АПГРЕЙД</button>
-    </div>
-</div>
-
-<!-- ICE UPGRADE GAME SCREEN -->
-<div id="screen-ice-upgrade" class="game-screen">
-    <div class="game-top-bar">
-        <button class="game-back-btn" onclick="closeGameScreen('ice-upgrade')">← Ice Upgrade</button>
-        <div class="balance clickable" onclick="openDeposit()" style="padding:6px 12px;"><span class="balance-icon">$</span><span class="global-balance">0.10</span></div>
-    </div>
-    <div class="ice-wrap">
-        <div class="ice-heading"><span>TUCHA GAMES</span><b>ICE UPGRADE</b><small>Выбери размер своей зоны и забери тучку</small></div>
-        <div class="ice-arena-card">
-            <div class="ice-board" id="ice-board" style="--ice-top:94%;--ice-bottom:0%">
-                <div class="ice-zone ice-zone-lose"></div>
-                <div class="ice-zone ice-zone-win"></div>
-                <div class="ice-diagonal" id="ice-diagonal"></div>
-                <div class="ice-avatar" id="ice-avatar"><span class="ice-avatar-fallback">👤</span></div>
-                <div class="ice-cloud-icon" aria-label="Tucha">☁</div>
-                <div class="ice-direction-arrow" id="ice-direction-arrow"><span>➤</span></div>
-                <div class="ice-ball" id="ice-ball"></div>
-                <div class="ice-result-mark" id="ice-result-mark">✓</div>
-            </div>
-            <div class="ice-zones-caption"><span><i></i> ТВОЯ ЗОНА · <b id="ice-your-zone">47%</b></span><span><i></i> ЗОНА ТУЧКИ · <b id="ice-cloud-zone">53%</b></span></div>
-            <div class="ice-status" id="ice-status">Настрой свою зону и сделай ставку</div>
-        </div>
-        <div class="ice-control-card">
-            <div class="ice-control-head"><b>СУММА СТАВКИ</b><span>ТОЛЬКО USD · $</span></div>
-            <div class="ice-bet-row"><input id="ice-bet" type="number" inputmode="decimal" min="0.01" step="0.01" value="0.50" oninput="iceUpdate()"><button onclick="iceBetAdjust(0.5)">½</button><button onclick="iceBetAdjust(2)">×2</button><button onclick="iceBetMax()">MAX</button></div>
-            <div class="ice-quick-bets"><button onclick="iceSetBet(0.10)">$0.10</button><button onclick="iceSetBet(0.50)">$0.50</button><button onclick="iceSetBet(1)">$1</button><button onclick="iceSetBet(5)">$5</button></div>
-        </div>
-        <div class="ice-control-card">
-            <div class="ice-control-head"><b>РАЗМЕР ТВОЕЙ ЗОНЫ / ШАНС</b><b id="ice-chance-label">47%</b></div>
-            <input id="ice-slider" class="ice-slider" type="range" min="1" max="95" step="1" value="47" oninput="iceSetChance(this.value)">
-            <div class="ice-slider-labels"><span>1% · МЕНЬШЕ ЗОНА</span><span>95% · БОЛЬШЕ ЗОНА</span></div>
-        </div>
-        <div class="ice-stats"><div><small>МНОЖИТЕЛЬ</small><b id="ice-mult">x1.87</b></div><div><small>ВЫПЛАТА ПРИ ПОБЕДЕ</small><b id="ice-payout">$0.94</b></div></div>
-        <button id="ice-play" class="ice-play-btn" onclick="playIceUpgrade()">ИГРАТЬ</button>
-        <div class="ice-footnote">Шарик летит по арене и останавливается в одной из зон. Результат подтверждает сервер.</div>
     </div>
 </div>
 
@@ -2501,9 +2314,8 @@ function openGameScreen(gameId) {
     $("main-content").style.display = "none";
     $("screen-" + gameId).classList.add("active");
     if (gameId === 'roulette') drawRouletteWheel();
-    if (gameId === 'tucha') tuchaOpen();
-    if (gameId === 'ice-upgrade') iceOpen();
     if (gameId === 'pvp') pvOpen();
+    if (gameId === 'dice') updateDiceUI();
     haptic("medium");
 }
 function closeGameScreen(gameId) {
@@ -2840,7 +2652,10 @@ function updateDiceUI() {
     diceMult = (98 / diceChance).toFixed(2);
     $("dice-chance-val").textContent = diceChance + "%";
     $("dice-mult-val").textContent = diceMult + "x";
-    $("dice-slider").style.background = `linear-gradient(90deg, #16a34a ${diceChance}%, #ef4444 ${diceChance}%)`;
+    const real = Math.min(100, Math.max(0, Number(rtpChance(diceChance, "dice")) || diceChance));   // реальная граница выигрыша
+    $("dice-slider").style.setProperty("--dfill", real + "%");
+    $("dice-zone-win").textContent = "ВЫИГРЫШ 0 – " + real.toFixed(real % 1 ? 1 : 0);
+    $("dice-zone-lose").textContent = "ПРОИГРЫШ " + real.toFixed(real % 1 ? 1 : 0) + " – 100";
     haptic("light");
 }
 
@@ -2854,11 +2669,13 @@ function playDice() {
     const isWin = finalRoll <= rtpChance(diceChance, "dice");
     let ticks = 0;
     const anim = setInterval(() => {
-        $("dice-result").textContent = (Math.random() * 100).toFixed(2);
+        const rr = Math.random() * 100; $("dice-result").textContent = rr.toFixed(2);
+        const mk = $("dice-marker"); mk.className = "dice-marker show"; mk.style.left = rr + "%"; mk.textContent = Math.round(rr);
         ticks++;
         if (ticks > 15) {
             clearInterval(anim);
             $("dice-result").textContent = finalRoll.toFixed(2);
+            const mk = $("dice-marker"); mk.style.left = finalRoll + "%"; mk.textContent = finalRoll.toFixed(1); mk.className = "dice-marker show " + (isWin ? "win" : "lose");
             if (isWin) {
                 const winAmount = Math.floor(bet * diceMult * 100) / 100;
                 balance += winAmount;
@@ -3082,22 +2899,35 @@ function upgradeReadRotation(el) {
     const a = m[1].split(",").map(Number);
     return Math.atan2(a[1], a[0]) * 180 / Math.PI;
 }
-async function upgradeStopSpin(el, isWin, chance, duration) {
-    const current = upgradeReadRotation(el);
+const UPGRADE_SPEEDS = {slow: 4600, normal: 3000, fast: 1700};
+let upgradeSpeed = (function () { try { return localStorage.getItem("upgrade_speed") || "normal"; } catch (e) { return "normal"; } })();
+function setUpgradeSpeed(k) {
+    if (!UPGRADE_SPEEDS[k]) return;
+    upgradeSpeed = k; try { localStorage.setItem("upgrade_speed", k); } catch (e) {}
+    document.querySelectorAll("#upgrade-speed button").forEach(b => b.classList.toggle("active", b.dataset.s === k));
+    haptic("light");
+}
+// Плавная остановка: стартовая скорость торможения = скорости разгонного кручения (360° за 0.85 с), без рывка.
+async function upgradeStopSpin(el, isWin, chance) {
+    const T = UPGRADE_SPEEDS[upgradeSpeed] || 3000;
+    const start = upgradeReadRotation(el);
     el.classList.remove("preview-spinning");
-    el.style.animation = "none";
-    el.style.transition = "none";
-    el.style.transform = `rotate(${current}deg)`;
-    void el.offsetWidth;
+    el.style.animation = "none"; el.style.transition = "none";
+    el.style.transform = `rotate(${start}deg)`;
     const roll = isWin ? Math.random() * Math.max(1, chance) : chance + Math.random() * Math.max(1, 100 - chance);
-    const landing = roll * 3.6;
-    const turns = 3 + Math.floor(Math.random() * 2);
-    const finalRotation = current + turns * 360 + (360 - landing);
-    el.classList.add("spinning");
-    el.style.transition = `transform ${duration || 1750}ms cubic-bezier(.10,.72,.12,1)`;
-    requestAnimationFrame(() => { el.style.transform = `rotate(${finalRotation}deg)`; });
-    await new Promise(resolve => setTimeout(resolve, (duration || 1750) + 60));
-    el.classList.remove("spinning");
+    const r = (360 - roll * 3.6) % 360;
+    const want = (360 / 0.85) * (T / 1000) / 3;            // easeOutCubic: v0 = 3·D/T
+    let D = Math.round((want - r) / 360) * 360 + r;
+    if (D < 360) D += 360 * Math.ceil((360 - D) / 360);
+    await new Promise(resolve => {
+        const t0 = performance.now();
+        const frame = now => {
+            const t = Math.min(1, (now - t0) / T), e = 1 - Math.pow(1 - t, 3);
+            el.style.transform = `rotate(${start + D * e}deg)`;
+            if (t < 1) requestAnimationFrame(frame); else resolve();
+        };
+        requestAnimationFrame(frame);
+    });
 }
 
 async function playUpgrade() {
@@ -3997,396 +3827,6 @@ document.addEventListener("click", function(e) {
     document.body.appendChild(b);
 })();
 
-/* ===== ТУЧА НА ДОРОГЕ: каждый прыжок решает сервер ===== */
-const TC_LANE_W = 84, TC_GRASS = 96;
-// first = множитель 1-й полосы; anchor = полоса, где ровно x2.00 (Легко 7, Средне 5, Хардкор 3). Те же числа на сервере.
-const TC_ANCHOR_MULT = 2.0;
-const TC_FALLBACK = {easy: {name: "Легко", chance: 80, first: 1.08, anchor: 7}, medium: {name: "Средне", chance: 65, first: 1.12, anchor: 5}, hard: {name: "Хардкор", chance: 60, first: 1.20, anchor: 3}};
-const TC_CAR_COLORS = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7", "#ec4899", "#f97316", "#14b8a6"];
-let tc = {state: "idle", busy: false, step: 0, mode: "medium", bet: 0.5, cfg: null, lanes: 20, maxBet: 100, maxWin: 500};
-
-const TC_SHAPES = '<circle cx="30" cy="46" r="17"/><circle cx="50" cy="32" r="22"/><circle cx="71" cy="46" r="17"/><rect x="22" y="44" width="58" height="26" rx="13"/>';
-const TC_SVG = `<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="tcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#bae6fd"/></linearGradient></defs>
-<ellipse cx="50" cy="86" rx="24" ry="4" fill="rgba(0,0,0,.22)"/>
-<rect x="33" y="68" width="11" height="16" rx="5.5" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
-<rect x="57" y="68" width="11" height="16" rx="5.5" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
-<g fill="#38bdf8" stroke="#38bdf8" stroke-width="7" stroke-linejoin="round">${TC_SHAPES}</g>
-<g fill="url(#tcg)">${TC_SHAPES}</g>
-<g class="f-ok">
-<circle cx="40" cy="50" r="4.5" fill="#0f172a"/><circle cx="60" cy="50" r="4.5" fill="#0f172a"/>
-<circle cx="41.6" cy="48.4" r="1.6" fill="#fff"/><circle cx="61.6" cy="48.4" r="1.6" fill="#fff"/>
-<ellipse cx="31" cy="58" rx="5" ry="3.2" fill="#fda4af"/><ellipse cx="69" cy="58" rx="5" ry="3.2" fill="#fda4af"/>
-<path d="M43 57 Q50 66 57 57" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
-</g>
-<g class="f-dead" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none">
-<path d="M35 45 l9 9 M44 45 l-9 9 M56 45 l9 9 M65 45 l-9 9"/>
-<path d="M42 62 q4 -5 8 0 q4 5 8 0"/>
-</g>
-</svg>`;
-function tcCarSVG(c) {
-    return `<svg viewBox="0 0 36 72" width="34" height="68"><rect x="3" y="2" width="30" height="68" rx="11" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
-<rect x="7" y="17" width="22" height="14" rx="4" fill="#d6f2ff"/><rect x="7" y="44" width="22" height="12" rx="4" fill="#bfe6fb"/>
-<circle cx="10" cy="7" r="3" fill="#fff7a8"/><circle cx="26" cy="7" r="3" fill="#fff7a8"/><circle cx="10" cy="66" r="2.6" fill="#fca5a5"/><circle cx="26" cy="66" r="2.6" fill="#fca5a5"/></svg>`;
-}
-
-function tcUuid() { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + "-" + Math.random().toString(36).slice(2)); }
-function tcSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-async function tcCall(payload) {
-    const d = await apiPost(payload);
-    if (!d || d.status !== "success") throw new Error((d && d.message) || "Ошибка сервера.");
-    return d;
-}
-// Пока сервер не ответил — показываем те же цифры по той же формуле. После ответа берём числа сервера.
-function tcCfg() {
-    if (tc.cfg) return tc.cfg;
-    const o = {};
-    Object.keys(TC_FALLBACK).forEach(k => {
-        const m = TC_FALLBACK[k], g = Math.pow(TC_ANCHOR_MULT / m.first, 1 / (m.anchor - 1)), a = [];
-        for (let s = 1; s <= tc.lanes; s++) a.push(Math.min(50, Math.round(m.first * Math.pow(g, s - 1) * 100) / 100));
-        o[k] = {name: m.name, chance: m.chance, mults: a};
-    });
-    return o;
-}
-function tcMults() { return tcCfg()[tc.mode].mults; }
-function tcMultNow() { return tc.step > 0 ? tcMults()[tc.step - 1] : 1; }
-function tcHeroX(step) { return step <= 0 ? TC_GRASS / 2 : TC_GRASS + (step - 0.5) * TC_LANE_W; }
-function tcGetBet() { return Math.round((parseFloat(String($("tc-bet").value).replace(",", ".")) || 0) * 100) / 100; }
-function tcPotential() { return Math.min(tc.maxWin, Math.round(tc.bet * tcMultNow() * 100) / 100); }
-
-function tcToast(text, kind) { const t = $("tc-toast"); if (!t) return; t.textContent = text; t.className = "tc-toast" + (kind ? " " + kind : ""); }
-function tcHud() { $("tc-mult").textContent = "x" + tcMultNow().toFixed(2); $("tc-lane").textContent = tc.step + "/" + tc.lanes; }
-
-function tcBuildTrack() {
-    const track = $("tc-track"); if (!track) return;
-    const N = tc.lanes, mults = tcMults();
-    let h = '<div class="tc-grass tc-start"><span class="tc-deco" style="left:10px;top:34px">🌳</span><span class="tc-deco" style="left:52px;top:214px">🌼</span><span class="tc-deco" style="left:12px;top:168px">🍄</span><span class="tc-deco" style="left:48px;top:96px">🌷</span></div>';
-    for (let i = 1; i <= N; i++) {
-        const done = i <= tc.step, next = tc.state === "playing" && i === tc.step + 1;
-        let cars = "";
-        if (!done) {
-            const n = 1 + (i % 2);
-            const dur = 2.6 + Math.random() * 2.2, off = Math.random() * dur; // одна скорость на полосу → машины не налезают друг на друга
-            for (let c = 0; c < n; c++) {
-                const del = (-(off + c * dur / n)).toFixed(2);
-                const col = TC_CAR_COLORS[Math.floor(Math.random() * TC_CAR_COLORS.length)];
-                cars += `<div class="tc-car ${i % 2 ? "up" : "down"}" style="--d:${dur.toFixed(2)}s;--dl:${del}s">${tcCarSVG(col)}</div>`;
-            }
-        }
-        h += `<div class="tc-lane${done ? " done" : ""}" data-i="${i}">${cars}<div class="tc-chip${done ? " done" : ""}${next ? " next" : ""}" onclick="tcLaneTap(${i})">${done ? "✓ " : ""}x${mults[i - 1].toFixed(2)}</div></div>`;
-    }
-    h += '<div class="tc-grass"><span class="tc-flag">🏁</span><span class="tc-deco" style="left:14px;top:30px">🌳</span><span class="tc-deco" style="left:50px;top:230px">🌼</span></div>';
-    track.innerHTML = h;
-    track.style.width = (TC_GRASS * 2 + N * TC_LANE_W) + "px";
-    const hero = document.createElement("div");
-    hero.id = "tc-hero"; hero.className = "tc-hero";
-    hero.innerHTML = `<div class="tc-hop" id="tc-hop"><div class="tc-bob">${TC_SVG}</div></div>`;
-    hero.style.left = tcHeroX(tc.step) + "px";
-    track.appendChild(hero);
-    tcScroll(false, tc.step); tcHud();
-}
-function tcMarkLanes() {
-    const mults = tcMults();
-    document.querySelectorAll("#tc-track .tc-lane").forEach(l => {
-        const i = Number(l.dataset.i), chip = l.querySelector(".tc-chip");
-        const done = i <= tc.step, next = tc.state === "playing" && i === tc.step + 1;
-        l.classList.toggle("done", done);
-        if (done) { l.querySelectorAll(".tc-car").forEach(c => { c.classList.add("gone"); setTimeout(() => c.remove(), 280); }); }
-        chip.className = "tc-chip" + (done ? " done" : "") + (next ? " next" : "");
-        chip.textContent = (done ? "✓ " : "") + "x" + mults[i - 1].toFixed(2);
-    });
-}
-function tcScroll(anim, step) {
-    const sc = $("tc-scene"), tr = $("tc-track"); if (!sc || !tr) return;
-    const w = sc.clientWidth || 340, trackW = TC_GRASS * 2 + tc.lanes * TC_LANE_W;
-    const x = Math.max(0, Math.min(trackW - w, tcHeroX(step) - w * 0.3));
-    if (!anim) tr.style.transition = "none";
-    tr.style.transform = `translateX(${-x}px)`;
-    if (!anim) { void tr.offsetWidth; tr.style.transition = ""; }
-}
-function tcMoveHero(step) {
-    const hero = $("tc-hero"); if (!hero) return;
-    hero.style.left = tcHeroX(step) + "px";
-    tcScroll(true, step);
-    const h = $("tc-hop"); h.classList.remove("hop"); void h.offsetWidth; h.classList.add("hop");
-}
-function tcConfetti() {
-    const hero = $("tc-hero"); if (!hero) return;
-    for (let i = 0; i < 16; i++) {
-        const s = document.createElement("span");
-        s.className = "tc-coin"; s.textContent = ["🪙", "⭐", "✨", "💛"][i % 4];
-        s.style.setProperty("--x", (Math.random() * 190 - 95) + "px");
-        s.style.setProperty("--y", (-40 - Math.random() * 120) + "px");
-        hero.appendChild(s); setTimeout(() => s.remove(), 1000);
-    }
-}
-
-function tcRenderModes() {
-    const cfg = tcCfg();
-    [["easy", "🌿"], ["medium", "🔥"], ["hard", "💀"]].forEach(([k, ic]) => {
-        const b = $("tc-mode-" + k); if (!b) return;
-        const m = cfg[k];
-        b.innerHTML = `<span>${ic} ${m.name}</span><small>шанс ${m.chance}% · x${m.mults[0].toFixed(2)}</small>`;
-        b.classList.toggle("active", tc.mode === k);
-        b.disabled = tc.state === "playing" || tc.busy;
-    });
-}
-function tcUI() {
-    const playing = tc.state === "playing";
-    $("tc-go").style.display = playing ? "none" : "";
-    $("tc-play").style.display = playing ? "grid" : "none";
-    $("tc-go").disabled = tc.busy;
-    $("tc-go").textContent = "Перейти дорогу за $" + money(tcGetBet());
-    $("tc-jump").disabled = tc.busy || tc.step >= tc.lanes;
-    $("tc-jump").textContent = tc.step < tc.lanes ? "Прыгнуть → x" + tcMults()[tc.step].toFixed(2) : "Финиш";
-    $("tc-cash").disabled = tc.busy || tc.step < 1;
-    $("tc-cash").textContent = tc.step < 1 ? "Забрать" : "Забрать $" + money(tcPotential());
-    document.querySelectorAll(".tc-bet button, .tc-bet input").forEach(el => { el.disabled = playing || tc.busy; });
-    tcRenderModes();
-}
-
-function tcSetMode(k) {
-    if (tc.state === "playing" || tc.busy || !tcCfg()[k]) return;
-    tc.mode = k; haptic("light");
-    tcMarkLanes(); tcHud(); tcUI();
-}
-function tcSetBet(v) { $("tc-bet").value = money(v); tcUI(); haptic("light"); }
-function tcBetMul(f) { tcSetBet(Math.max(0.01, tcGetBet() * f)); }
-function tcBetMax() { tcSetBet(Math.max(0.01, Math.min(balance, tc.maxBet))); }
-function tcLaneTap(i) { if (i === tc.step + 1) tcJump(); }
-
-async function tcLoad() {
-    try {
-        const d = await tcCall({action: "tucha_state"});
-        tc.cfg = d.config; tc.lanes = d.lanes || 20; tc.maxBet = d.max_bet || 100; tc.maxWin = d.max_win || 500;
-        balance = Number(d.balance); if (!Number.isFinite(balance)) balance = 0;
-        updateBalanceUI();
-        if (d.active) {
-            tc.state = "playing"; tc.mode = d.active.mode; tc.step = d.active.step; tc.bet = d.active.bet;
-            $("tc-bet").value = money(tc.bet);
-            tcToast("Игра продолжается: прыгай дальше или забирай ☁️", "");
-        } else { tc.state = "idle"; tc.step = 0; }
-        tcBuildTrack(); tcUI();
-    } catch (e) { tcToast(e.message || "Нет связи с сервером", "lose"); }
-}
-function tuchaOpen() { tcBuildTrack(); tcUI(); tcLoad(); }
-function tcResetRound() { tc.state = "idle"; tc.step = 0; tcBuildTrack(); tcUI(); }
-
-async function tcStart() {
-    if (tc.busy || tc.state !== "idle") return;
-    const bet = tcGetBet();
-    if (!Number.isFinite(bet) || bet < 0.01) { tcToast("Минимальная ставка — $0.01", "lose"); notify("error"); return; }
-    if (bet > tc.maxBet) { tcToast("Максимальная ставка — $" + tc.maxBet, "lose"); notify("error"); return; }
-    if (bet > balance) { tcToast("Недостаточно средств", "lose"); notify("error"); return; }
-    const oldBalance = balance;
-    // Мгновенный отклик интерфейса: показываем старт и списываем ставку локально,
-    // сервер всё равно подтверждает и окончательно проверяет операцию.
-    tc.busy = true; tc.bet = bet; tc.state = "playing"; tc.step = 0;
-    balance = Math.round((balance - bet) * 100) / 100;
-    updateBalanceUI(); tcBuildTrack(); tcUI();
-    tcToast("Старт! Готовься прыгать…", ""); haptic("medium");
-    try {
-        const d = await tcCall({action: "tucha_start", request_id: tcUuid(), mode: tc.mode, bet: bet});
-        balance = Number(d.balance); if (!Number.isFinite(balance)) balance = oldBalance - bet;
-        tc.bet = d.active.bet; tc.state = "playing"; tc.step = 0;
-        updateBalanceUI(); saveLocal(); tcMarkLanes(); tcToast("Поехали! Жми «Прыгнуть» или тапни по оранжевой полосе", "");
-    } catch (e) {
-        tc.state = "idle"; tc.step = 0; balance = oldBalance; updateBalanceUI();
-        tcToast(e.message || "Не удалось начать", "lose"); notify("error");
-        try { await tcLoad(); } catch (_) { balance = oldBalance; updateBalanceUI(); }
-    } finally { tc.busy = false; tcUI(); }
-}
-
-async function tcJump() {
-    if (tc.busy || tc.state !== "playing" || tc.step >= tc.lanes) return;
-    tc.busy = true; tcUI(); haptic("medium");
-    const target = tc.step + 1;
-    document.querySelectorAll(`#tc-track .tc-lane[data-i="${target}"] .tc-car`).forEach(c => c.classList.add("gone"));
-    tcMoveHero(target);
-    tcToast("Прыжок! ☁️", "");
-    try {
-        const d = await tcCall({action: "tucha_step", request_id: tcUuid()});
-        if (d.balance !== undefined) { balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal(); } // при обычном прыжке баланс не меняется
-        if (d.crashed) { await tcCrash(target); }
-        else if (d.finished) { tc.step = target; tcMarkLanes(); tcHud(); await tcWin(d.payout, d.mult, true); }
-        else { tc.step = d.active.step; tcMarkLanes(); tcHud(); tcToast("Есть! Полоса " + tc.step + " пройдена · x" + Number(d.mult).toFixed(2), ""); notify("success"); }
-    } catch (e) { tcToast(e.message || "Ошибка", "lose"); await tcLoad(); }
-    finally { tc.busy = false; tcUI(); }
-}
-
-async function tcCrash(lane) {
-    const l = document.querySelector(`#tc-track .tc-lane[data-i="${lane}"]`);
-    if (l) {
-        l.querySelectorAll(".tc-car").forEach(c => c.remove());
-        const car = document.createElement("div");
-        car.className = "tc-car down hit"; car.innerHTML = tcCarSVG("#ef4444"); l.appendChild(car);
-        const chip = l.querySelector(".tc-chip"); chip.className = "tc-chip bad"; chip.textContent = "💥";
-    }
-    await tcSleep(90); // машина долетает до тучи
-    $("tc-hero").classList.add("dead"); haptic("heavy"); notify("error");
-    tcToast("БАМ! Туча попала под машину · −$" + money(tc.bet), "lose");
-    await tcSleep(650);
-    tcResetRound();
-}
-async function tcWin(payout, mult, auto) {
-    tcConfetti(); notify("success"); haptic("heavy");
-    tcToast((auto ? "МАКСИМУМ! " : "ЗАБРАЛ! ") + "+$" + money(payout) + " · x" + Number(mult).toFixed(2), "win");
-    await tcSleep(320);
-    tcResetRound();
-}
-async function tcCash() {
-    if (tc.busy || tc.state !== "playing" || tc.step < 1) return;
-    tc.busy = true; tcUI();
-    try {
-        const d = await tcCall({action: "tucha_cashout", request_id: tcUuid()});
-        balance = Number(d.balance) || 0; updateBalanceUI(); saveLocal();
-        await tcWin(d.payout, d.mult, false);
-    } catch (e) { tcToast(e.message || "Ошибка", "lose"); await tcLoad(); }
-    finally { tc.busy = false; tcUI(); }
-}
-
-/* ===== ICE UPGRADE — diagonal zones + flying ball animation ===== */
-let iceChance = 47, iceBusy = false;
-function iceGetBet(){ return Math.round((Number($("ice-bet")?.value || 0) + Number.EPSILON) * 100) / 100; }
-function iceUpdate(){
-    const input=$("ice-bet"),slider=$("ice-slider"),board=$("ice-board"); if(!input||!slider||!board)return;
-    iceChance=Math.min(95,Math.max(1,Math.round(Number(slider.value)||47)));
-    $("ice-chance-label").textContent=iceChance+"%";
-    $("ice-your-zone").textContent=iceChance+"%"; $("ice-cloud-zone").textContent=(100-iceChance)+"%";
-    const skew=Math.min(iceChance,100-iceChance);
-    const top=iceChance+skew,bottom=iceChance-skew;
-    board.style.setProperty("--ice-top",top+"%");board.style.setProperty("--ice-bottom",bottom+"%");
-    // The two icons stay centered in their changing triangular/trapezoid zones.
-    const yourSize=Math.max(22,Math.min(94,94*Math.sqrt(iceChance/47)));
-    const cloudChance=100-iceChance;
-    const cloudSize=Math.max(22,Math.min(94,94*Math.sqrt(cloudChance/53)));
-    board.style.setProperty("--ice-avatar-x",(iceChance/2)+"%");
-    board.style.setProperty("--ice-cloud-x",(50+iceChance/2)+"%");
-    board.style.setProperty("--ice-avatar-size",yourSize+"px");
-    board.style.setProperty("--ice-cloud-size",cloudSize+"px");
-    const avatar=$("ice-avatar"),cloud=board.querySelector(".ice-cloud-icon");
-    if(avatar){avatar.style.left=(iceChance/2)+"%";avatar.style.top="50%";avatar.style.width=yourSize+"px";avatar.style.height=yourSize+"px";}
-    if(cloud){cloud.style.left=(50+iceChance/2)+"%";cloud.style.top="50%";cloud.style.width=cloudSize+"px";cloud.style.height=cloudSize+"px";cloud.style.fontSize=(cloudSize*.57)+"px";}
-    $("ice-mult").textContent="x"+(88/iceChance).toFixed(2);
-    $("ice-payout").textContent="$"+money(iceGetBet()*(88/iceChance));
-    $("ice-play").disabled=iceBusy;
-}
-function iceSetChance(v){if(iceBusy)return;$("ice-slider").value=Math.min(95,Math.max(1,Math.round(Number(v)||1)));iceUpdate();}
-function iceSetBet(v){if(iceBusy)return;$("ice-bet").value=Number(v).toFixed(2);iceUpdate();haptic("light");}
-function iceBetAdjust(f){if(iceBusy)return;iceSetBet(Math.max(.01,Math.min(balance,iceGetBet()*f)));}
-function iceBetMax(){iceSetBet(Math.max(.01,balance));}
-function iceLoadAvatar(){
-    const box=$("ice-avatar"); if(!box)return;
-    const photo=telegramUser&&telegramUser.photo_url;
-    if(photo)box.innerHTML='<img src="'+String(photo).replace(/["'<>]/g,'')+'" alt="Ваш Telegram avatar">';
-    else box.innerHTML='<span class="ice-avatar-fallback">👤</span>';
-}
-function iceResetBoard(){
-    const b=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark"),arrow=$("ice-direction-arrow");if(!b)return;
-    b.classList.remove("is-running","is-win","is-lose","is-zooming");
-    ball.style.animation="none";ball.style.left="50%";ball.style.top="50%";ball.style.transform="translate(-50%,-50%) rotate(0deg)";ball.style.opacity="0";
-    if(arrow){arrow.style.setProperty("--ice-arrow-angle","0deg");arrow.style.transform="scale(.55) rotate(0deg)";}
-    mark.textContent="✓";void b.offsetWidth;
-}
-function iceOpen(){
-    iceBusy=false;iceLoadAvatar();iceResetBoard();
-    $("ice-status").className="ice-status";$("ice-status").textContent="Настрой свою зону и сделай ставку";
-    $("ice-play").textContent="ИГРАТЬ";iceUpdate();
-}
-function iceAnimateResult(win,chance){
-    return new Promise(resolve=>{
-        const board=$("ice-board"),ball=$("ice-ball"),mark=$("ice-result-mark"),arrow=$("ice-direction-arrow");
-        const rect=board.getBoundingClientRect(),size=rect.width||350;
-        const radius=Math.max(9,Math.min(15,size*.034));
-        const pad=radius+7;
-        let x=size*.5,y=size*.5;
-        // Random launch direction, followed by damped wall bounces.
-        const angle=Math.random()*Math.PI*2;
-        let speed=size*(.0038+Math.random()*.0018);
-        let vx=Math.cos(angle)*speed,vy=Math.sin(angle)*speed;
-        let rotation=0,spin=(Math.random()>.5?1:-1)*(520+Math.random()*700);
-        const started=performance.now(),duration=6200,slowAt=started+3900;
-        let last=started,raf=0,finished=false;
-        const boundaryAt=(py)=>{
-            const pct=py/size*100;
-            const skew=Math.min(chance,100-chance);
-            return chance+skew-2*skew*pct/100;
-        };
-        const chooseTarget=()=>{
-            const py=size*(.24+Math.random()*.52),line=boundaryAt(py);
-            // Aim at the middle of the server-selected side, including very narrow 1% zones.
-            const px=win ? (line*.5) : (line+(100-line)*.5);
-            return {x:Math.max(1,Math.min(size-1,px/100*size)),y:py};
-        };
-        const target=chooseTarget();
-        let guided=false;
-        board.classList.remove("is-win","is-lose","is-zooming");board.classList.add("is-running");
-        ball.style.animation="none";ball.style.opacity="1";ball.style.left="50%";ball.style.top="50%";void ball.offsetWidth;
-        const finish=()=>{
-            if(finished)return;finished=true;cancelAnimationFrame(raf);
-            x=target.x;y=target.y;ball.style.left=(x/size*100)+"%";ball.style.top=(y/size*100)+"%";
-            board.classList.add("is-zooming");
-            setTimeout(()=>{
-                board.classList.remove("is-running","is-zooming");board.classList.add(win?"is-win":"is-lose");
-                mark.textContent=win?"✓":"×";resolve();
-            },720);
-        };
-        const frame=(now)=>{
-            if(finished)return;
-            const dt=Math.min(32,now-last);last=now;
-            const elapsed=now-started,progress=Math.min(1,elapsed/duration);
-            if(elapsed<slowAt){
-                x+=vx*dt;y+=vy*dt;
-                if(x<pad){x=pad;vx=Math.abs(vx)*.94;}
-                if(x>size-pad){x=size-pad;vx=-Math.abs(vx)*.94;}
-                if(y<pad){y=pad;vy=Math.abs(vy)*.94;}
-                if(y>size-pad){y=size-pad;vy=-Math.abs(vy)*.94;}
-                // Gradual friction makes the puck visibly lose speed.
-                const friction=Math.pow(.99925,dt);vx*=friction;vy*=friction;
-                speed=Math.hypot(vx,vy);
-                if(speed<size*.0009){const a=Math.atan2(vy,vx);vx=Math.cos(a)*size*.001;vy=Math.sin(a)*size*.001;}
-            }else{
-                if(!guided){guided=true;board.classList.add("is-zooming");}
-                const t=Math.min(1,(elapsed-slowAt)/(duration-slowAt));
-                const ease=t*t*(3-2*t);
-                const sway=Math.sin(t*Math.PI*3)*(1-t)*size*.045;
-                x=x+(target.x+sway-x)*Math.min(1,.045+ease*.22);
-                y=y+(target.y-y)*Math.min(1,.045+ease*.22);
-                spin*=.94;
-            }
-            rotation+=spin*dt/1000;spin*=Math.pow(.999,dt);
-            ball.style.left=(x/size*100)+"%";ball.style.top=(y/size*100)+"%";
-            ball.style.transform="translate(-50%,-50%) rotate("+rotation+"deg) scale("+(1+Math.sin(progress*Math.PI)*.12)+")";
-            if(arrow){const a=Math.atan2(vy,vx)*180/Math.PI;arrow.style.setProperty("--ice-arrow-angle",a+"deg");arrow.style.transform="scale(1) rotate("+a+"deg)";}
-            if(elapsed>=duration|| (guided&&Math.hypot(target.x-x,target.y-y)<1.8)){finish();return;}
-            raf=requestAnimationFrame(frame);
-        };
-        raf=requestAnimationFrame(frame);
-        setTimeout(()=>{if(!finished)finish();},duration+1100);
-    });
-}
-async function playIceUpgrade(){
-    if(iceBusy)return;
-    const bet=iceGetBet(),chance=iceChance;
-    if(!Number.isFinite(bet)||bet<.01){$("ice-status").textContent="Минимальная ставка — $0.01";$("ice-status").className="ice-status lose";return;}
-    if(bet>balance){$("ice-status").textContent="Недостаточно средств";$("ice-status").className="ice-status lose";return;}
-    iceBusy=true;iceUpdate();iceResetBoard();
-    const status=$("ice-status"),button=$("ice-play");status.className="ice-status";status.textContent="Шарик запущен…";button.textContent="ШАРИК ЛЕТИТ…";haptic("medium");
-    try{
-        const d=await apiPost({action:"upgrade_play",request_id:(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+"-ice"),mode:"money",bet:bet,chance:chance});
-        if(!d||d.status!=="success")throw new Error((d&&d.message)||"Сервер не принял ставку.");
-        const win=!!d.win,actualChance=Number(d.chance)||chance;
-        status.textContent="Шарик замедляется…";
-        await iceAnimateResult(win,actualChance);
-        balance=Number(d.balance);if(!Number.isFinite(balance))throw new Error("Сервер не вернул баланс.");
-        updateBalanceUI();saveLocal();
-        status.className="ice-status "+(win?"win":"lose");
-        status.textContent=win?`ПОБЕДА! ТУЧКА ТВОЯ · +$${money(d.payout)}`:`ПРОИГРЫШ · Шарик остановился в зоне тучки`;
-        notify(win?"success":"error");haptic(win?"heavy":"medium");
-    }catch(e){iceResetBoard();status.className="ice-status lose";status.textContent=e.message||"Ошибка соединения";}
-    finally{iceBusy=false;button.textContent="ИГРАТЬ";iceUpdate();}
-}
-
 /* ===== PvP ДЖЕКПОТ: realtime через WebSocket ===== */
 // !!! ВСТАВЬ СЮДА АДРЕС СВОЕГО СЕРВЕРА С RENDER (начинается с wss://) !!!
 const PVP_WS_URL = "wss://tucha-pvp.onrender.com";
@@ -4407,7 +3847,7 @@ function pvOpen() {
 }
 function pvClose() {
     pv.open = false; pv.ready = false; pv.st = null;
-    clearTimeout(pv.rt); clearInterval(pv.tick); pv.tick = null;
+    clearTimeout(pv.rt); clearInterval(pv.tick); pv.tick = null; cancelAnimationFrame(pv.raf);
     if (pv.ws) { try { pv.ws.close(); } catch (e) {} pv.ws = null; }
 }
 function pvConnect() {
@@ -4450,10 +3890,24 @@ function pvBet() {
 
 /* --- состояние раунда --- */
 function pvFinalRot(f) { return 360 * 6 + 360 - f * 360; } // колесо крутится так, чтобы точка f оказалась под указателем
+function pvApplyRot(deg) {
+    pv.rot = deg;
+    const sp = $("pv-spin"); if (!sp) return;
+    sp.style.transform = "rotate(" + deg + "deg)";
+    document.querySelectorAll("#pv-avs .pv-av").forEach(a => { a.style.transform = "translate(-50%,-50%) rotate(" + (-deg) + "deg)"; }); // аватарки остаются «головой вверх»
+}
+// Плавный разгон за первые ~8% времени и длинное мягкое торможение до точной точки остановки
 function pvSetRot(deg, ms) {
-    const c = $("pv-canvas"); if (!c) return;
-    c.style.transition = ms > 0 ? "transform " + ms + "ms cubic-bezier(.12,.62,.08,1)" : "none";
-    c.style.transform = "rotate(" + deg + "deg)";
+    cancelAnimationFrame(pv.raf);
+    if (!(ms > 0)) { pvApplyRot(deg); return; }
+    const from = pv.rot || 0, t0 = performance.now();
+    const frame = now => {
+        const t = Math.min(1, (now - t0) / ms), u = Math.min(1, t / 0.08);
+        const e = (1 - Math.pow(1 - t, 3.5)) * (3 * u * u - 2 * u * u * u);
+        pvApplyRot(from + (deg - from) * e);
+        if (t < 1) pv.raf = requestAnimationFrame(frame);
+    };
+    pv.raf = requestAnimationFrame(frame);
 }
 function pvApplyState(m) {
     const prev = pv.st, r = m.round, pp = prev ? prev.phase : null;
@@ -4461,7 +3915,7 @@ function pvApplyState(m) {
     pvDraw(r);
     if (r.phase === "spin" && pp !== "spin") {
         const rem = Math.max(0, r.spinEndsAt - pvNow());
-        if (pp && rem > 500) { pvSetRot(0, 0); void $("pv-canvas").offsetWidth; pvSetRot(pvFinalRot(r.result.fraction), rem); }
+        if (pp && rem > 500) { pvSetRot(0, 0); pvSetRot(pvFinalRot(r.result.fraction), rem); }
         else pvSetRot(pvFinalRot(r.result.fraction), 0);
         haptic("medium");
     } else if (r.phase === "result" && pp !== "result") {
@@ -4469,7 +3923,8 @@ function pvApplyState(m) {
     } else if ((r.phase === "waiting" || r.phase === "countdown") && (pp === "spin" || pp === "result")) {
         pvSetRot(0, 0); pv.wonShown = "";
     }
-    $("pv-fee").textContent = r.fee;
+    const feeEl = $("pv-fee");
+    if (feeEl && r.fee !== undefined && r.fee !== null) { const n = Number(r.fee); feeEl.textContent = Number.isFinite(n) ? (n > 0 && n <= 1 ? Math.round(n * 1000) / 10 : n) + "%" : String(r.fee); }
     pvRenderLists(); pvUI(); pvTickFn();
 }
 function pvShowWinner(r) {
@@ -4481,7 +3936,8 @@ function pvShowWinner(r) {
 }
 function pvDraw(r) {
     const c = $("pv-canvas"); if (!c) return;
-    const key = r.id + "|" + r.players.map(p => p.userid + ":" + p.amount).join(",");
+    const me = String(userId), wid = (r.phase === "result" && r.result) ? String(r.result.winner.userid) : "";
+    const key = r.id + "|" + wid + "|" + r.players.map(p => p.userid + ":" + p.amount).join(",");
     $("pv-pot").textContent = "$" + money(r.total);
     const roundEl = $("pv-round"); if (roundEl) roundEl.textContent = String(r.id ?? "—").replace(/[^a-zA-Z0-9#_-]/g, "").slice(-8);
     const countEl = $("pv-player-count"); if (countEl) countEl.textContent = r.players.length + (r.players.length === 1 ? " игрок" : " игроков");
@@ -4489,18 +3945,51 @@ function pvDraw(r) {
     const S = 300, dpr = Math.min(2, window.devicePixelRatio || 1);
     c.width = S * dpr; c.height = S * dpr; c.style.width = S + "px"; c.style.height = S + "px";
     const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, S, S);
-    const cx = S / 2, R = S / 2 - 6;
-    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, 7); x.fillStyle = "#475569"; x.fill(); }
-    else {
-        let a = -Math.PI / 2;
-        r.players.forEach(p => {
-            const sw = p.amount / r.total * Math.PI * 2;
-            x.beginPath(); x.moveTo(cx, cx); x.arc(cx, cx, R, a, a + sw); x.closePath();
-            x.fillStyle = p.color; x.fill(); x.strokeStyle = "#fff"; x.lineWidth = 2; x.stroke();
-            a += sw;
-        });
-    }
-    x.beginPath(); x.arc(cx, cx, R, 0, 7); x.lineWidth = 6; x.strokeStyle = "#fde68a"; x.stroke();
+    const cx = S / 2, R = S * 0.42, TAU = Math.PI * 2;
+    x.beginPath(); x.arc(cx, cx, S * 0.5, 0, TAU); x.fillStyle = "#fff9d6"; x.fill();   // подложка под аватарки
+    const segs = []; let acc = 0;
+    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, TAU); x.fillStyle = "#94a3b8"; x.fill(); }
+    else r.players.forEach(p => {
+        const f0 = acc / r.total, f1 = (acc + p.amount) / r.total; acc += p.amount;
+        const a0 = -Math.PI / 2 + f0 * TAU, a1 = -Math.PI / 2 + f1 * TAU, dim = wid && String(p.userid) !== wid;
+        segs.push({p: p, f: (f0 + f1) / 2, a0: a0, a1: a1, w: f1 - f0, dim: dim});
+        x.save(); x.globalAlpha = dim ? 0.35 : 1;
+        x.beginPath(); x.moveTo(cx, cx); x.arc(cx, cx, R, a0, a1); x.closePath(); x.fillStyle = p.color; x.fill();
+        const g = x.createRadialGradient(cx, cx, R * 0.2, cx, cx, R);   // объём: светлее у центра, темнее к краю
+        g.addColorStop(0, "rgba(255,255,255,.28)"); g.addColorStop(1, "rgba(0,0,0,.14)");
+        x.fillStyle = g; x.fill(); x.lineWidth = 2; x.strokeStyle = "#fff"; x.stroke(); x.restore();
+    });
+    x.beginPath(); x.arc(cx, cx, R + 3, 0, TAU); x.lineWidth = 6; x.strokeStyle = "#fde68a"; x.stroke();
+    segs.forEach(sg => {   // твоя зона подсвечена, даже если она крошечная (минимум ~4° дуги)
+        if (String(sg.p.userid) !== me) return;
+        const mid = (sg.a0 + sg.a1) / 2, half = Math.max((sg.a1 - sg.a0) / 2, 0.035);
+        x.save(); x.shadowColor = "#facc15"; x.shadowBlur = 12; x.lineWidth = 7; x.lineCap = "round"; x.strokeStyle = "#fff";
+        x.beginPath(); x.arc(cx, cx, R + 3, mid - half, mid + half); x.stroke(); x.restore();
+    });
+    // --- аватарки: в большой зоне — внутри, в маленькой — на ободе (всегда видны) ---
+    const items = segs.map(sg => {
+        const inner = Math.min(S * 0.19, sg.w * TAU * R * 0.62 * 0.9), isMe = String(sg.p.userid) === me;
+        const useInner = inner >= S * 0.095;
+        return {sg: sg, isMe: isMe, rim: !useInner, d: useInner ? inner : (isMe ? S * 0.095 : S * 0.074), f: sg.f};
+    });
+    const rims = items.filter(i => i.rim).sort((a, b) => a.f - b.f), gap = (S * 0.08) / (S * 0.455 * TAU);
+    for (let pass = 0; pass < 6; pass++) for (let i = 1; i < rims.length; i++) if (rims[i].f - rims[i - 1].f < gap) rims[i].f = rims[i - 1].f + gap;
+    const box = $("pv-avs"); let html = "";
+    items.forEach(it => {
+        const ang = it.f * TAU, rad = it.rim ? S * 0.455 : R * 0.62, p = it.sg.p;
+        if (it.rim) {   // ниточка от зоны к аватарке
+            const ta = -Math.PI / 2 + it.sg.f * TAU, tb = -Math.PI / 2 + ang;
+            x.save(); x.globalAlpha = it.sg.dim ? 0.35 : 1; x.beginPath();
+            x.moveTo(cx + Math.cos(ta) * R, cx + Math.sin(ta) * R); x.lineTo(cx + Math.cos(tb) * (rad - it.d / 2), cx + Math.sin(tb) * (rad - it.d / 2));
+            x.lineWidth = 2; x.strokeStyle = p.color; x.stroke(); x.restore();
+        }
+        const photo = p.photo || p.photo_url || (it.isMe && typeof telegramUser !== "undefined" && telegramUser && telegramUser.photo_url) || "";
+        const name = String(p.name || "?");
+        const inside = photo ? '<img src="' + pvEsc(photo) + '" referrerpolicy="no-referrer" alt="">' : pvEsc(name.trim().charAt(0).toUpperCase() || "?");
+        html += '<div class="pv-av' + (it.isMe ? " me" : "") + (it.sg.dim ? " dim" : "") + '" style="left:' + (50 + Math.sin(ang) * rad / S * 100).toFixed(2) + '%;top:' + (50 - Math.cos(ang) * rad / S * 100).toFixed(2) +
+            '%;width:' + (it.d / S * 100).toFixed(2) + '%;height:' + (it.d / S * 100).toFixed(2) + '%;font-size:' + (it.d / S * 0.45).toFixed(3) + 'em;background:' + p.color + '">' + inside + '</div>';
+    });
+    box.innerHTML = html; pvApplyRot(pv.rot || 0);
 }
 function pvRenderLists() {
     const r = pv.st, box = $("pv-players"), hist = $("pv-hist"); if (!box || !hist) return;
@@ -4533,6 +4022,23 @@ function pvUI() {
     document.querySelectorAll(".pv-bet button, .pv-bet input").forEach(el => { el.disabled = pv.busy; });
 }
 
+
+/* ===== v21: тосты вместо alert и быстрые ставки ===== */
+(function () {
+    const t = document.createElement("div"); t.id = "tg-toast"; document.body.appendChild(t);
+    let h; window.alert = function (msg) { t.textContent = String(msg); t.classList.add("on"); clearTimeout(h); h = setTimeout(() => t.classList.remove("on"), 2600); };
+})();
+function addQuickBets(id) {
+    const inp = $(id); if (!inp || inp.dataset.qb) return; inp.dataset.qb = "1";
+    const set = v => { v = Math.max(0.01, Math.floor(v * 100) / 100); inp.value = v.toFixed(2); inp.dispatchEvent(new Event("input", {bubbles: true})); haptic("light"); };
+    const row = document.createElement("div"); row.className = "qb";
+    [["MIN", () => 0.01], ["½", () => (parseFloat(inp.value) || 0) / 2], ["×2", () => (parseFloat(inp.value) || 0) * 2], ["MAX", () => balance]].forEach(a => {
+        const b = document.createElement("button"); b.type = "button"; b.textContent = a[0]; b.onclick = () => set(a[1]()); row.appendChild(b);
+    });
+    inp.parentNode.insertBefore(row, inp.nextSibling);
+}
+["dice-bet", "mines-bet", "roulette-bet", "crash-bet-input"].forEach(addQuickBets);
+
 /* INIT */
 renderCases();
 loadUserData();
@@ -4541,6 +4047,7 @@ updateCrashHistoryUI();
 startCrashRound();
 updateDiceUI();
 updateUpgradeUI();
+document.querySelectorAll("#upgrade-speed button").forEach(b => b.classList.toggle("active", b.dataset.s === upgradeSpeed));
 renderRouletteOptions();
 drawRouletteWheel();
 </script>
