@@ -1626,6 +1626,18 @@ main { color:#292929 !important; }
 #tg-toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-90px);z-index:9999;max-width:88vw;padding:11px 16px;border-radius:14px;background:#1f2937;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .25s ease;text-align:center;pointer-events:none}
 #tg-toast.on{transform:translate(-50%,0)}
 </style>
+<style>
+/* === v22: стикеры и огонёк в PvP === */
+.pv-wheel-card{position:relative}
+.pv-emos{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 2px;justify-content:center;flex-wrap:wrap}
+.pv-emos button{border:2px solid #eadc50;background:#fffbd4;border-radius:14px;width:42px;height:42px;font-size:22px;padding:0;line-height:1}
+.pv-emos button:active{transform:scale(.88)}
+.pv-emo{position:absolute;z-index:9;font-size:30px;pointer-events:none;animation:pvEmo 1.7s ease-out forwards}
+@keyframes pvEmo{0%{opacity:0;transform:translate(-50%,-30%) scale(.4)}15%{opacity:1;transform:translate(-50%,-110%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
+#pv-flame{position:absolute;z-index:8;width:40px;height:40px;margin:-20px 0 0 -20px;border:0;border-radius:50%;font-size:24px;padding:0;background:radial-gradient(circle,#fff3b0,#fb923c 70%);box-shadow:0 0 16px #f97316;animation:pvFlame .45s ease-in-out infinite alternate}
+@keyframes pvFlame{to{transform:scale(1.2) rotate(10deg)}}
+.pv-boost{text-align:center;font-weight:950;color:#ea580c;min-height:20px;font-size:14px;margin-top:6px}
+</style>
 </head>
 
 <body>
@@ -1891,6 +1903,8 @@ main { color:#292929 !important; }
                 <div class="pv-center"><small>БАНК РАУНДА</small><b id="pv-pot">$0.00</b></div>
             </div>
             <div class="pv-timer" id="pv-timer">—</div>
+            <div class="pv-boost" id="pv-boost"></div>
+            <div class="pv-emos" id="pv-emos"></div>
         </div>
         <div class="pv-bet">
             <div class="pv-bet-top"><span>ВЫБЕРИ СТАВКУ</span><span class="pv-min-label">МИН. $0.10</span></div>
@@ -3843,11 +3857,11 @@ function pvBetMax() { pvSetBet(Math.max(0.1, Math.min(balance, 100))); }
 function pvOpen() {
     pv.open = true; pv.tries = 0; pv.drawKey = ""; pv.wonShown = "";
     if (!pv.tick) pv.tick = setInterval(pvTickFn, 250);
-    pvConnect(); pvUI(); pvRenderLists();
+    pvBuildEmos(); pvConnect(); pvUI(); pvRenderLists();
 }
 function pvClose() {
     pv.open = false; pv.ready = false; pv.st = null;
-    clearTimeout(pv.rt); clearInterval(pv.tick); pv.tick = null; cancelAnimationFrame(pv.raf);
+    clearTimeout(pv.rt); clearInterval(pv.tick); pv.tick = null; cancelAnimationFrame(pv.raf); pvFlameOff();
     if (pv.ws) { try { pv.ws.close(); } catch (e) {} pv.ws = null; }
 }
 function pvConnect() {
@@ -3875,6 +3889,9 @@ function pvOnMsg(m) {
     else if (m.type === "state") pvApplyState(m);
     else if (m.type === "bet_ok") { pv.busy = false; clearTimeout(pv.busyT); notify("success"); pvUI(); }
     else if (m.type === "info") pvToast(m.message, "");
+    else if (m.type === "emote") pvEmote(m.userid, m.id);
+    else if (m.type === "flame") pvFlame(m);
+    else if (m.type === "flame_result") { pvToast("🔥 Множитель x" + m.mult + "! Выиграешь раунд — выигрыш ×" + m.mult, "win"); notify("success"); haptic("heavy"); }
     else if (m.type === "error") { pv.busy = false; clearTimeout(pv.busyT); pvToast(m.message, "lose"); notify("error"); pvUI(); }
 }
 function pvBet() {
@@ -3925,13 +3942,15 @@ function pvApplyState(m) {
     }
     const feeEl = $("pv-fee");
     if (feeEl && r.fee !== undefined && r.fee !== null) { const n = Number(r.fee); feeEl.textContent = Number.isFinite(n) ? (n > 0 && n <= 1 ? Math.round(n * 1000) / 10 : n) + "%" : String(r.fee); }
+    const mp = r.players.find(p => String(p.userid) === String(userId)), bt = $("pv-boost");
+    if (bt) bt.textContent = (mp && mp.boost > 1) ? "🔥 Твой множитель выигрыша: x" + mp.boost : "";
     pvRenderLists(); pvUI(); pvTickFn();
 }
 function pvShowWinner(r) {
     if (pv.wonShown === r.id || !r.result) return;
     pv.wonShown = r.id;
     const me = String(r.result.winner.userid) === String(userId);
-    pvToast(me ? "🎉 ТЫ ВЫИГРАЛ +$" + money(r.result.payout) + "!" : "Победил " + r.result.winner.name + " · +$" + money(r.result.payout), me ? "win" : "");
+    pvToast(me ? "🎉 ТЫ ВЫИГРАЛ +$" + money(r.result.payout) + (r.result.boost > 1 ? " (🔥 x" + r.result.boost + ")" : "") + "!" : "Победил " + r.result.winner.name + " · +$" + money(r.result.payout) + (r.result.boost > 1 ? " (🔥 x" + r.result.boost + ")" : ""), me ? "win" : "");
     if (me) { notify("success"); haptic("heavy"); } else haptic("light");
 }
 function pvDraw(r) {
@@ -3986,7 +4005,7 @@ function pvDraw(r) {
         const photo = p.photo || p.photo_url || (it.isMe && typeof telegramUser !== "undefined" && telegramUser && telegramUser.photo_url) || "";
         const name = String(p.name || "?");
         const inside = photo ? '<img src="' + pvEsc(photo) + '" referrerpolicy="no-referrer" alt="">' : pvEsc(name.trim().charAt(0).toUpperCase() || "?");
-        html += '<div class="pv-av' + (it.isMe ? " me" : "") + (it.sg.dim ? " dim" : "") + '" style="left:' + (50 + Math.sin(ang) * rad / S * 100).toFixed(2) + '%;top:' + (50 - Math.cos(ang) * rad / S * 100).toFixed(2) +
+        html += '<div data-uid="' + pvEsc(String(p.userid)) + '" class="pv-av' + (it.isMe ? " me" : "") + (it.sg.dim ? " dim" : "") + '" style="left:' + (50 + Math.sin(ang) * rad / S * 100).toFixed(2) + '%;top:' + (50 - Math.cos(ang) * rad / S * 100).toFixed(2) +
             '%;width:' + (it.d / S * 100).toFixed(2) + '%;height:' + (it.d / S * 100).toFixed(2) + '%;font-size:' + (it.d / S * 0.45).toFixed(3) + 'em;background:' + p.color + '">' + inside + '</div>';
     });
     box.innerHTML = html; pvApplyRot(pv.rot || 0);
@@ -3999,7 +4018,7 @@ function pvRenderLists() {
         box.innerHTML = r.players.map(p => {
             const pct = r.total > 0 ? Math.round(p.amount / r.total * 1000) / 10 : 0;
             const cls = "pv-row" + (String(p.userid) === String(userId) ? " me" : "") + (wid && wid === String(p.userid) && r.phase === "result" ? " won" : "");
-            return `<div class="${cls}"><span class="pv-dot" style="background:${p.color}"></span><span class="n">${pvEsc(p.name)}${String(p.userid) === String(userId) ? " (ты)" : ""}</span><span class="a">$${money(p.amount)}</span><span class="p">${pct}%</span></div>`;
+            return `<div class="${cls}"><span class="pv-dot" style="background:${p.color}"></span><span class="n">${pvEsc(p.name)}${String(p.userid) === String(userId) ? " (ты)" : ""}${p.boost > 1 ? " 🔥x" + p.boost : ""}</span><span class="a">$${money(p.amount)}</span><span class="p">${pct}%</span></div>`;
         }).join("");
     }
     hist.innerHTML = pv.hist.length ? pv.hist.map(h => `<div class="pv-row"><span class="n">🏆 ${pvEsc(h.name)}</span><span class="a">+$${money(h.payout)}</span><span class="p">из $${money(h.total)}</span></div>`).join("") : '<div class="pv-empty">Раундов ещё не было</div>';
@@ -4038,6 +4057,37 @@ function addQuickBets(id) {
     inp.parentNode.insertBefore(row, inp.nextSibling);
 }
 ["dice-bet", "mines-bet", "roulette-bet", "crash-bet-input"].forEach(addQuickBets);
+
+/* ===== v22: стикеры и огонёк-множитель ===== */
+const PV_EMO = {fire: "🔥", heart: "❤️", like: "👍", dislike: "👎", sad: "😢", laugh: "😂", wow: "😱", money: "🤑", luck: "🍀"};
+let pvEmoLast = 0;
+function pvBuildEmos() {
+    const b = $("pv-emos"); if (!b || b.dataset.b) return; b.dataset.b = "1";
+    Object.keys(PV_EMO).forEach(k => { const e = document.createElement("button"); e.type = "button"; e.textContent = PV_EMO[k]; e.onclick = () => pvSendEmo(k); b.appendChild(e); });
+}
+function pvSendEmo(k) {
+    const n = Date.now(); if (n - pvEmoLast < 120) return; pvEmoLast = n;   // спамить можно, но не чаще ~8 в секунду
+    pvEmote(userId, k);
+    if (pv.ws && pv.ws.readyState === 1 && pv.ready) pv.ws.send(JSON.stringify({type: "emote", id: k}));
+    haptic("light");
+}
+function pvEmote(uid, k) {   // стикер вылетает над аватаркой игрока (или над колесом, если он не в раунде)
+    const box = document.querySelector(".pv-wheelbox"); if (!box || !PV_EMO[k]) return;
+    const av = document.querySelector('#pv-avs .pv-av[data-uid="' + String(uid) + '"]'), br = box.getBoundingClientRect();
+    let x = br.width / 2, y = br.height * 0.1;
+    if (av) { const ar = av.getBoundingClientRect(); x = ar.left - br.left + ar.width / 2; y = ar.top - br.top; }
+    const el = document.createElement("div"); el.className = "pv-emo"; el.textContent = PV_EMO[k];
+    el.style.left = (x + (Math.random() * 20 - 10)) + "px"; el.style.top = y + "px";
+    box.appendChild(el); setTimeout(() => el.remove(), 1800);
+}
+function pvFlameOff() { clearTimeout(pv.flameT); const f = $("pv-flame"); if (f) f.remove(); }
+function pvFlame(m) {
+    const card = document.querySelector(".pv-wheel-card"); if (!card) return; pvFlameOff();
+    const b = document.createElement("button"); b.id = "pv-flame"; b.type = "button"; b.textContent = "🔥";
+    b.style.left = Math.min(90, Math.max(10, Number(m.x) || 50)) + "%"; b.style.top = Math.min(88, Math.max(12, Number(m.y) || 50)) + "%";
+    b.onclick = () => { if (pv.ws && pv.ws.readyState === 1) pv.ws.send(JSON.stringify({type: "flame_claim", id: m.id})); pvFlameOff(); haptic("medium"); };
+    card.appendChild(b); pv.flameT = setTimeout(pvFlameOff, Number(m.ttl) || 3000);
+}
 
 /* INIT */
 renderCases();
