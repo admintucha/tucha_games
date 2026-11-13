@@ -1767,13 +1767,10 @@ main { color:#292929 !important; }
 .hub-sub{margin:4px 2px 10px;font-size:13px;font-weight:950;letter-spacing:.06em;color:#7a6cff;text-transform:uppercase}
 .game-card.soon{position:relative;filter:grayscale(.7) brightness(.97);opacity:.78}
 .game-card.soon::after{content:"СКОРО";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-8deg);padding:6px 14px;border-radius:999px;background:rgba(40,30,110,.85);color:#fff;font-size:13px;font-weight:950;letter-spacing:.08em;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-#tab-cases > :not(.soon-cover){display:none !important}
 .soon-cover{margin:30px 6px;padding:34px 20px;border-radius:26px;text-align:center;background:linear-gradient(160deg,#fff,#eef1ff);box-shadow:0 12px 30px rgba(110,90,255,.2)}
 .soon-ic{font-size:60px;animation:hubFloat 3s ease-in-out infinite;--r:0deg}
 .soon-cover b{display:block;font-size:20px;font-weight:950;color:#2b2d57;margin:8px 0 6px}
 .soon-cover p{margin:0;font-size:13px;font-weight:700;color:#8a8fc0}
-nav button[data-tab="cases"]{position:relative}
-nav button[data-tab="cases"]::after{content:"скоро";position:absolute;top:2px;right:4px;padding:1px 5px;border-radius:8px;background:#7a6cff;color:#fff;font-size:8px;font-weight:950}
 /* ===== АДМИНКА ===== */
 .adm{position:fixed;inset:0;z-index:999;flex-direction:column;background:#12142b;color:#e8ebff}
 .adm *{box-sizing:border-box}
@@ -1818,6 +1815,54 @@ nav button[data-tab="cases"]::after{content:"скоро";position:absolute;top:2
 .adm-g td:last-child{text-align:right;font-weight:900}
 .adm-g .gt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:15px;font-weight:950;color:#fff}
 .adm .admin-promo-row{background:#1d2142;border:1px solid #2d3360;color:#d6dbff}
+
+/* ===== КЕЙСЫ (v23) ===== */
+.cs-sub{margin:-2px 2px 14px;color:#5c4a00;font-size:12px;font-weight:800;line-height:1.4}
+.cs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.cs-card{position:relative;padding:14px 8px 12px;border-radius:22px;text-align:center;background:linear-gradient(160deg,#fff,#fff8dc);border:2px solid #f0e66a;box-shadow:0 6px 16px rgba(176,153,0,.14);cursor:pointer;transition:transform .15s}
+.cs-card:active{transform:scale(.97)}
+.cs-ic{height:92px;display:flex;align-items:center;justify-content:center;font-size:58px;filter:drop-shadow(0 8px 8px rgba(105,65,8,.28));animation:hubFloat 3s ease-in-out infinite;--r:0deg}
+.cs-name{margin-top:6px;font-size:15px;font-weight:950;color:#332900}
+.cs-price{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;background:linear-gradient(135deg,#d9ffe2,#a7f3bd);border:1px solid #6bc987;color:#087b38;font-size:13px;font-weight:950}
+.cs-range{margin-top:5px;font-size:10px;font-weight:850;color:#9c841a}
+.cs-preview{display:flex;justify-content:center;gap:8px;margin:6px 0 4px;min-height:96px}
+.cs-preview .cs-tile{width:84px;height:92px;border-radius:20px;background:linear-gradient(160deg,#fff,#fff3b8);border:2px solid #f0d84a;box-shadow:0 8px 18px rgba(176,140,0,.25)}
+.cs-preview .cs-tile:nth-child(1){transform:rotate(-9deg) translateY(10px)}
+.cs-preview .cs-tile:nth-child(3){transform:rotate(9deg) translateY(10px)}
+.cs-preview .cs-tile:nth-child(2){transform:translateY(-4px)}
+.cs-title{font-size:27px;line-height:1.05;font-weight:1000;color:#332900;margin:10px 2px 12px}
+.cs-title small{display:block;margin-top:5px;font-size:13px;font-weight:900;color:#16a34a}
+.cs-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 4px;box-sizing:border-box;border-radius:16px;background:#fff;border:2px solid #f0e66a;box-shadow:0 4px 10px rgba(176,153,0,.12)}
+.cs-tile img{width:42px;height:42px;object-fit:contain}
+.cs-tile b{font-size:15px;font-weight:1000;color:#332900;line-height:1}
+.cs-tile i{font-style:normal;font-size:9px;font-weight:900;color:#9c841a}
+.cs-coin{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff3a0,#f5b700 70%);color:#7a5200;font-size:22px;font-weight:1000;box-shadow:inset 0 -3px 0 rgba(150,95,0,.3),0 3px 6px rgba(150,95,0,.25)}
+.cs-prizes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.cs-prizes .cs-tile{height:92px}
+.cs-ctrl{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.cs-qty{flex:1;display:flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.9);border:2px solid #f0e66a}
+.cs-qty button{flex:1;border:0;padding:10px 0;border-radius:999px;background:transparent;color:#806f35;font-size:13px;font-weight:950}
+.cs-qty button.active{background:linear-gradient(135deg,#34d37a,#16a34a);color:#fff;box-shadow:0 3px 8px rgba(22,163,74,.3)}
+.cs-turbo{border:2px solid #f0e66a;background:rgba(255,255,255,.9);color:#806f35;padding:13px 14px;border-radius:999px;font-size:13px;font-weight:950;white-space:nowrap}
+.cs-turbo.active{background:#fff2a8;border-color:#f5b700;color:#7a5200}
+.cs-open{width:100%;font-size:16px;font-weight:1000}
+.cs-open:disabled{opacity:.6}
+.cs-msg{min-height:18px;margin:2px 0 8px;text-align:center;font-size:12px;font-weight:900;color:#e11d48}
+.cs-reel{position:relative;overflow:hidden;height:104px;margin-bottom:14px;border-radius:18px;background:rgba(255,255,255,.7);border:2px solid #f0e66a}
+.cs-reel-track{display:flex;gap:8px;padding:6px;will-change:transform}
+.cs-reel-track .cs-tile{flex:0 0 84px;height:88px}
+.cs-reel-mark{position:absolute;z-index:3;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:#16a34a;box-shadow:0 0 8px rgba(22,163,74,.7)}
+.cs-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(30,20,0,.55)}
+.cs-modal.active{display:flex}
+.cs-modal-box{width:100%;max-width:380px;max-height:86vh;overflow:auto;padding:18px 14px;border-radius:26px;background:linear-gradient(160deg,#fff,#fff8dc);border:2px solid #f0e66a;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:csPop .3s ease-out}
+.cs-modal-head{text-align:center;font-size:20px;font-weight:1000;color:#332900;margin-bottom:12px}
+.cs-modal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cs-modal-grid .cs-tile{height:84px;animation:csPop .35s ease-out both}
+.cs-modal-grid.one{grid-template-columns:1fr}
+.cs-modal-grid.one .cs-tile{height:130px}
+.cs-modal-total{margin:14px 0;text-align:center;font-size:16px;font-weight:1000;color:#16a34a}
+.cs-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@keyframes csPop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 
@@ -1901,37 +1946,33 @@ nav button[data-tab="cases"]::after{content:"скоро";position:absolute;top:2
 
     <!-- CASES TAB -->
     <section id="tab-cases" class="tab">
-        <div class="soon-cover"><div class="soon-ic">🎁</div><b>Кейсы — скоро!</b><p>Готовим честные кейсы с проверкой на сервере. Следи за обновлениями.</p></div>
-        <div id="cases-list">
-            <div class="games-header" style="margin-bottom:5px;">Кейсы</div>
-            <div style="margin-bottom: 18px; color: #5c4a00; font-size: 13px; font-weight: 800;">Открывай кейсы и забирай крутые призы!<br><span style="color:#16834a;font-size:11px;font-weight:950;">Улучшенные шансы на более ценные призы</span></div>
-            
-            <div class="case-grid" id="case-grid">
-            </div>
+        <div id="cs-list">
+            <div class="games-header">Кейсы</div>
+            <div class="cs-sub">Открывай кейсы: подарки или доллары. Минимум — ½ цены кейса, максимум — ×10!</div>
+            <div class="cs-grid" id="cs-grid"></div>
         </div>
-
-        <!-- CASE DETAIL -->
-        <div id="case-detail" class="case-detail">
-            <button class="case-back" onclick="closeCaseDetail()">← Назад к кейсам</button>
-            <div id="case-detail-card" class="case-detail-card ready">
-                <div id="detail-case-title" class="case-detail-title">Кейс</div>
-                <div id="detail-case-price" style="text-align:center; color:#16a34a; font-weight:950; margin-top:5px;">$0.00</div>
-                <img id="case-big-image" class="case-big-image" src="./case.png" alt="Кейс">
-
-                <div class="case-quantity-selector">
-                    <button class="qty-btn active" onclick="setCaseQuantity(1)">1</button>
-                    <button class="qty-btn" onclick="setCaseQuantity(2)">2</button>
-                    <button class="qty-btn" onclick="setCaseQuantity(3)">3</button>
-                    <button class="qty-btn" onclick="setCaseQuantity(4)">4</button>
-                    <button class="qty-btn" onclick="setCaseQuantity(5)">5</button>
+        <div id="cs-detail" style="display:none">
+            <button class="case-back" onclick="csBack()">← Все кейсы</button>
+            <div class="cs-preview" id="cs-preview"></div>
+            <div class="cs-title" id="cs-title"></div>
+            <div class="cs-reel" id="cs-reel" style="display:none"><div class="cs-reel-mark"></div><div class="cs-reel-track" id="cs-track"></div></div>
+            <div class="cs-prizes" id="cs-prizes"></div>
+            <div class="cs-msg" id="cs-msg"></div>
+            <div class="cs-ctrl">
+                <div class="cs-qty" id="cs-qty"></div>
+                <button class="cs-turbo" id="cs-turbo" onclick="csToggleTurbo()">⚡ Турбо</button>
+            </div>
+            <button id="cs-open" class="primary green cs-open" onclick="csOpen()">Открыть</button>
+        </div>
+        <div id="cs-modal" class="cs-modal" onclick="if(event.target===this)csCloseModal()">
+            <div class="cs-modal-box">
+                <div class="cs-modal-head">🎉 Твой выигрыш</div>
+                <div class="cs-modal-grid" id="cs-modal-grid"></div>
+                <div class="cs-modal-total" id="cs-modal-total"></div>
+                <div class="cs-modal-btns">
+                    <button class="primary green" onclick="csCloseModal()">Забрать</button>
+                    <button class="primary gold" onclick="csCloseModal();csOpen()">Ещё раз</button>
                 </div>
-                <div id="roulettes-container"></div>
-                <div id="case-result" style="text-align:center; color:#16a34a; font-weight:950; margin:10px 0;">Нажми на кнопку, чтобы открыть</div>
-                <button id="case-button" class="primary gold" onclick="openCurrentCase()">ОТКРЫТЬ</button>
-                <div id="case-timer" style="text-align:center; color:#5c4a00; font-size:12px; font-weight:900; margin-top:10px;"></div>
-
-                <div style="margin-top:20px; font-weight:950; color:#332900;">Возможные призы</div>
-                <div id="prizes-grid" class="prizes-grid"></div>
             </div>
         </div>
     </section>
@@ -2524,6 +2565,7 @@ function loadLocal() {
 
 function switchTab(name) {
     if (name === "wheel") loadWheel();
+    if (name === "cases") csInit();
     document.querySelectorAll(".tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + name));
     document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
     haptic();
@@ -3048,6 +3090,7 @@ const UPGRADE_RTP = 88.0; // Серверный RTP; результат всег
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
+    { name: "Подарок", price: 0.35, img: "./box.png" },
     { name: "Бокс", price: 0.50, img: "./box.png" },
     { name: "Ракетка", price: 0.75, img: "./rocket.png" },
     { name: "Кубок", price: 1.00, img: "./trofei.png" },
@@ -3064,7 +3107,8 @@ function upgradeGiftLevel(item) {
     if (!item) return -1;
     const name = String(item.name || "").trim().toLocaleLowerCase("ru");
     const img = String(item.img || "").toLowerCase();
-    return UPGRADE_GIFTS.findIndex(g => g.name.toLocaleLowerCase("ru") === name || img.endsWith(g.img.replace("./", "").toLowerCase()));
+    const byName = UPGRADE_GIFTS.findIndex(g => g.name.toLocaleLowerCase("ru") === name);
+    return byName >= 0 ? byName : UPGRADE_GIFTS.findIndex(g => img.endsWith(g.img.replace("./", "").toLowerCase()));
 }
 
 function getSelectedUpgradeGift() {
@@ -4423,7 +4467,7 @@ function pvFlame(m) {
 }
 
 /* INIT */
-renderCases();
+csRenderList(); // старые клиентские кейсы отключены — теперь серверные (cases_open)
 loadUserData();
 buildMines();
 updateCrashHistoryUI();
@@ -4433,6 +4477,106 @@ updateUpgradeUI();
 document.querySelectorAll("#upgrade-speed button").forEach(b => b.classList.toggle("active", b.dataset.s === upgradeSpeed));
 renderRouletteOptions();
 drawRouletteWheel();
+
+// ===================== КЕЙСЫ (v23) =====================
+// Всё считает сервер (cases_open). Этот список — запасной, на случай если сервер ещё не ответил.
+const CS_FALLBACK = [{"id": "lite", "name": "Лайт кейс", "price": 0.4, "icon": "🎁", "prizes": [{"value": 0.2, "type": "gift", "name": "Мишка", "img": "./bear.png"}, {"value": 0.35, "type": "gift", "name": "Подарок", "img": "./box.png"}, {"value": 0.5, "type": "cash", "name": "$0.50", "img": ""}, {"value": 0.75, "type": "gift", "name": "Ракетка", "img": "./rocket.png"}, {"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 2.0, "type": "cash", "name": "$2.00", "img": ""}, {"value": 4.0, "type": "cash", "name": "$4.00", "img": ""}]}, {"id": "fun", "name": "Веселый кейс", "price": 1.0, "icon": "🎉", "prizes": [{"value": 0.5, "type": "cash", "name": "$0.50", "img": ""}, {"value": 0.75, "type": "gift", "name": "Ракетка", "img": "./rocket.png"}, {"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 1.5, "type": "cash", "name": "$1.50", "img": ""}, {"value": 3.0, "type": "cash", "name": "$3.00", "img": ""}, {"value": 5.0, "type": "cash", "name": "$5.00", "img": ""}, {"value": 10.0, "type": "cash", "name": "$10.00", "img": ""}]}, {"id": "cloud", "name": "Тучка кейс", "price": 2.0, "icon": "⛈️", "prizes": [{"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 1.5, "type": "cash", "name": "$1.50", "img": ""}, {"value": 2.0, "type": "cash", "name": "$2.00", "img": ""}, {"value": 3.0, "type": "cash", "name": "$3.00", "img": ""}, {"value": 5.0, "type": "cash", "name": "$5.00", "img": ""}, {"value": 10.0, "type": "cash", "name": "$10.00", "img": ""}, {"value": 20.0, "type": "cash", "name": "$20.00", "img": ""}]}, {"id": "mega", "name": "Мега кейс", "price": 5.0, "icon": "💎", "prizes": [{"value": 2.5, "type": "cash", "name": "$2.50", "img": ""}, {"value": 4, "type": "cash", "name": "$4.00", "img": ""}, {"value": 5, "type": "cash", "name": "$5.00", "img": ""}, {"value": 8, "type": "cash", "name": "$8.00", "img": ""}, {"value": 15, "type": "cash", "name": "$15.00", "img": ""}, {"value": 25, "type": "cash", "name": "$25.00", "img": ""}, {"value": 50, "type": "cash", "name": "$50.00", "img": ""}]}, {"id": "gold", "name": "Золотой кейс", "price": 10.0, "icon": "🏆", "prizes": [{"value": 5, "type": "cash", "name": "$5.00", "img": ""}, {"value": 8, "type": "cash", "name": "$8.00", "img": ""}, {"value": 10, "type": "cash", "name": "$10.00", "img": ""}, {"value": 15, "type": "cash", "name": "$15.00", "img": ""}, {"value": 30, "type": "cash", "name": "$30.00", "img": ""}, {"value": 50, "type": "cash", "name": "$50.00", "img": ""}, {"value": 100, "type": "cash", "name": "$100.00", "img": ""}]}, {"id": "vip", "name": "VIP кейс", "price": 25.0, "icon": "👑", "prizes": [{"value": 12.5, "type": "cash", "name": "$12.50", "img": ""}, {"value": 20, "type": "cash", "name": "$20.00", "img": ""}, {"value": 25, "type": "cash", "name": "$25.00", "img": ""}, {"value": 40, "type": "cash", "name": "$40.00", "img": ""}, {"value": 75, "type": "cash", "name": "$75.00", "img": ""}, {"value": 125, "type": "cash", "name": "$125.00", "img": ""}, {"value": 250, "type": "cash", "name": "$250.00", "img": ""}]}];
+let csCases = CS_FALLBACK, csQtyList = [1,3,5,10], csQty = 1, csTurbo = false, csCur = null, csBusy = false;
+
+function csTile(p, big) {
+    const ic = p.type === "gift" && p.img ? `<img src="${p.img}" alt="">` : `<div class="cs-coin">$</div>`;
+    const lab = p.type === "gift" ? `<i>${displayGiftName(p.name, p.img)}</i>` : "";
+    return `<div class="cs-tile">${ic}<b>$${money(p.value)}</b>${lab}</div>`;
+}
+function csRenderList() {
+    $("cs-grid").innerHTML = csCases.map(c => {
+        const mn = Math.min(...c.prizes.map(p => p.value)), mx = Math.max(...c.prizes.map(p => p.value));
+        return `<div class="cs-card" onclick="csOpenDetail('${c.id}')"><div class="cs-ic">${c.icon}</div><div class="cs-name">${c.name}</div><div class="cs-price">$${money(c.price)}</div><div class="cs-range">$${money(mn)} — $${money(mx)}</div></div>`;
+    }).join("");
+}
+function csRenderDetail() {
+    const c = csCur; if (!c) return;
+    const sorted = c.prizes.slice().sort((a, b) => a.value - b.value), top = sorted.slice(-3);
+    $("cs-preview").innerHTML = top.map(csTile).join("");
+    $("cs-title").innerHTML = `${c.name}<small>$${money(c.price)}</small>`;
+    $("cs-prizes").innerHTML = sorted.map(csTile).join("");
+    $("cs-qty").innerHTML = csQtyList.map(q => `<button class="${q === csQty ? "active" : ""}" onclick="csSetQty(${q})">×${q}</button>`).join("");
+    $("cs-turbo").classList.toggle("active", csTurbo);
+    $("cs-open").textContent = `Открыть · $${money(c.price * csQty)}`;
+}
+function csOpenDetail(id) {
+    csCur = csCases.find(c => c.id === id); if (!csCur) return;
+    csQty = 1; $("cs-msg").textContent = ""; $("cs-reel").style.display = "none";
+    $("cs-list").style.display = "none"; $("cs-detail").style.display = "block";
+    csRenderDetail(); haptic();
+}
+function csBack() { if (csBusy) return; $("cs-detail").style.display = "none"; $("cs-list").style.display = "block"; haptic(); }
+function csSetQty(q) { if (csBusy) return; csQty = q; csRenderDetail(); haptic(); }
+function csToggleTurbo() { if (csBusy) return; csTurbo = !csTurbo; csRenderDetail(); haptic(); }
+function csCloseModal() { $("cs-modal").classList.remove("active"); }
+async function csInit() {
+    csRenderList();
+    if (!isDBConnected()) return;
+    try {
+        const d = await apiPost({ action: "cases_list" });
+        if (d.status === "success" && Array.isArray(d.cases)) {
+            csCases = d.cases; if (Array.isArray(d.qty)) csQtyList = d.qty;
+            csRenderList(); if (csCur) { csCur = csCases.find(c => c.id === csCur.id) || csCur; csRenderDetail(); }
+        }
+    } catch (e) {}
+}
+function csSpin(c, win) { // анимация ленты для одного кейса
+    return new Promise(resolve => {
+        const reel = $("cs-reel"), track = $("cs-track"), W = 84, GAP = 8, N = 40, WIN = 34;
+        reel.style.display = "block";
+        const items = []; for (let i = 0; i < N; i++) items.push(i === WIN ? win : c.prizes[Math.floor(Math.random() * c.prizes.length)]);
+        track.style.transition = "none"; track.style.transform = "translateX(0)";
+        track.innerHTML = items.map(csTile).join("");
+        const center = 6 + WIN * (W + GAP) + W / 2, jitter = (Math.random() - 0.5) * (W * 0.6);
+        const shift = center - reel.clientWidth / 2 + jitter;
+        void track.offsetWidth;
+        track.style.transition = "transform 3.6s cubic-bezier(.12,.7,.1,1)";
+        track.style.transform = `translateX(${-shift}px)`;
+        setTimeout(resolve, 3700);
+    });
+}
+function csShuffle(c) { // быстрая «крутилка» для ×3/×5/×10
+    return new Promise(resolve => {
+        const reel = $("cs-reel"), track = $("cs-track"); reel.style.display = "block";
+        track.style.transition = "none"; track.style.transform = "translateX(0)";
+        const t0 = Date.now(), timer = setInterval(() => {
+            const p = c.prizes[Math.floor(Math.random() * c.prizes.length)], q = c.prizes[Math.floor(Math.random() * c.prizes.length)];
+            track.innerHTML = [p, q, p, q].map(csTile).join(""); haptic("light");
+            if (Date.now() - t0 > 1500) { clearInterval(timer); resolve(); }
+        }, 110);
+    });
+}
+async function csOpen() {
+    if (csBusy || !csCur) return;
+    const c = csCur, cost = Math.round(c.price * csQty * 100) / 100, msg = $("cs-msg");
+    msg.textContent = "";
+    if (!isDBConnected()) { msg.textContent = "Нет связи с сервером."; return; }
+    if (balance + 1e-9 < cost) { msg.textContent = "Недостаточно средств. Пополни баланс."; notify("error"); return; }
+    csBusy = true; $("cs-open").disabled = true; haptic("medium");
+    try {
+        const reqId = "cs_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10);
+        const d = await apiPost({ action: "cases_open", case_id: c.id, qty: csQty, request_id: reqId });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось открыть кейс.");
+        if (!csTurbo) { if (csQty === 1) await csSpin(c, d.results[0]); else await csShuffle(c); }
+        balance = Number(d.balance); if (!Number.isFinite(balance)) balance = 0;
+        try { inventory = JSON.parse(d.inventory || "[]"); } catch (e) {}
+        inventoryVersion = Number(d.inventory_version) || inventoryVersion;
+        renderInventory(); updateBalanceUI(); try { saveLocal(); } catch (e) {}
+        $("cs-modal-grid").className = "cs-modal-grid" + (d.results.length === 1 ? " one" : "");
+        $("cs-modal-grid").innerHTML = d.results.map((p, i) => csTile(p).replace('class="cs-tile"', `class="cs-tile" style="animation-delay:${csTurbo ? 0 : i * 0.07}s"`)).join("");
+        $("cs-modal-total").textContent = `Итого: $${money(d.win)} (кейс стоил $${money(d.cost)})`;
+        $("cs-modal").classList.add("active"); notify("success");
+    } catch (e) {
+        msg.textContent = String(e.message || e); notify("error");
+    } finally {
+        $("cs-reel").style.display = "none"; csBusy = false; $("cs-open").disabled = false;
+    }
+}
 </script>
 <script id="v4-extras">
 function soonToast(){ try{ alert("Скоро! Эта игра появится позже."); }catch(e){} haptic("light"); }
