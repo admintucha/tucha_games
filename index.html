@@ -2554,6 +2554,9 @@ function displayGiftName(value, imagePath = "") {
 }
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4L4uFeBBGDb9hxCjAuc6L9YHv-IT77kz6sWEJEYyvKURRojhb8SjjBOS4ViCnK_af/exec";
+// Сервер «Мин» на Render. Если адрес твоего сервиса другой — поменяй здесь (без / в конце).
+const MINES_URL = "https://tucha-mines.onrender.com";
+
 
 const userId = telegramUser ? String(telegramUser.id) : "demo_user";
 const userName = telegramUser?.first_name || "Игрок";
@@ -2613,6 +2616,8 @@ let GAME_LEVELS = {
     upgrade:  { level: 4, turnover: 80, name: "Апгрейд" }
 };
 let playerTurnover = 0;
+// Игры, которые видны, но пока закрыты («Скоро»). Чтобы открыть Ракетку — поставь crash: false (и COMING_SOON в Code.gs).
+const SOON_GAMES = { crash: true };
 function playerLevelNow() {
     let lvl = 1;
     Object.keys(GAME_LEVELS).forEach(k => { const g = GAME_LEVELS[k]; if (playerTurnover + 1e-9 >= g.turnover && g.level > lvl) lvl = g.level; });
@@ -2634,9 +2639,10 @@ function renderGameLevels() {
     const lvl = playerLevelNow();
     document.querySelectorAll("[data-game]").forEach(card => {
         const g = GAME_LEVELS[card.dataset.game]; if (!g) return;
-        const locked = !gameUnlocked(card.dataset.game);
+        const soon = !!SOON_GAMES[card.dataset.game];
+        const locked = soon || !gameUnlocked(card.dataset.game);
         card.classList.toggle("locked", locked);
-        if (locked) card.setAttribute("data-lock", `🔒 Оборот $${money(g.turnover)}`); else card.removeAttribute("data-lock");
+        if (soon) card.setAttribute("data-lock", "🔜 Скоро"); else if (locked) card.setAttribute("data-lock", `🔒 Оборот $${money(g.turnover)}`); else card.removeAttribute("data-lock");
     });
     const next = Object.keys(GAME_LEVELS).map(k => ({ id: k, ...GAME_LEVELS[k] })).filter(g => playerTurnover + 1e-9 < g.turnover).sort((a, b) => a.turnover - b.turnover)[0];
     const prevTh = Math.max(0, ...Object.keys(GAME_LEVELS).map(k => GAME_LEVELS[k].turnover).filter(t => t <= playerTurnover + 1e-9));
@@ -2649,6 +2655,7 @@ function renderGameLevels() {
 }
 
 function openGameScreen(gameId) {
+    if (SOON_GAMES[gameId]) { try { alert("🚀 «Ракетка» скоро откроется. Следи за обновлениями!"); } catch (e) {} haptic("light"); return; }
     if (GAME_LEVELS[gameId] && !gameUnlocked(gameId)) { lockedToast(gameId); return; }
     $("main-header").style.display = "none";
     $("main-nav").style.display = "none";
@@ -2674,6 +2681,13 @@ function closeGameScreen(gameId) {
 function isDBConnected() { return SCRIPT_URL && SCRIPT_URL.startsWith("http"); }
 function updateBalanceUI() { document.querySelectorAll('.global-balance').forEach(el => el.textContent = money(balance)); }
 function getStartParam() { return String(tg?.initDataUnsafe?.start_param || ""); }
+async function minesPost(payload) {
+    const securedPayload = { ...payload, initData: tg?.initData || "" };
+    const response = await fetch(MINES_URL + "/mines", { method: "POST", body: JSON.stringify(securedPayload) });
+    const data = await response.json();
+    if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
+    return data;
+}
 async function apiPost(payload) {
     const securedPayload = { ...payload, initData: tg?.initData || "", userid: payload.userid || userId, username: payload.username || userName };
     const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(securedPayload) });
@@ -3062,7 +3076,7 @@ function minesChip(k){
 async function minesSync(){
     if(minesBusy) return; minesBusy=true;
     try{
-        const d=await apiPost({action:"mines_state"});
+        const d=await minesPost({action:"mines_state"});
         if(d.status!=="success") throw new Error(d.message||"Не удалось загрузить Мины.");
         balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
         minesMaxBet=Number(d.max_bet)||100;
@@ -3080,7 +3094,7 @@ async function minesStart(){
     minesBusy=true; $("mx-start").disabled=true; $("mx-start").classList.add("loading");
     let resync=false;
     try{
-        const d=await apiPost({action:"mines_start",bet:bet,mines:mines});
+        const d=await minesPost({action:"mines_start",bet:bet,mines:mines});
         if(d.status!=="success") throw new Error(d.message||"Сервер не принял ставку.");
         balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
         minesState="playing"; minesGame=d.active;
@@ -3114,7 +3128,7 @@ function minesOpen(i) {
 async function minesSendOpen(i, token) {
     if (token !== minesRound || minesAbort) return;
     try {
-        const d = await apiPost({ action: "mines_open", cell: i });
+        const d = await minesPost({ action: "mines_open", cell: i });
         if (token !== minesRound) return;
         if (d.status !== "success") throw new Error(d.message || "Ошибка хода.");
         minesPendingCells = minesPendingCells.filter(x => x !== i); minesPending = Math.max(0, minesPending - 1);
@@ -3142,7 +3156,7 @@ async function minesCashout() {
     try { await minesChain; } catch (e) {}
     if (token !== minesRound || minesState !== "playing") { minesBusy = false; minesRefreshUI(); return; }   // пока ждали — попалась мина
     try {
-        const d = await apiPost({ action: "mines_cashout" });
+        const d = await minesPost({ action: "mines_cashout" });
         if (d.status !== "success") throw new Error(d.message || "Не удалось забрать выигрыш.");
         minesAbort = true; minesWin(d);
     } catch (e) { alert(e.message || "Ошибка."); minesBusy = false; minesSync(); return; }
