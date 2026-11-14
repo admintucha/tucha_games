@@ -1746,6 +1746,36 @@ main { color:#292929 !important; }
 #mx-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:5px solid #7a6cff;box-shadow:0 3px 8px rgba(60,40,160,.4)}
 #mx-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:5px solid #7a6cff}
 </style>
+<style id="mines-v5">
+/* ===== MINES v5: поля 3/5/7/10, баннер, ожидание хода ===== */
+#screen-mines .mx-board{grid-template-columns:repeat(var(--n,5),minmax(0,1fr))}
+#screen-mines .mx-board.mx-wait .mx-cell{pointer-events:none}
+#screen-mines .mx-board[data-n="3"]{gap:13px;padding:15px;border-radius:30px}
+#screen-mines .mx-board[data-n="3"] .mx-front,#screen-mines .mx-board[data-n="3"] .mx-back{border-radius:24px}
+#screen-mines .mx-board[data-n="7"]{gap:6px;padding:10px;border-radius:24px}
+#screen-mines .mx-board[data-n="7"] .mx-front,#screen-mines .mx-board[data-n="7"] .mx-back{border-radius:12px}
+#screen-mines .mx-board[data-n="7"] .mx-front{box-shadow:0 4px 0 #78b4e6,0 7px 10px rgba(20,40,120,.22),inset 0 2px 0 #fff}
+#screen-mines .mx-board[data-n="7"] .mx-cell.safe .mx-back{box-shadow:0 4px 0 #1ea35d,0 7px 10px rgba(0,80,40,.22),inset 0 2px 0 rgba(255,255,255,.8)}
+#screen-mines .mx-board[data-n="7"] .mx-cell.mine .mx-back{box-shadow:0 4px 0 #1b0f4f,0 7px 10px rgba(20,0,80,.3),inset 0 2px 0 rgba(255,255,255,.3)}
+#screen-mines .mx-board[data-n="10"]{gap:4px;padding:8px;border-radius:22px}
+#screen-mines .mx-board[data-n="10"] .mx-front,#screen-mines .mx-board[data-n="10"] .mx-back{border-radius:8px}
+#screen-mines .mx-board[data-n="10"] .mx-front{box-shadow:0 3px 0 #78b4e6,0 5px 7px rgba(20,40,120,.2),inset 0 1px 0 #fff}
+#screen-mines .mx-board[data-n="10"] .mx-cell.safe .mx-back{box-shadow:0 3px 0 #1ea35d,0 5px 7px rgba(0,80,40,.2),inset 0 1px 0 rgba(255,255,255,.8)}
+#screen-mines .mx-board[data-n="10"] .mx-cell.mine .mx-back{box-shadow:0 3px 0 #1b0f4f,0 5px 7px rgba(20,0,80,.3),inset 0 1px 0 rgba(255,255,255,.3)}
+#screen-mines .mx-board[data-n="10"] .mx-cell:not(:disabled):active .mx-front{transform:translateY(2px)}
+#screen-mines .mx-board[data-n="10"] .mx-front svg{width:62%;height:62%}
+.mx-banner{display:block;width:100%;aspect-ratio:2138/560;object-fit:cover;border-radius:22px;box-shadow:0 8px 22px rgba(30,40,140,.28)}
+.hub-hero.hub-banner{display:block;padding:0;min-height:0;aspect-ratio:2138/735;background:#f2c200;border-radius:24px;box-shadow:0 12px 28px rgba(230,170,0,.42)}
+.hub-hero.hub-banner::before{display:none}
+.hub-hero.hub-banner img{display:block;width:100%;height:100%;object-fit:cover;border-radius:24px}
+.mx-size-box{padding:12px;border-radius:20px;background:#f6f4ff;border:2px solid #e3defc}
+.mx-sizes{display:flex;gap:8px}
+.mx-sizes button{flex:1;height:44px;border:2px solid #dfe6ff;border-radius:13px;background:#fff;color:#5560c8;font-size:14px;font-weight:950;transition:transform .08s}
+.mx-sizes button:active{transform:scale(.95)}
+.mx-sizes button.on{background:linear-gradient(180deg,#ffe066,#ffb020);border-color:#ffb020;color:#5a3300;box-shadow:0 3px 0 #c77d0a}
+#screen-mines .mx-sheet{max-height:92vh;overflow-y:auto}
+</style>
+
 <style id="v4-hub-admin">
 /* ===== ГЛАВНЫЙ ЭКРАН ===== */
 .hub-hero,.hub-pvp{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:26px;padding:18px;margin:0 0 14px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
@@ -1950,15 +1980,7 @@ main { color:#292929 !important; }
     <!-- GAMES HUB TAB -->
     <section id="tab-games" class="tab active">
         <div class="games-header">Игры</div>
-        <div class="hub-hero" onclick="openGameScreen('mines')">
-            <div class="hub-txt">
-                <span class="hub-badge">🔥 ХИТ</span>
-                <h3>МИНЫ</h3>
-                <p>Открывай облака, обходи грозы. Множитель растёт с каждым шагом!</p>
-                <span class="hub-play">ИГРАТЬ →</span>
-            </div>
-            <div class="hub-art"><i style="--r:-8deg">☁️</i><i style="--r:6deg">💎</i><i style="--r:5deg">💎</i><i style="--r:-6deg">⚡</i></div>
-        </div>
+        <div class="hub-hero hub-banner" onclick="openGameScreen('mines')"><img src="./minuuu.png" alt="Мины"></div>
         <div class="hub-pvp" onclick="openGameScreen('pvp')">
             <div class="hub-txt">
                 <span class="hub-badge live">● ОНЛАЙН</span>
@@ -2193,6 +2215,7 @@ main { color:#292929 !important; }
         <div class="mx-bal" onclick="openDeposit()"><i>$</i><span class="global-balance">0.10</span></div>
     </div>
     <div class="mx-wrap">
+        <img class="mx-banner" src="./minuuu.png" alt="Мины">
         <div id="mx-board" class="mx-board mx-idle"></div>
         <div id="mx-ladder" class="mx-ladder"></div>
         <div id="mx-info" class="mx-info"></div>
@@ -2225,6 +2248,18 @@ main { color:#292929 !important; }
                 <button type="button" onclick="minesChip('half')">½</button>
                 <button type="button" onclick="minesChip('x2')">×2</button>
                 <button type="button" onclick="minesChip('max')">MAX</button>
+            </div>
+            <div class="mx-size-box">
+                <div class="mx-mines-head">
+                    <span class="mx-bomb">🧩</span>
+                    <div><b>Размер поля</b><small>Больше поле — больше клеток и ход игры дольше</small></div>
+                </div>
+                <div id="mx-sizes" class="mx-sizes">
+                    <button type="button" data-n="3">3×3</button>
+                    <button type="button" data-n="5" class="on">5×5</button>
+                    <button type="button" data-n="7">7×7</button>
+                    <button type="button" data-n="10">10×10</button>
+                </div>
             </div>
             <div class="mx-mines-box">
                 <div class="mx-mines-head">
@@ -2565,6 +2600,7 @@ let inventory = [];
 let userLoaded = false;
 let adminPlayersData = [];
 let adminPasswordSession = "";
+let adminKeySession = "";
 let referralData = { invited_count: 0, referral_balance: 0, total_earned: 0, referral_link: "" };
 let playerRtp = 1;
 let inventoryVersion = 1;
@@ -2935,30 +2971,67 @@ async function confirmCrashBet() {
     }
 }
 
-/* MINES v3 — игру считает сервер, браузер только рисует */
-let minesState="idle", minesBusy=false, minesGame=null, minesMaxBet=100, minesHist=[], minesRound=0, minesWinTimer=null, minesToastTimer=null;
+/* MINES v5 — игру считает сервер. Клетка открывается ТОЛЬКО после ответа сервера:
+   никакого «сначала зелёная, потом мина». Поля 3×3 / 5×5 / 7×7 / 10×10, звуки, иконка. */
+let minesState="idle", minesBusy=false, minesWait=false, minesGame=null, minesMaxBet=100, minesHist=[], minesRound=0, minesWinTimer=null, minesToastTimer=null, minesSize=5;
+// n — сторона поля, cells — клеток, min/max — сколько мин можно выбрать (должно совпадать с server.js)
+const MX_SIZES={3:{cells:9,min:1,max:8},5:{cells:25,min:1,max:24},7:{cells:49,min:2,max:40},10:{cells:100,min:3,max:50}};
 const MX_STAR=`<svg viewBox="0 0 24 24" width="54%" height="54%"><path d="M17.5 18C19.985 18 22 15.985 22 13.5C22 11.156 20.206 9.231 17.9 9.024C17.434 5.587 14.484 3 10.9 3C7.034 3 3.9 6.134 3.9 10C3.9 10.238 3.912 10.474 3.935 10.706C2.236 11.355 1 12.988 1 14.9C1 17.164 2.836 19 5.1 19H17.5Z" fill="#bfe0fa" stroke="#8ec2ee" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
 const MX_GEM=`<svg viewBox="0 0 48 48" width="74%" height="74%"><defs><linearGradient id="mxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffbd0"/><stop offset=".5" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff9f1c"/></linearGradient></defs><path d="M14 6h20l10 12-20 26L4 18z" fill="url(#mxg)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M4 18h40M14 6l10 12L34 6M24 18v26" stroke="#fff" stroke-opacity=".75" stroke-width="1.4" fill="none"/></svg>`;
 const MX_MINE=`<svg viewBox="0 0 48 48" width="78%" height="78%"><defs><linearGradient id="mxm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a8bff"/><stop offset="1" stop-color="#43319b"/></linearGradient></defs><path d="M13 31c-5.5 0-9-3.4-9-7.8 0-3.8 2.8-6.9 6.6-7.6C12 10.2 16.6 6 22.4 6c5.8 0 10.4 3.9 11.2 9.2 4.8.4 8.4 3.6 8.4 8 0 4.5-3.6 7.8-8.4 7.8H13z" fill="url(#mxm)" stroke="#fff" stroke-width="1.6"/><path d="M26 24l-7 11h5l-3 10 10-14h-6l4-7z" fill="#ffe14d" stroke="#ff9f1c" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
 
-// Только превью лесенки до старта (настоящие значения приходят с сервера)
-function minesLadderLocal(mines){
-    const out=[]; let prob=1;
-    for(let s=1;s<=25-mines;s++){ prob*=(25-mines-(s-1))/(25-(s-1)); out.push(Math.max(1.01,Math.floor(0.88/prob*100)/100)); }
+function mxN(){ return (minesGame&&minesGame.size)||minesSize; }
+// Превью лесенки до старта (настоящие значения приходят с сервера)
+function minesLadderLocal(mines,size){
+    const cells=MX_SIZES[size||minesSize].cells, out=[]; let prob=1;
+    for(let s=1;s<=cells-mines;s++){ prob*=(cells-mines-(s-1))/(cells-(s-1)); out.push(Math.max(1.01,Math.floor(0.88/prob*100)/100)); }
     return out;
 }
-function mxSound(k){ try{ if(typeof playTuchaSound==="function") playTuchaSound(k); }catch(e){} }
+/* ---------- звуки Мин (Web Audio, без файлов) ---------- */
+function mxCtx(){
+    if(typeof tuchaSoundsEnabled!=="undefined" && !tuchaSoundsEnabled) return null;
+    try{
+        const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
+        window.tuchaAudioCtx=window.tuchaAudioCtx||new C();
+        if(window.tuchaAudioCtx.state==="suspended") window.tuchaAudioCtx.resume();
+        return window.tuchaAudioCtx;
+    }catch(e){ return null; }
+}
+function mxBeep(f,d,type,vol,delay,to){
+    const ctx=mxCtx(); if(!ctx) return;
+    try{
+        const t=ctx.currentTime+(delay||0), o=ctx.createOscillator(), g=ctx.createGain();
+        o.type=type||"sine"; o.frequency.setValueAtTime(f,t);
+        if(to) o.frequency.exponentialRampToValueAtTime(to,t+d);
+        g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol||.06,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+d);
+        o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+d+.03);
+    }catch(e){}
+}
+function mxTap(){ mxBeep(480,.05,"square",.022); }                                   // нажатие на клетку
+function mxGem(n){ const f=520*Math.pow(1.06,Math.min(n,20)); mxBeep(f,.11,"sine",.06); mxBeep(f*1.5,.15,"sine",.05,.07); }   // безопасно: тон растёт с каждым шагом
+function mxCash(){ [660,880,1100,1320].forEach((f,i)=>mxBeep(f,.17,"sine",.06,i*.08)); }  // выигрыш / забрать
+function mxStartSnd(){ mxBeep(330,.09,"triangle",.05); mxBeep(494,.12,"triangle",.05,.08); }
+function mxBoom(){                                                                  // мина: взрыв
+    const ctx=mxCtx(); if(!ctx) return;
+    try{
+        const len=Math.floor(ctx.sampleRate*.45), buf=ctx.createBuffer(1,len,ctx.sampleRate), ch=buf.getChannelData(0);
+        for(let i=0;i<len;i++) ch[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.2);
+        const src=ctx.createBufferSource(), g=ctx.createGain(); src.buffer=buf; g.gain.value=.22; src.connect(g); g.connect(ctx.destination); src.start();
+    }catch(e){}
+    mxBeep(150,.4,"sawtooth",.09,0,40);
+}
 function minesSpark(c){ for(let k=0;k<9;k++){ const p=document.createElement("b"); p.className="mx-spark"; const a=k/9*6.283; p.style.setProperty("--dx",Math.cos(a)*38+"px"); p.style.setProperty("--dy",Math.sin(a)*38+"px"); c.appendChild(p); setTimeout(()=>p.remove(),800); } }
 function mxCell(i){ return $("mx-board").children[i]; }
 function buildMines(animateIn){
-    minesRound++; minesAbort=false; minesPending=0; minesPendingCells=[];
-    const g=$("mx-board"); g.innerHTML="";
-    for(let i=0;i<25;i++){
+    minesRound++; minesWait=false;
+    const n=mxN(), g=$("mx-board");
+    g.innerHTML=""; g.dataset.n=n; g.style.setProperty("--n",n); g.classList.remove("mx-wait");
+    for(let i=0;i<n*n;i++){
         const c=document.createElement("button");
         c.type="button"; c.className="mx-cell"; c.disabled=true; c.dataset.i=i;
         c.innerHTML=`<div class="mx-inner"><div class="mx-front">${MX_STAR}</div><div class="mx-back"></div></div>`;
         c.onclick=()=>minesOpen(i);
-        if(animateIn){ c.classList.add("mx-in"); c.style.animationDelay=((i%5)*45+Math.floor(i/5)*45)+"ms"; }
+        if(animateIn){ c.classList.add("mx-in"); c.style.animationDelay=((i%n)*30+Math.floor(i/n)*30)+"ms"; }
         g.appendChild(c);
     }
 }
@@ -2970,16 +3043,18 @@ function minesFlip(i,kind,o){
     if(o.instant) c.classList.add("nt");
     c.classList.add("open",kind);
     if(o.dim) c.classList.add("dim");
-    if(o.glow){ c.classList.add("glow"); setTimeout(()=>c.classList.remove("glow"),900); minesSpark(c); mxSound("case"); }
+    if(o.glow){ c.classList.add("glow"); setTimeout(()=>c.classList.remove("glow"),900); minesSpark(c); }
     if(o.instant) requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.remove("nt")));
 }
 function minesRevealRest(mines){
     const token=minesRound; let k=0;
+    const left=[...$("mx-board").children].filter(c=>!c.classList.contains("open")).length;
+    const step=Math.max(6,Math.min(38,1400/Math.max(1,left)));
     [...$("mx-board").children].forEach((c,i)=>{
-        if(c.classList.contains("open")){ return; }
+        if(c.classList.contains("open")) return;
         c.disabled=true;
         const kind=mines.includes(i)?"mine":"safe";
-        setTimeout(()=>{ if(token===minesRound) minesFlip(i,kind,{dim:true}); },160+(k++)*38);
+        setTimeout(()=>{ if(token===minesRound) minesFlip(i,kind,{dim:true}); },160+(k++)*step);
     });
 }
 function minesRenderLadder(lad,opened){
@@ -3001,8 +3076,8 @@ function minesRefreshUI(){
             minesInfo("Множитель x"+g.mult.toFixed(2)+(g.ladder[n]?" · дальше x"+g.ladder[n].toFixed(2):""),"");
         }
     } else if(minesState==="finished"){ b.disabled=false; t.textContent="Играть снова"; }
-    else { b.disabled=false; t.textContent="Сделать ставку"; minesInfo("Выбери ставку и количество мин",""); }
-    const lad=g?g.ladder:minesLadderLocal(Number($("mx-slider").value));
+    else { b.disabled=false; t.textContent="Сделать ставку"; minesInfo("Выбери ставку, поле и количество мин",""); }
+    const lad=g?g.ladder:minesLadderLocal(Number($("mx-slider").value),minesSize);
     minesRenderLadder(lad,n);
 }
 // Полная перерисовка (старт игры / продолжение после обновления страницы)
@@ -3045,7 +3120,8 @@ function minesLose(d,hit){
     const bet=minesGame.bet;
     minesState="finished";
     const board=$("mx-board"); board.classList.remove("mx-idle"); board.classList.add("mx-lose");
-    minesFlip(hit,"mine"); mxCell(hit).classList.add("hit"); mxSound("lose"); board.classList.add("mx-shake"); setTimeout(()=>board.classList.remove("mx-shake"),600);
+    minesFlip(hit,"mine"); mxCell(hit).classList.add("hit"); mxBoom();
+    board.classList.add("mx-shake"); setTimeout(()=>board.classList.remove("mx-shake"),600);
     minesRevealRest(d.mines||[]);
     minesRecord(bet,0,0);
     minesRefreshUI(); minesInfo("ПРОИГРЫШ −$"+money(bet),"lose"); notify("error");
@@ -3057,19 +3133,35 @@ function minesWin(d){
     const board=$("mx-board"); board.classList.remove("mx-idle"); board.classList.add("mx-win");
     minesRevealRest(d.mines||[]);
     minesRecord(g.bet,d.mult,d.payout);
-    minesRefreshUI(); minesInfo("ВЫИГРЫШ +$"+money(d.payout)+" · x"+Number(d.mult).toFixed(2),"win"); notify("success"); mxSound("win");
+    minesRefreshUI(); minesInfo("ВЫИГРЫШ +$"+money(d.payout)+" · x"+Number(d.mult).toFixed(2),"win"); notify("success"); mxCash();
     setTimeout(()=>{ if(minesState==="finished") minesShowWin(d.payout,d.mult); },750);
 }
 function minesMainBtn(){
-    if(minesBusy) return;
+    if(minesBusy||minesWait) return;
     if(minesState==="playing") minesCashout(); else minesOpenSheet();
 }
-function minesOpenSheet(){ if(minesState==="playing") return; $("mx-sheet").classList.add("open"); $("mx-start").disabled=false; }
+function minesOpenSheet(){ if(minesState==="playing") return; minesPickSize(minesSize,true); $("mx-sheet").classList.add("open"); $("mx-start").disabled=false; }
 function minesCloseSheet(){ $("mx-sheet").classList.remove("open"); }
 function minesChip(k){
     const i=$("mx-bet"); let v=Number(i.value)||0;
     if(k==="min") v=0.10; else if(k==="half") v=v/2; else if(k==="x2") v=v*2; else v=Math.min(balance,minesMaxBet);
     v=Math.max(0.01,Math.floor(v*100)/100); i.value=v.toFixed(2); haptic("light");
+}
+// Выбор размера поля (3×3 / 5×5 / 7×7 / 10×10)
+function minesPickSize(n,silent){
+    n=Number(n); const s=MX_SIZES[n]; if(!s) return;
+    minesSize=n;
+    document.querySelectorAll("#mx-sizes button").forEach(b=>b.classList.toggle("on",Number(b.dataset.n)===n));
+    const sl=$("mx-slider"); sl.min=s.min; sl.max=s.max;
+    sl.value=Math.max(s.min,Math.min(s.max,Number(sl.value)||s.min));
+    mxSliderUi();
+    if(minesState==="idle"){ minesGame=null; buildMines(false); $("mx-board").classList.add("mx-idle"); }
+    if(!silent){ mxTap(); haptic("light"); }
+}
+function mxSliderUi(){
+    const sl=$("mx-slider"), v=Number(sl.value), mn=Number(sl.min), mx=Number(sl.max);
+    $("mx-count").textContent=v; sl.style.setProperty("--p",((v-mn)/Math.max(1,mx-mn)*100)+"%");
+    if(minesState==="idle") minesRenderLadder(minesLadderLocal(v,minesSize),0);
 }
 
 // Вход на экран: подтягиваем состояние с сервера (незаконченная игра продолжится)
@@ -3080,93 +3172,72 @@ async function minesSync(){
         if(d.status!=="success") throw new Error(d.message||"Не удалось загрузить Мины.");
         balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
         minesMaxBet=Number(d.max_bet)||100;
-        if(d.active){ minesState="playing"; minesGame=d.active; minesCloseSheet(); minesPaint(false); }
+        if(d.active){ minesState="playing"; minesGame=d.active; minesGame.size=minesGame.size||5; minesSize=minesGame.size; minesCloseSheet(); minesPaint(false); }
         else { minesState="idle"; minesGame=null; minesPaint(false); minesOpenSheet(); }
     }catch(e){ alert(e.message||"Ошибка загрузки."); }
     finally{ minesBusy=false; }
 }
 async function minesStart(){
     if(minesBusy) return;
-    const bet=Math.round(Number($("mx-bet").value)*100)/100, mines=Number($("mx-slider").value);
+    const bet=Math.round(Number($("mx-bet").value)*100)/100, mines=Number($("mx-slider").value), size=minesSize;
     if(!(bet>=0.01)) return alert("Введи сумму ставки.");
     if(bet>minesMaxBet) return alert("Максимальная ставка $"+minesMaxBet);
     if(bet>balance) return alert("Недостаточно средств.");
     minesBusy=true; $("mx-start").disabled=true; $("mx-start").classList.add("loading");
     let resync=false;
     try{
-        const d=await minesPost({action:"mines_start",bet:bet,mines:mines});
+        const d=await minesPost({action:"mines_start",bet:bet,mines:mines,size:size});
         if(d.status!=="success") throw new Error(d.message||"Сервер не принял ставку.");
         balance=Number(d.balance)||0; updateBalanceUI(); saveLocal();
-        minesState="playing"; minesGame=d.active;
+        minesState="playing"; minesGame=d.active; minesGame.size=minesGame.size||size;
         minesCloseSheet(); minesCloseWin(); minesPaint(true);
-        minesToast("Игра запущена!","выбери клетку без мины"); haptic("medium");
+        mxStartSnd(); minesToast("Игра запущена!","выбери клетку без мины"); haptic("medium");
     }catch(e){
         alert(e.message||"Не удалось начать игру.");
         if(/начат/i.test(e.message||"")) resync=true;
     }finally{ minesBusy=false; $("mx-start").disabled=false; $("mx-start").classList.remove("loading"); }
     if(resync) minesSync();
 }
-// Ход делается МГНОВЕННО: клетка переворачивается сразу, а сервер подтверждает в фоне.
-// Мина по-прежнему определяется только сервером: если он скажет «мина» — клетка перевернётся обратно в мину, а необработанные клики отменятся.
-let minesChain = Promise.resolve(), minesPending = 0, minesPendingCells = [], minesAbort = false;
-function minesUndoPending() {
-    minesPendingCells.forEach(i => { const c = mxCell(i); if (c) c.classList.remove("open", "safe", "glow", "dim"); });
-    minesPendingCells = []; minesPending = 0;
-}
-function minesOpen(i) {
-    if (minesState !== "playing" || minesBusy || minesAbort) return;
-    const c = mxCell(i); if (!c || c.disabled || c.classList.contains("open")) return;
-    const g = minesGame; if (!g || g.opened.indexOf(i) >= 0) return;
-    g.opened = g.opened.concat([i]);
-    const n = g.opened.length; g.mult = g.ladder[n - 1] || g.mult;       // множитель из таблицы, пришедшей с сервера
-    minesPendingCells.push(i); minesPending++;
-    minesFlip(i, "safe", { glow: true });
-    minesRefreshUI(); haptic("medium");
-    const token = minesRound;
-    minesChain = minesChain.then(() => minesSendOpen(i, token));
-}
-async function minesSendOpen(i, token) {
-    if (token !== minesRound || minesAbort) return;
-    try {
-        const d = await minesPost({ action: "mines_open", cell: i });
-        if (token !== minesRound) return;
-        if (d.status !== "success") throw new Error(d.message || "Ошибка хода.");
-        minesPendingCells = minesPendingCells.filter(x => x !== i); minesPending = Math.max(0, minesPending - 1);
-        if (d.boom) {
-            minesAbort = true; minesUndoPending();
-            const c = mxCell(i); if (c) c.classList.remove("open", "safe", "glow");
-            minesLose(d, i);
-        } else if (d.finished) {
-            minesAbort = true; minesUndoPending();
-            minesWin(d);
-        } else if (minesPending === 0 && d.active) {
-            minesGame = d.active; minesRefreshUI();
+// Ход: клетка показывает «ждём» (пульсирует) и переворачивается ТОЛЬКО когда сервер ответил — сразу в правильную сторону.
+async function minesOpen(i){
+    if(minesState!=="playing"||minesBusy||minesWait) return;
+    const c=mxCell(i); if(!c||c.disabled||c.classList.contains("open")) return;
+    const g=minesGame; if(!g||g.opened.indexOf(i)>=0) return;
+    minesWait=true; c.classList.add("pending"); $("mx-board").classList.add("mx-wait"); mxTap(); haptic("light");
+    const token=minesRound;
+    try{
+        const d=await minesPost({action:"mines_open",cell:i});
+        if(token!==minesRound) return;
+        if(d.status!=="success") throw new Error(d.message||"Ошибка хода.");
+        c.classList.remove("pending");
+        if(d.boom){ minesLose(d,i); }
+        else if(d.finished){
+            g.opened=g.opened.concat([i]); minesFlip(i,"safe",{glow:true}); mxGem(g.opened.length); minesWin(d);
+        } else {
+            minesGame=Object.assign({},d.active,{size:g.size}); minesFlip(i,"safe",{glow:true});
+            mxGem(minesGame.opened.length); minesRefreshUI(); haptic("medium");
         }
-    } catch (e) {
-        if (token !== minesRound) return;
-        minesAbort = true; minesPending = 0; minesPendingCells = [];
-        alert(e.message || "Ошибка хода.");
-        await minesSync(); minesAbort = false;
+    }catch(e){
+        if(token!==minesRound) return;
+        c.classList.remove("pending");
+        alert(e.message||"Ошибка хода.");
+        minesWait=false; await minesSync(); return;
+    }finally{
+        if(token===minesRound){ minesWait=false; $("mx-board").classList.remove("mx-wait"); }
     }
 }
-async function minesCashout() {
-    if (minesBusy || minesState !== "playing" || minesAbort) return;
-    minesBusy = true; $("mx-main").disabled = true; $("mx-main").classList.add("loading");
-    const token = minesRound;
-    try { await minesChain; } catch (e) {}
-    if (token !== minesRound || minesState !== "playing") { minesBusy = false; minesRefreshUI(); return; }   // пока ждали — попалась мина
-    try {
-        const d = await minesPost({ action: "mines_cashout" });
-        if (d.status !== "success") throw new Error(d.message || "Не удалось забрать выигрыш.");
-        minesAbort = true; minesWin(d);
-    } catch (e) { alert(e.message || "Ошибка."); minesBusy = false; minesSync(); return; }
-    minesBusy = false;
+async function minesCashout(){
+    if(minesBusy||minesWait||minesState!=="playing") return;
+    minesBusy=true; $("mx-main").disabled=true; $("mx-main").classList.add("loading");
+    try{
+        const d=await minesPost({action:"mines_cashout"});
+        if(d.status!=="success") throw new Error(d.message||"Не удалось забрать выигрыш.");
+        minesWin(d);
+    }catch(e){ alert(e.message||"Ошибка."); minesBusy=false; minesSync(); return; }
+    minesBusy=false;
 }
-if($("mx-slider")) $("mx-slider").addEventListener("input",()=>{
-    const v=Number($("mx-slider").value);
-    $("mx-count").textContent=v; $("mx-slider").style.setProperty("--p",((v-1)/23*100)+"%");
-    if(minesState==="idle") minesRenderLadder(minesLadderLocal(v),0);
-});
+if($("mx-slider")) $("mx-slider").addEventListener("input",()=>{ mxSliderUi(); mxBeep(600+Number($("mx-slider").value)*8,.03,"square",.012); });
+if($("mx-sizes")) $("mx-sizes").addEventListener("click",e=>{ const b=e.target.closest("button[data-n]"); if(b) minesPickSize(b.dataset.n); });
 minesRenderHist();
 
 /* DICE LOGIC */
@@ -4091,7 +4162,7 @@ async function fetchAdminPromos(){
     const box=$("admin-promos-list"); if(!box)return;
     box.textContent="Загрузка промокодов...";
     try{
-        const d=await apiPost({action:"admin_get_promos",admin_password:adminPasswordSession});
+        const d=await apiPost({action:"admin_get_promos",admin_password: adminPasswordSession, admin_key: adminKeySession});
         if(d.status!=="success")throw new Error(d.message||"Не удалось загрузить промокоды.");
         const promos=d.promos||[];
         box.innerHTML=promos.length?promos.map(p=>`<div class="admin-promo-row">
@@ -4104,7 +4175,7 @@ async function fetchAdminPromos(){
 async function adminCreatePromo(){
     const status=$("admin-promo-status");
     try{
-        const d=await apiPost({action:"admin_create_promo",admin_password:adminPasswordSession,
+        const d=await apiPost({action:"admin_create_promo",admin_password: adminPasswordSession, admin_key: adminKeySession,
             code:$("admin-promo-code").value,type:$("admin-promo-type").value,
             amount:Number($("admin-promo-amount").value),max_uses:Number($("admin-promo-limit").value),
             expires_at:$("admin-promo-expiry").value});
@@ -4116,14 +4187,14 @@ async function adminCreatePromo(){
 async function adminDeletePromo(code){
     if(!confirm("Удалить промокод "+code+" навсегда?"))return;
     try{
-        const d=await apiPost({action:"admin_delete_promo",admin_password:adminPasswordSession,code:code});
+        const d=await apiPost({action:"admin_delete_promo",admin_password: adminPasswordSession, admin_key: adminKeySession,code:code});
         if(d.status!=="success")throw new Error(d.message||"Не удалось удалить.");
         fetchAdminPromos();
     }catch(e){alert(e.message||"Ошибка удаления.");}
 }
 async function adminTogglePromo(code,active){
     try{
-        const d=await apiPost({action:"admin_toggle_promo",admin_password:adminPasswordSession,code:code,active:active});
+        const d=await apiPost({action:"admin_toggle_promo",admin_password: adminPasswordSession, admin_key: adminKeySession,code:code,active:active});
         if(d.status!=="success")throw new Error(d.message||"Не удалось изменить статус.");
         fetchAdminPromos();
     }catch(e){alert(e.message||"Ошибка промокода.");}
@@ -4162,7 +4233,7 @@ function adminRenderDashboard(s) {
 async function adminLoadLog() {
     const box = $("admin-log"); if (!box) return;
     try {
-        const d = await apiPost({ action: "admin_log", admin_password: adminPasswordSession });
+        const d = await apiPost({ action: "admin_log", admin_password: adminPasswordSession, admin_key: adminKeySession });
         if (d.status !== "success") throw new Error(d.message);
         box.innerHTML = d.log.length ? d.log.map(l => `<div style="padding:4px 0;border-bottom:1px solid #f3e3a0;">${esc(new Date(l.time).toLocaleString("ru"))} · <b>${esc(l.action)}</b> · ${esc(l.target)} ${esc(l.details)}</div>`).join("") : "Пока пусто.";
     } catch (e) { box.textContent = e.message || "Ошибка"; }
@@ -4170,10 +4241,10 @@ async function adminLoadLog() {
 async function fetchAllPlayers() {
     const box = $("admin-players-list"); box.innerHTML = '<p style="text-align:center;">Загрузка...</p>';
     try {
-        const d = await apiPost({ action: "get_all", admin_password: adminPasswordSession });
+        const d = await apiPost({ action: "get_all", admin_password: adminPasswordSession, admin_key: adminKeySession });
         if (d.status !== "success") throw new Error(d.message || "Сервер не вернул список.");
         adminPlayersData = d.players || []; renderAdminPlayers();
-        apiPost({ action: "admin_dashboard", admin_password: adminPasswordSession }).then(x => { if (x.status === "success") adminRenderDashboard(x.stats); });
+        apiPost({ action: "admin_dashboard", admin_password: adminPasswordSession, admin_key: adminKeySession }).then(x => { if (x.status === "success") adminRenderDashboard(x.stats); });
     } catch (e) { box.innerHTML = '<p style="text-align:center;color:#dc2626;font-weight:900;">' + esc(e.message || e) + '</p>'; }
 }
 function renderAdminPlayers() {
@@ -4198,7 +4269,7 @@ async function adminOpenPlayer(id) {
     const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (!p) return;
     $("admin-player-title").textContent = p.username; $("admin-player-body").textContent = "Загрузка…"; $("admin-player-modal").style.display = "flex";
     try {
-        const d = await apiPost({ action: "admin_player", admin_password: adminPasswordSession, target_userid: String(id) });
+        const d = await apiPost({ action: "admin_player", admin_password: adminPasswordSession, admin_key: adminKeySession, target_userid: String(id) });
         if (d.status !== "success") throw new Error(d.message);
         const i = d.info, r = i.referral || {};
         $("admin-player-body").innerHTML = `
@@ -4223,14 +4294,14 @@ async function adminOpenPlayer(id) {
 }
 async function adminToggleBan(id, ban) {
     if (!confirm(ban ? "Заблокировать игрока?" : "Разблокировать игрока?")) return;
-    try { const d = await apiPost({ action: "admin_ban", admin_password: adminPasswordSession, target_userid: String(id), banned: ban }); if (d.status !== "success") throw new Error(d.message);
+    try { const d = await apiPost({ action: "admin_ban", admin_password: adminPasswordSession, admin_key: adminKeySession, target_userid: String(id), banned: ban }); if (d.status !== "success") throw new Error(d.message);
         const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (p) p.banned = ban; renderAdminPlayers(); adminOpenPlayer(id); adminLoadLog(); }
     catch (e) { alert(e.message || "Ошибка"); }
 }
 async function adminGiveGift(id) {
     const name = $("gift-name").value.trim(), price = Number($("gift-price").value);
     if (!name || !(price > 0)) return alert("Укажи название и цену.");
-    try { const d = await apiPost({ action: "admin_give_gift", admin_password: adminPasswordSession, target_userid: String(id), name: name, price: price }); if (d.status !== "success") throw new Error(d.message);
+    try { const d = await apiPost({ action: "admin_give_gift", admin_password: adminPasswordSession, admin_key: adminKeySession, target_userid: String(id), name: name, price: price }); if (d.status !== "success") throw new Error(d.message);
         const p = adminPlayersData.find(x => String(x.userid) === String(id)); if (p) { p.inventory = d.inventory; p.inventory_version = d.inventory_version; }
         alert("Подарок выдан."); renderAdminPlayers(); adminLoadLog(); }
     catch (e) { alert(e.message || "Ошибка"); }
@@ -4238,12 +4309,24 @@ async function adminGiveGift(id) {
 async function openAdminPanel() {
     const entered = prompt("Пароль администратора:"); if (entered === null) return;
     adminPasswordSession = entered;
-    try {
-        const d = await apiPost({ action: "admin_dashboard", admin_password: entered });
-        if (d.status !== "success") throw new Error(d.message || "Нет доступа.");
-        $("admin-modal").style.display = "flex"; adminRenderDashboard(d.stats);
-        fetchAllPlayers(); fetchAdminPromos(); adminLoadLog();
-    } catch (e) { adminPasswordSession = ""; alert(e.message || "Нет доступа."); }
+    adminKeySession = localStorage.getItem("tucha_admin_key") || "";
+    for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+            const d = await apiPost({ action: "admin_dashboard", admin_password: entered, admin_key: adminKeySession });
+            if (d.status !== "success") throw new Error(d.message || "Нет доступа.");
+            try { localStorage.setItem("tucha_admin_key", adminKeySession); } catch (e) {}
+            $("admin-modal").style.display = "flex"; adminRenderDashboard(d.stats);
+            fetchAllPlayers(); fetchAdminPromos(); adminLoadLog();
+            return;
+        } catch (e) {
+            if (attempt === 0 && /ключ/i.test(e.message || "")) {
+                const k = prompt("Ключ админки (ADMIN_KEY):");
+                if (k === null) { adminPasswordSession = ""; return; }
+                adminKeySession = k.trim(); continue;
+            }
+            adminPasswordSession = ""; alert(e.message || "Нет доступа."); return;
+        }
+    }
 }
 
 function adminViewInventory(targetUserId) {
@@ -4284,7 +4367,7 @@ function adminDeletePlayerItem(targetUserId, originalIndex) {
     if (!player) { alert("Обнови список игроков и попробуй ещё раз."); return; }
     fetch(SCRIPT_URL, {
         method: "POST",
-        body: JSON.stringify({ action: "admin_delete_item", admin_password: adminPasswordSession, target_userid: String(targetUserId), item_index: Number(originalIndex), inventory_version: Number(player?.inventory_version) || 0 })
+        body: JSON.stringify({ action: "admin_delete_item", admin_password: adminPasswordSession, admin_key: adminKeySession, target_userid: String(targetUserId), item_index: Number(originalIndex), inventory_version: Number(player?.inventory_version) || 0 })
     }).then(r => r.json()).then(data => {
         if (data.status !== "success") throw new Error(data.message || "Не удалось удалить предмет.");
         const player = adminPlayersData.find(p => String(p.userid) === String(targetUserId));
@@ -4298,7 +4381,7 @@ function adminDeletePlayerItem(targetUserId, originalIndex) {
 function adminEditBalance(id, nm, b) {
     let nb = prompt("Новый баланс:", b); 
     if (nb !== null && !isNaN(nb)) {
-        apiPost({ action: "admin_set_balance", admin_password: adminPasswordSession, target_userid: String(id), balance: parseFloat(nb) })
+        apiPost({ action: "admin_set_balance", admin_password: adminPasswordSession, admin_key: adminKeySession, target_userid: String(id), balance: parseFloat(nb) })
         .then(data => { if (data.status !== "success") throw new Error(data.message || "Не удалось изменить баланс"); alert("Баланс обновлён!"); fetchAllPlayers(); if (String(id) === String(userId)) { balance = parseFloat(nb); updateBalanceUI(); } })
         .catch(err => alert("Ошибка изменения баланса: " + (err.message || err)));
     }
@@ -4336,7 +4419,7 @@ function toggleTuchaSounds() {
 }
 document.addEventListener("click", function(e) {
     const target=e.target.closest("button,.game-card,.case-card,.upgrade-gift-choice");
-    if(!target || target.disabled) return;
+    if(!target || target.disabled || target.classList.contains("mx-cell")) return;
     const label=(target.textContent||"").toLowerCase();
     if(label.includes("открыть") || target.classList.contains("case-card")) playTuchaSound("case");
     else if(label.includes("апгрейд") || label.includes("улучшить")) playTuchaSound("upgrade");
@@ -4796,7 +4879,7 @@ adminOpenPlayer=async function(id){
 };
 async function adminAddBalance(id,delta){
     try{
-        const d=await apiPost({action:"admin_add_balance",admin_password:adminPasswordSession,target_userid:String(id),delta:delta});
+        const d=await apiPost({action:"admin_add_balance",admin_password: adminPasswordSession, admin_key: adminKeySession,target_userid:String(id),delta:delta});
         if(d.status!=="success") throw new Error(d.message||"Ошибка");
         const p=adminPlayersData.find(x=>String(x.userid)===String(id)); if(p) p.balance=d.balance;
         if(String(id)===String(userId)){ balance=d.balance; updateBalanceUI(); }
@@ -4806,7 +4889,7 @@ async function adminAddBalance(id,delta){
 async function adminLoadGames(){
     const box=$("adm-games-body"); if(!box) return; box.textContent="Загрузка…";
     try{
-        const d=await apiPost({action:"admin_game_stats",admin_password:adminPasswordSession});
+        const d=await apiPost({action:"admin_game_stats",admin_password: adminPasswordSession, admin_key: adminKeySession});
         if(d.status!=="success") throw new Error(d.message||"Ошибка");
         const on=d.mines_enabled!==false;
         const pr=(b,w)=>{ const v=b-w; return `<b style="color:${v>=0?"#4be08a":"#ff7a8a"}">${v>=0?"+":"−"}$${money(Math.abs(v))}</b>`; };
@@ -4822,7 +4905,7 @@ async function adminLoadGames(){
 }
 async function adminToggleGame(game,on){
     if(!confirm(on?"Включить игру?":"Поставить игру на паузу?")) return;
-    try{ const d=await apiPost({action:"admin_toggle_game",admin_password:adminPasswordSession,game:game,enabled:on}); if(d.status!=="success") throw new Error(d.message); adminLoadGames(); adminLoadLog(); }
+    try{ const d=await apiPost({action:"admin_toggle_game",admin_password: adminPasswordSession, admin_key: adminKeySession,game:game,enabled:on}); if(d.status!=="success") throw new Error(d.message); adminLoadGames(); adminLoadLog(); }
     catch(e){ alert(e.message||"Ошибка"); }
 }
 const _openAdminOrig=openAdminPanel;
