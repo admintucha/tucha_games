@@ -1864,6 +1864,19 @@ main { color:#292929 !important; }
 .cs-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @keyframes csPop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
+<style>
+/* ===== v24: уровни игр ===== */
+.lvl-panel{margin:0 2px 12px;padding:12px 14px;border-radius:18px;background:#fff;border:2px solid rgba(122,108,255,.18);box-shadow:0 5px 14px rgba(73,55,130,.10)}
+.lvl-row{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:950;color:#332900}
+.lvl-row span{font-size:13px;color:#7a6cff}
+.lvl-bar{height:9px;border-radius:99px;background:#ece9ff;margin:9px 0 6px;overflow:hidden}
+.lvl-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7a6cff,#f59e0b);transition:width .4s}
+.lvl-next{font-size:12px;font-weight:850;color:#8d86b8}
+.game-card{position:relative}
+.game-card.locked{filter:grayscale(.75) brightness(.96);opacity:.82}
+.game-card.locked::after{content:attr(data-lock);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:6px 12px;border-radius:999px;background:rgba(40,30,110,.9);color:#fff;font-size:12px;font-weight:950;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#lvl-profile{margin-top:4px;font-size:13px;font-weight:900;color:#7a6cff}
+</style>
 </head>
 
 <body>
@@ -1935,12 +1948,13 @@ main { color:#292929 !important; }
             </div>
             <div class="hub-ic">⚔️</div>
         </div>
-        <div class="hub-sub">Скоро в Tucha</div>
+        <div class="hub-sub">Игры по уровням</div>
+        <div id="lvl-panel" class="lvl-panel"></div>
         <div class="games-grid">
-            <div class="game-card soon" onclick="soonToast()"><img src="./ikonkaraket.png" alt="Ракетка"></div>
-            <div class="game-card soon" onclick="soonToast()"><img src="./dicel.png" alt="Дайс"></div>
-            <div class="game-card soon" onclick="soonToast()"><img src="./apgre.png" alt="Апгрейд"></div>
-            <div class="game-card soon" onclick="soonToast()"><img src="./rulet.png" alt="Рулетка"></div>
+            <div class="game-card" data-game="crash" onclick="openGameScreen('crash')"><img src="./ikonkaraket.png" alt="Ракетка"></div>
+            <div class="game-card" data-game="dice" onclick="openGameScreen('dice')"><img src="./dicel.png" alt="Дайс"></div>
+            <div class="game-card" data-game="roulette" onclick="openGameScreen('roulette')"><img src="./rulet.png" alt="Рулетка"></div>
+            <div class="game-card" data-game="upgrade" onclick="openGameScreen('upgrade')"><img src="./apgre.png" alt="Апгрейд"></div>
         </div>
     </section>
 
@@ -2031,6 +2045,7 @@ main { color:#292929 !important; }
         <div class="panel" style="text-align:center; padding-top:32px;">
             <div id="avatar" style="width:90px; height:90px; margin:0 auto 14px; border-radius:50%; background:linear-gradient(135deg, #f59e0b, #ea580c); font-size:45px; display:flex; align-items:center; justify-content:center; border:3px solid #fff;">👤</div>
             <h2 id="username" style="margin:0; font-size:23px; font-weight:950; color:#332900;">Игрок</h2>
+            <div id="lvl-profile"></div>
             
             <div class="balance" style="display:inline-flex; margin:16px 0 20px;">
                 <span class="balance-icon">$</span>
@@ -2564,6 +2579,7 @@ function loadLocal() {
 }
 
 function switchTab(name) {
+    if (name === "games") { renderGameLevels(); refreshPlayerSettings(); }
     if (name === "wheel") loadWheel();
     if (name === "cases") csInit();
     document.querySelectorAll(".tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + name));
@@ -2571,8 +2587,51 @@ function switchTab(name) {
     haptic();
 }
 
+/* ===== УРОВНИ ИГР: игры открываются по обороту (сумме ставок). Пороги приходят с сервера (GAME_LEVELS в Code.gs) ===== */
+let GAME_LEVELS = {
+    crash:    { level: 1, turnover: 0,  name: "Ракетка" },
+    dice:     { level: 2, turnover: 10, name: "Дайс" },
+    roulette: { level: 3, turnover: 30, name: "Рулетка" },
+    upgrade:  { level: 4, turnover: 80, name: "Апгрейд" }
+};
+let playerTurnover = 0;
+function playerLevelNow() {
+    let lvl = 1;
+    Object.keys(GAME_LEVELS).forEach(k => { const g = GAME_LEVELS[k]; if (playerTurnover + 1e-9 >= g.turnover && g.level > lvl) lvl = g.level; });
+    return lvl;
+}
+function gameUnlocked(id) { const g = GAME_LEVELS[id]; return !g || playerTurnover + 1e-9 >= g.turnover; }
+function lockedToast(id) {
+    const g = GAME_LEVELS[id]; if (!g) return;
+    try { alert(`🔒 «${g.name}» откроется на уровне ${g.level}.\nНужен оборот $${money(g.turnover)} (сумма ставок в играх).\nСейчас у тебя: $${money(playerTurnover)}.`); } catch (e) {}
+    haptic("light");
+}
+function applyTurnover(d) {
+    if (!d) return;
+    if (d.levels && typeof d.levels === "object") GAME_LEVELS = d.levels;
+    if (Number.isFinite(Number(d.turnover))) playerTurnover = Number(d.turnover);
+    renderGameLevels();
+}
+function renderGameLevels() {
+    const lvl = playerLevelNow();
+    document.querySelectorAll("[data-game]").forEach(card => {
+        const g = GAME_LEVELS[card.dataset.game]; if (!g) return;
+        const locked = !gameUnlocked(card.dataset.game);
+        card.classList.toggle("locked", locked);
+        if (locked) card.setAttribute("data-lock", `🔒 Оборот $${money(g.turnover)}`); else card.removeAttribute("data-lock");
+    });
+    const next = Object.keys(GAME_LEVELS).map(k => ({ id: k, ...GAME_LEVELS[k] })).filter(g => playerTurnover + 1e-9 < g.turnover).sort((a, b) => a.turnover - b.turnover)[0];
+    const prevTh = Math.max(0, ...Object.keys(GAME_LEVELS).map(k => GAME_LEVELS[k].turnover).filter(t => t <= playerTurnover + 1e-9));
+    const pct = next ? Math.max(0, Math.min(100, (playerTurnover - prevTh) / (next.turnover - prevTh) * 100)) : 100;
+    const panel = $("lvl-panel");
+    if (panel) panel.innerHTML = `<div class="lvl-row"><b>Уровень ${lvl}</b><span>Оборот $${money(playerTurnover)}</span></div>
+        <div class="lvl-bar"><i style="width:${pct}%"></i></div>
+        <div class="lvl-next">${next ? `До «${esc(next.name)}» осталось $${money(next.turnover - playerTurnover)}` : "Все игры открыты 🎉"}</div>`;
+    const pr = $("lvl-profile"); if (pr) pr.textContent = `Уровень ${lvl} · оборот $${money(playerTurnover)}`;
+}
+
 function openGameScreen(gameId) {
-    if (["crash","dice","upgrade","roulette"].includes(gameId)) { soonToast(); return; }
+    if (GAME_LEVELS[gameId] && !gameUnlocked(gameId)) { lockedToast(gameId); return; }
     $("main-header").style.display = "none";
     $("main-nav").style.display = "none";
     $("main-content").style.display = "none";
@@ -2587,6 +2646,7 @@ function closeGameScreen(gameId) {
     if (gameId === 'pvp' && typeof pvClose === 'function') pvClose();
     if (gameId === 'mines') { minesCloseSheet(); minesCloseWin(); }
     $("screen-" + gameId).classList.remove("active");
+    if (GAME_LEVELS[gameId]) { renderGameLevels(); refreshPlayerSettings(); }
     $("main-header").style.display = "flex";
     $("main-nav").style.display = "flex";
     $("main-content").style.display = "block";
@@ -2624,8 +2684,8 @@ async function refreshPlayerSettings() {
     try {
         const d = await apiPost({ action: "get_settings", userid: userId, username: userName });
         if (d.status === "success") {
-            applyPlayerRtp(d.rtp); applyReferralData(d.referral);
-            const activeRound = (typeof inCrash !== "undefined" && inCrash) || (typeof diceState !== "undefined" && diceState !== "idle") || (typeof towerState !== "undefined" && towerState === "playing") || (typeof minesState !== "undefined" && minesState === "playing") || (typeof upgradeBusy !== "undefined" && upgradeBusy) || (typeof rouletteIsSpinning !== "undefined" && rouletteIsSpinning) || (typeof opening !== "undefined" && opening);
+            applyPlayerRtp(d.rtp); applyReferralData(d.referral); applyTurnover(d);
+            const activeRound = (typeof inCrash !== "undefined" && (inCrash || crashBusy)) || rouletteIsSpinning || upgradeBusy || (typeof diceState !== "undefined" && diceState !== "idle") || (typeof towerState !== "undefined" && towerState === "playing") || (typeof minesState !== "undefined" && minesState === "playing") || (typeof upgradeBusy !== "undefined" && upgradeBusy) || (typeof rouletteIsSpinning !== "undefined" && rouletteIsSpinning) || (typeof opening !== "undefined" && opening);
             if (!activeRound && savesPending === 0 && Date.now() - lastLocalChange > 12000 && Number.isFinite(Number(d.balance)) && Math.abs(Number(d.balance) - balance) > 0.001) { balance = Number(d.balance); updateBalanceUI(); saveLocal(); }
         }
     } catch (e) { console.warn("Не удалось обновить настройки игрока:", e); }
@@ -2655,7 +2715,7 @@ function loadUserData() {
     fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action: "get", userid: userId, username: userName, start_param: getStartParam(), initData: tg?.initData || ""}) })
     .then(res => res.json()).then(data => {
         if(data.status === "success") {
-            balance = parseFloat(data.balance);
+            balance = parseFloat(data.balance); applyTurnover(data);
             let removedTorchFromServer = false;
             if (data.inventory !== undefined) {
                 try {
@@ -2715,9 +2775,10 @@ function logGame(game, bet, win) {
     apiPost({ action: "log_game", game: game, bet: Number(bet) || 0, win: Number(win) || 0 }).catch(() => {});
 }
 
-/* CRASH (RACKET) LOGIC */
-let crashState = "waiting", crashBet = 0, inCrash = false, crashMultiplier = 1, crashTarget = 2;
-let crashTimer = null, crashTick = null, crashHistoryList = [91.9, 86.8, 2.47, 9.75, 1.07];
+/* CRASH (RACKET) — серверная версия: точку краха знает только сервер, браузер лишь рисует полёт */
+let crashState = "waiting", crashBet = 0, inCrash = false, crashBusy = false, crashMultiplier = 1;
+let crashGrowth = 0.08, crashMaxWin = 500, crashFlightStart = 0;
+let crashTick = null, crashPollT = null, crashStartT = null, crashResetT = null, crashHistoryList = [];
 
 function getPillClass(x) {
     if (x < 2) return 'pill-low';
@@ -2725,7 +2786,6 @@ function getPillClass(x) {
     if (x < 10) return 'pill-high';
     return 'pill-epic';
 }
-
 function updateCrashHistoryUI() {
     const cont = $("crash-history");
     cont.innerHTML = "";
@@ -2736,96 +2796,111 @@ function updateCrashHistoryUI() {
         cont.appendChild(d);
     });
 }
-
-function startCrashRound() {
-    clearInterval(crashTimer); clearInterval(crashTick);
-    crashState = "waiting"; crashBet = 0; inCrash = false; crashMultiplier = 1;
+function crashMultAt(ms) { return ms <= 0 ? 1 : Math.floor(Math.exp(crashGrowth * ms / 1000) * 100) / 100; }
+function crashClear() { clearInterval(crashTick); clearInterval(crashPollT); clearTimeout(crashStartT); clearTimeout(crashResetT); }
+function crashBtn(text, bg, disabled) {
+    const b = $("btn-crash-action"); b.textContent = text; b.style.background = bg; b.disabled = !!disabled;
+}
+function crashReset() {
+    crashClear();
+    crashState = "waiting"; crashBet = 0; inCrash = false; crashBusy = false; crashMultiplier = 1;
     $("crash-rocket-img").src = "./rocket.png";
     $("crash-rocket-img").style.transform = "translateY(0px)";
     $("crash-val").textContent = "1.00x";
     $("crash-val").style.color = "#ffffff";
-    $("crash-sub").textContent = "ОЖИДАНИЕ";
-    $("btn-crash-action").disabled = false;
-    $("btn-crash-action").textContent = "Сделать ставку 🚀";
-    $("btn-crash-action").style.background = "linear-gradient(180deg, #4da9ff, #2563eb)";
-    $("crash-players-info").textContent = "Игроков онлайн: " + (Math.floor(Math.random()*15)+5);
-    let seconds = 3;
-    $("crash-sub").textContent = "СТАРТ ЧЕРЕЗ " + seconds + "С";
-    crashTimer = setInterval(() => {
-        seconds--;
-        if (seconds > 0) $("crash-sub").textContent = "СТАРТ ЧЕРЕЗ " + seconds + "С";
-        else { clearInterval(crashTimer); runCrash(); }
-    }, 1000);
+    $("crash-sub").textContent = "ОЖИДАНИЕ СТАВКИ";
+    $("crash-players-info").textContent = "Забирай до краха · ставка до $100";
+    crashBtn("Сделать ставку 🚀", "linear-gradient(180deg, #4da9ff, #2563eb)", false);
 }
+function startCrashRound() { crashReset(); }
 
 function runCrash() {
-    crashState = "flying"; crashMultiplier = 1;
-    const r = Math.random();
-    const crashRtp = Math.max(0.05, effectiveRtp("crash"));
-    const lowCut = Math.min(1, 0.65 / crashRtp);
-    const midCut = Math.min(1, 0.90 / crashRtp);
-    if (r < lowCut) crashTarget = 1.05 + Math.random()*0.95;
-    else if (r < midCut) crashTarget = 2.0 + Math.random()*2.5;
-    else crashTarget = 4.5 + Math.random()*15.0;
-
+    crashState = "flying"; crashFlightStart = Date.now();
     $("crash-rocket-img").src = "./rocket.gif.gif";
     $("crash-sub").textContent = "ПОЛЁТ";
-    $("btn-crash-action").disabled = !inCrash;
+    crashBtn("ЗАБРАТЬ $" + money(crashBet), "linear-gradient(135deg, #16a34a, #059669)", false);
     crashTick = setInterval(() => {
-        crashMultiplier += 0.01;
+        crashMultiplier = Math.max(1, crashMultAt(Date.now() - crashFlightStart));
         $("crash-val").textContent = crashMultiplier.toFixed(2) + "x";
-        $("crash-val").style.color = "#ffffff";
-        let floatY = Math.sin(Date.now() / 150) * 8;
-        $("crash-rocket-img").style.transform = `translateY(${floatY}px)`;
-        if (inCrash) {
-            $("btn-crash-action").textContent = "ЗАБРАТЬ $" + money(crashBet * crashMultiplier);
-            $("btn-crash-action").style.background = "linear-gradient(135deg, #16a34a, #059669)";
-        }
-        if (crashMultiplier >= crashTarget) crashEnd();
-    }, 80);
+        $("crash-rocket-img").style.transform = `translateY(${Math.sin(Date.now() / 150) * 8}px)`;
+        if (!crashBusy) $("btn-crash-action").textContent = "ЗАБРАТЬ $" + money(Math.min(crashMaxWin, Math.floor(crashBet * crashMultiplier * 100) / 100));
+        if (crashBet * crashMultiplier >= crashMaxWin) crashCashout();   // потолок выплаты — забираем автоматически
+    }, 50);
+    crashPollT = setInterval(crashPoll, 1200);
 }
-
-function crashEnd() {
-    clearInterval(crashTick); crashState = "crashed";
+// раз в ~1 с спрашиваем сервер: не разбилась ли ракета (точку краха он раскрывает только после краха)
+async function crashPoll() {
+    if (crashBusy || crashState !== "flying") return;
+    try {
+        const d = await apiPost({ action: "crash_status" });
+        if (crashBusy || crashState !== "flying") return;
+        if (d.status === "success" && d.crashed) crashEnd(d.point);
+    } catch (e) { /* сеть моргнула — спросим в следующий раз */ }
+}
+function crashEnd(point) {
+    crashClear(); crashState = "crashed"; crashBusy = false;
+    const p = Number(point);
     $("crash-rocket-img").src = "./rocket.png";
     $("crash-rocket-img").style.transform = "translateY(0px)";
-    $("crash-val").textContent = crashTarget.toFixed(2) + "x";
+    $("crash-val").textContent = p >= 1 ? p.toFixed(2) + "x" : "КРАШ";
     $("crash-val").style.color = "#e11d48";
     $("crash-sub").textContent = "КРАШ";
-    crashHistoryList.unshift(Number(crashTarget.toFixed(2)));
-    if (crashHistoryList.length > 7) crashHistoryList.pop();
-    updateCrashHistoryUI();
-    if (inCrash) { logGame("crash", crashBet, 0); inCrash = false; notify("error"); }
-    $("btn-crash-action").disabled = true;
-    $("btn-crash-action").textContent = "РАУНД ЗАВЕРШЁН";
-    $("btn-crash-action").style.background = "#94a3b8";
-    setTimeout(startCrashRound, 3000);
+    if (p >= 1) { crashHistoryList.unshift(p); if (crashHistoryList.length > 7) crashHistoryList.pop(); updateCrashHistoryUI(); }
+    if (inCrash) { inCrash = false; playerTurnover += crashBet; renderGameLevels(); notify("error"); }
+    crashBtn("РАУНД ЗАВЕРШЁН", "#94a3b8", true);
+    crashResetT = setTimeout(crashReset, 3000);
 }
-
 function handleCrashAction() {
+    if (crashBusy) return;
     if (crashState === "waiting") { $("bet-modal-crash").classList.add("active"); haptic(); return; }
-    if (crashState === "flying" && inCrash) {
-        const win = Math.floor(crashBet * crashMultiplier * 100) / 100;
-        inCrash = false;
-        balance += win;
-        updateBalanceUI();
-        saveUserData(); logGame("crash", crashBet, win);
+    if (crashState === "flying" && inCrash) crashCashout();
+}
+async function crashCashout() {
+    if (!inCrash || crashBusy || crashState !== "flying") return;
+    crashBusy = true;
+    const claimed = crashMultiplier;
+    clearInterval(crashTick); clearInterval(crashPollT);
+    crashBtn("ЗАБИРАЕМ…", "#f59e0b", true);
+    try {
+        const d = await apiPost({ action: "crash_cashout", mult: claimed });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось забрать выигрыш.");
+        if (d.crashed) { crashEnd(d.point); return; }          // ракета успела разбиться
+        balance = Number(d.balance) || balance; updateBalanceUI(); saveLocal();
+        crashState = "done"; inCrash = false; crashBusy = false;
+        playerTurnover += crashBet; renderGameLevels();
+        $("crash-val").textContent = Number(d.mult).toFixed(2) + "x";
+        $("crash-sub").textContent = "ВЫ ЗАБРАЛИ";
+        $("crash-rocket-img").src = "./rocket.png";
+        crashBtn("ВЫИГРЫШ $" + money(d.payout), "linear-gradient(135deg, #16a34a, #059669)", true);
         notify("success");
-        $("btn-crash-action").disabled = true;
-        $("btn-crash-action").textContent = "ВЫИГРЫШ $" + money(win);
+        crashResetT = setTimeout(crashReset, 2500);
+    } catch (e) {
+        crashBusy = false;
+        alert(e.message || "Ошибка. Баланс обновится после перезапуска игры.");
+        crashEnd(null);
     }
 }
-
-function confirmCrashBet() {
+async function confirmCrashBet() {
+    if (crashBusy || crashState !== "waiting") return;
     const bet = Math.round(Number($("crash-bet-input").value) * 100) / 100;
-    if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств или неверная сумма!"); return; }
-    balance -= bet; crashBet = bet; inCrash = true;
-    updateBalanceUI(); saveUserData();
+    if (!isFinite(bet) || bet < 0.01 || bet > balance) { alert("Недостаточно средств или неверная сумма!"); return; }
     $("bet-modal-crash").classList.remove("active");
-    $("btn-crash-action").disabled = true;
-    $("btn-crash-action").textContent = "СТАВКА ПРИНЯТА";
-    $("btn-crash-action").style.background = "#f59e0b";
-    haptic("medium");
+    crashBusy = true; crashBtn("ПРИНИМАЕМ СТАВКУ…", "#f59e0b", true);
+    try {
+        const d = await apiPost({ action: "crash_start", bet: bet });
+        if (d.status !== "success") throw new Error(d.message || "Сервер не принял ставку.");
+        balance = Number(d.balance); updateBalanceUI(); saveLocal();
+        crashBet = bet; inCrash = true; crashBusy = false;
+        crashGrowth = Number(d.growth) || 0.08; crashMaxWin = Number(d.max_win) || 500;
+        crashState = "countdown";
+        $("crash-sub").textContent = "СТАРТ…";
+        crashBtn("СТАВКА ПРИНЯТА", "#f59e0b", true);
+        crashStartT = setTimeout(runCrash, Number(d.delay_ms) || 1500);
+        haptic("medium");
+    } catch (e) {
+        crashBusy = false; crashBtn("Сделать ставку 🚀", "linear-gradient(180deg, #4da9ff, #2563eb)", false);
+        alert(e.message || "Ошибка ставки."); notify("error");
+    }
 }
 
 /* MINES v3 — игру считает сервер, браузер только рисует */
@@ -3048,36 +3123,38 @@ function updateDiceUI() {
     haptic("light");
 }
 
-function playDice() {
+async function playDice() {
     if (diceState === "rolling") return;
-    const bet = Number($("dice-bet").value);
+    const bet = Math.round(Number($("dice-bet").value) * 100) / 100;
     if (!isFinite(bet) || bet <= 0 || bet > balance) { alert("Недостаточно средств!"); notify("error"); return; }
-    balance -= bet; updateBalanceUI(); diceState = "rolling";
+    const prev = balance;
+    balance = Math.round((prev - bet) * 100) / 100; updateBalanceUI(); diceState = "rolling";
     $("btn-dice-action").disabled = true; $("btn-dice-action").textContent = "БРОСОК...";
-    const finalRoll = (Math.random() * 100);
-    const isWin = finalRoll <= rtpChance(diceChance, "dice");
-    let ticks = 0;
-    const anim = setInterval(() => {
+    $("dice-result").style.color = "";
+    const reqId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + "-" + Math.random().toString(36).slice(2));
+    const anim = setInterval(() => {                       // картинка «крутится», пока сервер считает
         const rr = Math.random() * 100; $("dice-result").textContent = rr.toFixed(2);
         const mk = $("dice-marker"); mk.className = "dice-marker show"; mk.style.left = rr + "%"; mk.textContent = Math.round(rr);
-        ticks++;
-        if (ticks > 15) {
-            clearInterval(anim);
-            $("dice-result").textContent = finalRoll.toFixed(2);
-            const mk = $("dice-marker"); mk.style.left = finalRoll + "%"; mk.textContent = finalRoll.toFixed(1); mk.className = "dice-marker show " + (isWin ? "win" : "lose");
-            if (isWin) {
-                const winAmount = Math.floor(bet * diceMult * 100) / 100;
-                balance += winAmount;
-                $("dice-result").style.color = "#16a34a"; $("dice-result-sub").textContent = `ВЫИГРЫШ +$${winAmount.toFixed(2)}`;
-                notify("success");
-            } else {
-                $("dice-result").style.color = "#ef4444"; $("dice-result-sub").textContent = `ПРОИГРЫШ -$${bet.toFixed(2)}`;
-                notify("error");
-            }
-            updateBalanceUI(); saveUserData(); logGame("dice", bet, isWin ? Math.floor(bet * diceMult * 100) / 100 : 0);
-            diceState = "idle"; $("btn-dice-action").disabled = false; $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
-        }
     }, 50);
+    const t0 = Date.now();
+    try {
+        const d = await apiPost({ action: "dice_play", request_id: reqId, bet: bet, chance: diceChance });
+        if (d.status !== "success") throw new Error(d.message || "Сервер не принял ставку.");
+        const wait = 800 - (Date.now() - t0); if (wait > 0) await new Promise(r => setTimeout(r, wait));
+        clearInterval(anim);
+        const roll = Number(d.roll), isWin = !!d.win;
+        $("dice-result").textContent = roll.toFixed(2);
+        const mk = $("dice-marker"); mk.style.left = roll + "%"; mk.textContent = roll.toFixed(1); mk.className = "dice-marker show " + (isWin ? "win" : "lose");
+        balance = Number(d.balance); playerTurnover += bet; renderGameLevels();
+        if (isWin) { $("dice-result").style.color = "#16a34a"; $("dice-result-sub").textContent = `ВЫИГРЫШ +$${money(d.payout)}`; notify("success"); }
+        else { $("dice-result").style.color = "#ef4444"; $("dice-result-sub").textContent = `ПРОИГРЫШ -$${money(bet)}`; notify("error"); }
+        updateBalanceUI(); saveLocal();
+    } catch (e) {
+        clearInterval(anim); balance = prev; updateBalanceUI();
+        alert(e.message || "Ошибка дайса."); notify("error");
+    } finally {
+        diceState = "idle"; $("btn-dice-action").disabled = false; $("btn-dice-action").textContent = "СДЕЛАТЬ СТАВКУ";
+    }
 }
 
 /* UPGRADE LOGIC */
@@ -3573,29 +3650,30 @@ function selectRouletteNum(value, button) {
     haptic("light");
 }
 
-function spinRoulette() {
+async function spinRoulette() {
     if (rouletteIsSpinning) return;
-    const bet = Number($("roulette-bet").value);
+    const bet = Math.round(Number($("roulette-bet").value) * 100) / 100;
     if (!Number.isFinite(bet) || bet < 0.01 || bet > balance) { alert("Проверь сумму ставки и баланс!"); notify("error"); return; }
+    if (!getRouletteWinningNumbers().length) { alert("Выбери ставку перед вращением."); return; }
 
-    const winningOptions = getRouletteWinningNumbers();
-    if (!winningOptions.length) { alert("Выбери ставку перед вращением."); return; }
-    // Каждый раунд выбирает сектор независимо через crypto.getRandomValues; серии одного цвета возможны и не являются подстройкой.
-    const baseChance = winningOptions.length / ROULETTE_NUMBERS.length;
-    const adjustedChance = Math.max(0, Math.min(1, baseChance * effectiveRtp("roulette")));
-    const isWin = secureRandomInt(1000000) < Math.round(adjustedChance * 1000000);
-    const outcomePool = isWin
-        ? ROULETTE_NUMBERS.filter(value => winningOptions.some(w => String(w) === String(value)))
-        : ROULETTE_NUMBERS.filter(value => !winningOptions.some(w => String(w) === String(value)));
-    const winningNum = outcomePool[secureRandomInt(outcomePool.length)];
-    const winningIdx = ROULETTE_NUMBERS.findIndex(value => String(value) === String(winningNum));
-    const multiplier = ROULETTE_RTP_FACTOR / winningOptions.length;
-
-    balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
-    updateBalanceUI();
-    saveUserData();
     rouletteIsSpinning = true;
     $("btn-roulette-action").disabled = true;
+    $("btn-roulette-action").textContent = "ПРИНИМАЕМ СТАВКУ…";
+    const prev = balance;
+    balance = Math.round((prev - bet) * 100) / 100; updateBalanceUI();
+    const reqId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + "-" + Math.random().toString(36).slice(2));
+    let d;
+    try {
+        // результат (сектор) выбирает СЕРВЕР, браузер только крутит колесо до нужного сектора
+        d = await apiPost({ action: "roulette_play", request_id: reqId, bet: bet, category: rouletteCategory, option: String(rouletteSelectedOption) });
+        if (d.status !== "success") throw new Error(d.message || "Сервер не принял ставку.");
+    } catch (e) {
+        balance = prev; updateBalanceUI(); rouletteIsSpinning = false;
+        $("btn-roulette-action").disabled = false; $("btn-roulette-action").textContent = "СДЕЛАТЬ СТАВКУ";
+        alert(e.message || "Ошибка рулетки."); notify("error"); return;
+    }
+    const isWin = !!d.win, winningNum = d.number, winningIdx = Number(d.index);
+
     $("btn-roulette-action").textContent = "ВРАЩЕНИЕ...";
     $("roulette-status").textContent = "Шарик вращается...";
     $("roulette-status").style.color = "#332900";
@@ -3621,11 +3699,9 @@ function spinRoulette() {
         $("roulette-stage")?.classList.remove("spinning");
         $("btn-roulette-action").disabled = false;
         $("btn-roulette-action").textContent = "СДЕЛАТЬ СТАВКУ";
-
+        balance = Number(d.balance); playerTurnover += bet; renderGameLevels();
         if (isWin) {
-            const winAmount = Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100;
-            balance = Math.round((balance + winAmount + Number.EPSILON) * 100) / 100;
-            $("roulette-status").textContent = `🎉 ВЫПАЛО ${winningNum}! ВЫИГРЫШ +$${money(winAmount)}`;
+            $("roulette-status").textContent = `🎉 ВЫПАЛО ${winningNum}! ВЫИГРЫШ +$${money(d.payout)}`;
             $("roulette-status").style.color = "#16a34a";
             notify("success");
         } else {
@@ -3633,11 +3709,9 @@ function spinRoulette() {
             $("roulette-status").style.color = "#dc2626";
             notify("error");
         }
-        updateBalanceUI();
-        saveUserData(); logGame("roulette", bet, isWin ? Math.floor((bet * multiplier + Number.EPSILON) * 100) / 100 : 0);
+        updateBalanceUI(); saveLocal();
     }, 5350);
 }
-
 
 /* ===== КОЛЕСО УДАЧИ ===== */
 let wheelData = [], wheelBusy = false, wheelRot = 0, wheelTimer = null, wheelNextAt = 0;
@@ -4472,6 +4546,7 @@ loadUserData();
 buildMines();
 updateCrashHistoryUI();
 startCrashRound();
+renderGameLevels();
 updateDiceUI();
 updateUpgradeUI();
 document.querySelectorAll("#upgrade-speed button").forEach(b => b.classList.toggle("active", b.dataset.s === upgradeSpeed));
