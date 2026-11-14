@@ -1926,6 +1926,51 @@ main { color:#292929 !important; }
 .cs-prizes .cs-tile{position:relative;height:100px}
 .cs-prizes .cs-tile em{position:absolute;right:6px;top:5px;font-style:normal;font-size:10px;font-weight:950;color:#9c841a;background:rgba(255,255,255,.85);padding:1px 6px;border-radius:99px}
 </style>
+<style>
+/* === v25: тёмный 3D PvP === */
+.hub-pvp-banner{background:#0a2a8a !important;box-shadow:0 14px 30px rgba(20,80,255,.45),0 0 0 2px rgba(120,180,255,.35) !important}
+#screen-pvp{background:radial-gradient(ellipse 100% 55% at 50% 0%,#12307a 0%,#0a1638 50%,#060b1f 100%) !important}
+#screen-pvp .game-top-bar{background:rgba(6,11,31,.92) !important;border-bottom:1px solid rgba(90,150,255,.35) !important;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+#screen-pvp .game-back-btn{color:#9cc8ff !important}
+#screen-pvp .pv-kicker{color:#5ea2ff !important;text-shadow:0 0 10px rgba(60,140,255,.7)}
+#screen-pvp .pv-title{color:#fff !important;text-shadow:0 3px 0 #0b2a7a,0 6px 16px rgba(30,100,255,.6)}
+#screen-pvp .pv-round-pill,#screen-pvp .pv-status{background:linear-gradient(180deg,#152a63,#0b1740) !important;border:1px solid #2f5bc4 !important;color:#bcd6ff !important;box-shadow:0 5px 0 #050c26,0 10px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+#screen-pvp .pv-round-pill b{color:#7cb8ff !important}
+#screen-pvp .pv-status.win{background:linear-gradient(180deg,#0f5a3b,#093a27) !important;color:#9ff5c8 !important;border-color:#2fd48a !important}
+#screen-pvp .pv-status.lose{background:linear-gradient(180deg,#5a1530,#3a0b1f) !important;color:#ffb9c8 !important;border-color:#e0476b !important}
+#screen-pvp .pv-wheel-card{background:linear-gradient(160deg,#16306e 0%,#0a1740 55%,#070f2c 100%) !important;border:1px solid #3a68d6 !important;border-radius:26px;box-shadow:0 8px 0 #040a22,0 18px 34px rgba(0,0,0,.6),inset 0 2px 0 rgba(255,255,255,.14),inset 0 -20px 40px rgba(0,0,0,.35)}
+#screen-pvp .pv-wheelbox{perspective:900px}
+#screen-pvp .pv-wheelbox canvas{box-shadow:0 14px 0 #050c28,0 24px 36px rgba(0,0,0,.7),0 0 0 6px #1d3f9e,0 0 0 9px #4d8dff,0 0 28px 10px rgba(60,130,255,.45) !important}
+#screen-pvp .pv-pointer{border-top-color:#7cc4ff !important;filter:drop-shadow(0 0 8px #3b8bff) drop-shadow(0 4px 3px rgba(0,0,0,.6)) !important}
+#screen-pvp .pv-center{background:radial-gradient(circle at 35% 28%,#3b6fe0,#12328a 62%,#0a1c55) !important;border:4px solid #7cb8ff !important;box-shadow:0 6px 0 #050c28,0 10px 22px rgba(0,0,0,.65),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -8px 14px rgba(0,0,0,.4) !important}
+#screen-pvp .pv-center small{color:#a9ceff !important}
+#screen-pvp .pv-center b{color:#fff !important;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+#screen-pvp .pv-timer{color:#d6e6ff !important;text-shadow:0 2px 8px rgba(60,130,255,.6)}
+#screen-pvp .pv-boost{color:#ffb84d !important}
+#screen-pvp .pv-bet,#screen-pvp .pv-box{background:linear-gradient(180deg,#112456,#0a1738) !important;border:1px solid #2c54b8 !important;border-radius:20px;box-shadow:0 6px 0 #040a22,0 14px 26px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)}
+#screen-pvp .pv-bet-top span,#screen-pvp .pv-box-heading span:first-child,#screen-pvp .pv-box-title{color:#8fbaff !important}
+#screen-pvp .pv-min-label,#screen-pvp .pv-box-heading span:last-child{color:#5f86c9 !important}
+#screen-pvp .pv-chips button,#screen-pvp .pv-bet-row .pv-adjust,#screen-pvp .pv-emos button{background:linear-gradient(180deg,#2450b5,#173a8a) !important;border:1px solid #5b95ff !important;color:#fff !important;box-shadow:0 3px 0 #0a1c55,0 6px 10px rgba(0,0,0,.4);border-radius:12px}
+#screen-pvp .pv-chips button:active,#screen-pvp .pv-bet-row .pv-adjust:active,#screen-pvp .pv-emos button:active{transform:translateY(3px);box-shadow:0 0 0 #0a1c55}
+#screen-pvp .pv-bet-row input{background:#050d26 !important;border:1px solid #3a68d6 !important;color:#fff !important;box-shadow:inset 0 3px 8px rgba(0,0,0,.6)}
+#screen-pvp .pv-go{color:#fff !important;background:linear-gradient(180deg,#4d9bff,#1f5ce0 55%,#1745b8) !important;border-radius:18px;text-shadow:0 2px 0 rgba(0,0,0,.35);box-shadow:0 7px 0 #0b2a7a,0 16px 26px rgba(20,90,255,.5),inset 0 2px 0 rgba(255,255,255,.4) !important}
+#screen-pvp .pv-go:active{transform:translateY(5px);box-shadow:0 2px 0 #0b2a7a,0 6px 12px rgba(20,90,255,.4) !important}
+#screen-pvp .pv-go:disabled{background:linear-gradient(180deg,#44557f,#2d3a5c) !important;box-shadow:0 5px 0 #121a33 !important}
+#screen-pvp .pv-note{color:#7ea6e8 !important}
+#screen-pvp .pv-row{background:linear-gradient(180deg,#14295f,#0c1a43) !important;border:1px solid #284a9e !important;color:#e4efff !important;box-shadow:0 3px 0 #050c26}
+#screen-pvp .pv-row .a{color:#ffd86b !important}
+#screen-pvp .pv-row .p{color:#8fb4f5 !important}
+#screen-pvp .pv-row.me{outline:2px solid #5ea2ff !important}
+#screen-pvp .pv-row.won{background:linear-gradient(180deg,#0f5a3b,#093a27) !important;outline:2px solid #2fd48a !important}
+#screen-pvp .pv-empty{color:#6f93d6 !important}
+.pv-av{border-color:#cfe3ff !important}
+/* вагер */
+.promo-wager-tag{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:8px;background:#1d4ed8;color:#fff;font-weight:900;font-size:11px}
+.wager-box{margin-top:10px;padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,#e8f1ff,#cfe0ff);border:2px solid #7aa7ff;color:#12327a;font-weight:900;font-size:13px;display:none}
+.wager-box.on{display:block}
+.wager-bar{height:8px;border-radius:99px;background:#fff;margin-top:6px;overflow:hidden}
+.wager-bar i{display:block;height:100%;background:linear-gradient(90deg,#3b82f6,#1d4ed8);border-radius:99px;transition:width .3s}
+</style>
 </head>
 
 <body>
@@ -1981,14 +2026,7 @@ main { color:#292929 !important; }
     <section id="tab-games" class="tab active">
         <div class="games-header">Игры</div>
         <div class="hub-hero hub-banner" onclick="openGameScreen('mines')"><img src="./minuuu.png" alt="Мины"></div>
-        <div class="hub-pvp" onclick="openGameScreen('pvp')">
-            <div class="hub-txt">
-                <span class="hub-badge live">● ОНЛАЙН</span>
-                <h3>PvP ДЖЕКПОТ</h3>
-                <p>Играй против других игроков в реальном времени</p>
-            </div>
-            <div class="hub-ic">⚔️</div>
-        </div>
+        <div class="hub-hero hub-banner hub-pvp-banner" onclick="openGameScreen('pvp')"><img src="./pvvvp.png" alt="PvP"></div>
         <div class="hub-sub">Игры по уровням</div>
         <div id="lvl-panel" class="lvl-panel"></div>
         <div class="games-grid">
@@ -2074,6 +2112,7 @@ main { color:#292929 !important; }
             <input id="promo-code-input" class="promo-input" type="text" maxlength="24" placeholder="ВВЕДИ КОД" autocomplete="off" autocapitalize="characters">
             <button id="promo-redeem-btn" class="primary gold" style="margin-top:12px;" onclick="redeemPromoCode()">АКТИВИРОВАТЬ</button>
             <div id="promo-status" class="promo-status"></div>
+            <div id="wager-box" class="wager-box"><span id="wager-text"></span><div class="wager-bar"><i id="wager-fill"></i></div></div>
         </div>
         <div class="panel" style="margin-top:14px;font-size:12px;color:#80621b;font-weight:800;line-height:1.5;">
             Один промокод можно активировать только один раз на аккаунт. Если код ограничен по количеству активаций или сроку действия, после окончания лимита он перестанет работать.
@@ -2522,6 +2561,7 @@ main { color:#292929 !important; }
                 <input id="admin-promo-code" type="text" maxlength="24" placeholder="КОД (например TUCHA10)" style="text-transform:uppercase">
                 <select id="admin-promo-type"><option value="balance">На баланс — бонусные средства</option></select>
                 <input id="admin-promo-amount" type="number" min="0.01" step="0.01" value="1" placeholder="Сумма награды ($)">
+                <input id="admin-promo-wager" type="number" min="0" max="1000" step="0.5" value="0" placeholder="Вагер ×N (0 = без вагера)">
                 <input id="admin-promo-limit" type="number" min="0" step="1" value="100" placeholder="Лимит активаций (0 = без лимита)">
                 <label>Дата окончания (необязательно)</label>
                 <input id="admin-promo-expiry" type="date">
@@ -2669,6 +2709,7 @@ function applyTurnover(d) {
     if (!d) return;
     if (d.levels && typeof d.levels === "object") GAME_LEVELS = d.levels;
     if (Number.isFinite(Number(d.turnover))) playerTurnover = Number(d.turnover);
+    if (d.wager_left !== undefined) { wagerLeft = Number(d.wager_left) || 0; if (typeof updateWagerUI === "function") updateWagerUI(); }
     renderGameLevels();
 }
 function renderGameLevels() {
@@ -2730,6 +2771,14 @@ async function apiPost(payload) {
     const data = await response.json();
     if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
     return data;
+}
+let wagerLeft = 0, wagerTotal = 0;
+function updateWagerUI() {
+    const b = $("wager-box"); if (!b) return;
+    if (wagerLeft > 0.004) { wagerTotal = Math.max(wagerTotal, wagerLeft); b.classList.add("on");
+        $("wager-text").textContent = "Осталось отыграть по промокоду: $" + money(wagerLeft);
+        $("wager-fill").style.width = Math.max(0, Math.min(100, (1 - wagerLeft / wagerTotal) * 100)) + "%";
+    } else { wagerTotal = 0; b.classList.remove("on"); }
 }
 function applyReferralData(data) {
     if (!data) return;
@@ -4153,7 +4202,7 @@ async function redeemPromoCode(){
         const d=await apiPost({action:"redeem_promo",code:code});
         if(d.status!=="success")throw new Error(d.message||"Промокод не сработал.");
         balance=Number(d.balance)||balance;updateBalanceUI();saveLocal();
-        status.style.color="#15803d";status.textContent=`Промокод активирован! Начислено +$${money(d.reward)}.`;
+        status.style.color="#15803d";status.textContent=`Промокод активирован! Начислено +$${money(d.reward)}.`+(Number(d.wager_added)>0?` Нужно отыграть $${money(d.wager_added)} (вагер ×${d.wager}).`:"");wagerLeft=Number(d.wager_left)||0;updateWagerUI();
         input.value="";notify("success");
     }catch(e){status.style.color="#dc2626";status.textContent=e.message||"Ошибка активации.";notify("error");}
     finally{button.disabled=false;button.textContent="АКТИВИРОВАТЬ";}
@@ -4166,7 +4215,7 @@ async function fetchAdminPromos(){
         if(d.status!=="success")throw new Error(d.message||"Не удалось загрузить промокоды.");
         const promos=d.promos||[];
         box.innerHTML=promos.length?promos.map(p=>`<div class="admin-promo-row">
-            <div><b>${p.code}</b><div>${p.type==="deposit"?"Промо-пополнение":"Бонус на баланс"} · $${money(p.amount)}</div><div>Использовано: ${p.used}${Number(p.max_uses)>0?"/"+p.max_uses:"/∞"} · ${p.expires_at||"Без срока"}</div></div>
+            <div><b>${p.code}</b><div>${p.type==="deposit"?"Промо-пополнение":"Бонус на баланс"} · $${money(p.amount)}</div><div>${Number(p.wager)>0?`<span class="promo-wager-tag">вагер ×${p.wager}</span>`:""}<div>Использовано: ${p.used}${Number(p.max_uses)>0?"/"+p.max_uses:"/∞"} · ${p.expires_at||"Без срока"}</div></div></div>
             <button type="button" onclick="adminTogglePromo('${p.code}',${!p.active})" style="border:0;border-radius:9px;padding:8px 10px;font-weight:900;color:white;background:${p.active?"#dc2626":"#16a34a"}">${p.active?"ОТКЛЮЧИТЬ":"ВКЛЮЧИТЬ"}</button>
             <button type="button" onclick="adminDeletePromo('${p.code}')" style="border:0;border-radius:9px;padding:8px 10px;margin-left:6px;font-weight:900;color:white;background:#475569">🗑</button>
         </div>`).join(""):'<div style="font-size:12px;color:#80621b;">Промокодов пока нет.</div>';
@@ -4177,7 +4226,7 @@ async function adminCreatePromo(){
     try{
         const d=await apiPost({action:"admin_create_promo",admin_password: adminPasswordSession, admin_key: adminKeySession,
             code:$("admin-promo-code").value,type:$("admin-promo-type").value,
-            amount:Number($("admin-promo-amount").value),max_uses:Number($("admin-promo-limit").value),
+            amount:Number($("admin-promo-amount").value),max_uses:Number($("admin-promo-limit").value),wager:Number($("admin-promo-wager").value)||0,
             expires_at:$("admin-promo-expiry").value});
         if(d.status!=="success")throw new Error(d.message||"Не удалось создать промокод.");
         status.style.color="#15803d";status.textContent="Промокод создан.";
@@ -4559,9 +4608,9 @@ function pvDraw(r) {
     c.width = S * dpr; c.height = S * dpr; c.style.width = S + "px"; c.style.height = S + "px";
     const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, S, S);
     const cx = S / 2, R = S * 0.42, TAU = Math.PI * 2;
-    x.beginPath(); x.arc(cx, cx, S * 0.5, 0, TAU); x.fillStyle = "#fff9d6"; x.fill();   // подложка под аватарки
+    x.beginPath(); x.arc(cx, cx, S * 0.5, 0, TAU); x.fillStyle = "#0a1a4a"; x.fill();   // подложка под аватарки
     const segs = []; let acc = 0;
-    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, TAU); x.fillStyle = "#94a3b8"; x.fill(); }
+    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, TAU); x.fillStyle = "#26427f"; x.fill(); }
     else r.players.forEach(p => {
         const f0 = acc / r.total, f1 = (acc + p.amount) / r.total; acc += p.amount;
         const a0 = -Math.PI / 2 + f0 * TAU, a1 = -Math.PI / 2 + f1 * TAU, dim = wid && String(p.userid) !== wid;
@@ -4570,9 +4619,9 @@ function pvDraw(r) {
         x.beginPath(); x.moveTo(cx, cx); x.arc(cx, cx, R, a0, a1); x.closePath(); x.fillStyle = p.color; x.fill();
         const g = x.createRadialGradient(cx, cx, R * 0.2, cx, cx, R);   // объём: светлее у центра, темнее к краю
         g.addColorStop(0, "rgba(255,255,255,.28)"); g.addColorStop(1, "rgba(0,0,0,.14)");
-        x.fillStyle = g; x.fill(); x.lineWidth = 2; x.strokeStyle = "#fff"; x.stroke(); x.restore();
+        x.fillStyle = g; x.fill(); x.lineWidth = 2.5; x.strokeStyle = "#0a1740"; x.stroke(); x.restore();
     });
-    x.beginPath(); x.arc(cx, cx, R + 3, 0, TAU); x.lineWidth = 6; x.strokeStyle = "#fde68a"; x.stroke();
+    x.beginPath(); x.arc(cx, cx, R + 3, 0, TAU); x.lineWidth = 6; x.strokeStyle = "#5ea2ff"; x.stroke();
     segs.forEach(sg => {   // твоя зона подсвечена, даже если она крошечная (минимум ~4° дуги)
         if (String(sg.p.userid) !== me) return;
         const mid = (sg.a0 + sg.a1) / 2, half = Math.max((sg.a1 - sg.a0) / 2, 0.035);
