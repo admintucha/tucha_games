@@ -1877,6 +1877,25 @@ main { color:#292929 !important; }
 .game-card.locked::after{content:attr(data-lock);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:6px 12px;border-radius:999px;background:rgba(40,30,110,.9);color:#fff;font-size:12px;font-weight:950;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 #lvl-profile{margin-top:4px;font-size:13px;font-weight:900;color:#7a6cff}
 </style>
+<style>
+/* ===== v25: кейсы — картинки, рулетка в стиле референса ===== */
+.cs-ic img{max-height:92px;max-width:100%;object-fit:contain;display:block;margin:0 auto}
+.cs-stage{position:relative;margin:4px -6px 8px;padding:6px 0 4px}
+.cs-pointer{position:absolute;left:50%;top:-2px;transform:translateX(-50%);z-index:20;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:15px solid #16a34a;filter:drop-shadow(0 3px 3px rgba(22,163,74,.45))}
+.cs-reel2{position:relative;overflow:hidden;height:150px;border-radius:26px;background:radial-gradient(120% 140% at 50% 0%,#fff6c9 0%,#ffe27a 55%,#ffd34d 100%);border:3px solid #fff;box-shadow:inset 0 0 0 2px #f0d84a,0 8px 20px rgba(120,80,10,.18)}
+.cs-reel2::before,.cs-reel2::after{content:"";position:absolute;top:0;bottom:0;width:60px;z-index:15;pointer-events:none}
+.cs-reel2::before{left:0;background:linear-gradient(90deg,rgba(255,226,122,.95),rgba(255,226,122,0))}
+.cs-reel2::after{right:0;background:linear-gradient(270deg,rgba(255,226,122,.95),rgba(255,226,122,0))}
+.cs-reel2 .cs-reel-track{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;gap:12px;padding:0 8px;will-change:transform}
+.cs-reel2 .cs-tile{flex:0 0 92px;height:116px;border-radius:22px;background:linear-gradient(160deg,#fff,#fff3b8);border:2px solid #f0d84a;box-shadow:0 8px 16px rgba(105,65,8,.22);will-change:transform}
+.cs-reel2 .cs-tile.cs-win{box-shadow:0 0 0 4px #16a34a,0 0 26px rgba(22,163,74,.75);animation:csWin .5s ease-out both}
+@keyframes csWin{0%{filter:brightness(1)}50%{filter:brightness(1.25)}100%{filter:brightness(1)}}
+.cs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:6px 2px 12px}
+.cs-head .cs-title{margin:0}
+.cs-caseimg{width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 8px 8px rgba(105,65,8,.3));flex:0 0 auto}
+.cs-prizes .cs-tile{position:relative;height:100px}
+.cs-prizes .cs-tile em{position:absolute;right:6px;top:5px;font-style:normal;font-size:10px;font-weight:950;color:#9c841a;background:rgba(255,255,255,.85);padding:1px 6px;border-radius:99px}
+</style>
 </head>
 
 <body>
@@ -1967,9 +1986,8 @@ main { color:#292929 !important; }
         </div>
         <div id="cs-detail" style="display:none">
             <button class="case-back" onclick="csBack()">← Все кейсы</button>
-            <div class="cs-preview" id="cs-preview"></div>
-            <div class="cs-title" id="cs-title"></div>
-            <div class="cs-reel" id="cs-reel" style="display:none"><div class="cs-reel-mark"></div><div class="cs-reel-track" id="cs-track"></div></div>
+            <div class="cs-stage"><div class="cs-pointer"></div><div class="cs-reel2" id="cs-reel"><div class="cs-reel-track" id="cs-track"></div></div></div>
+            <div class="cs-head"><div class="cs-title" id="cs-title"></div><img id="cs-caseimg" class="cs-caseimg" alt=""></div>
             <div class="cs-prizes" id="cs-prizes"></div>
             <div class="cs-msg" id="cs-msg"></div>
             <div class="cs-ctrl">
@@ -2919,7 +2937,7 @@ function mxSound(k){ try{ if(typeof playTuchaSound==="function") playTuchaSound(
 function minesSpark(c){ for(let k=0;k<9;k++){ const p=document.createElement("b"); p.className="mx-spark"; const a=k/9*6.283; p.style.setProperty("--dx",Math.cos(a)*38+"px"); p.style.setProperty("--dy",Math.sin(a)*38+"px"); c.appendChild(p); setTimeout(()=>p.remove(),800); } }
 function mxCell(i){ return $("mx-board").children[i]; }
 function buildMines(animateIn){
-    minesRound++;
+    minesRound++; minesAbort=false; minesPending=0; minesPendingCells=[];
     const g=$("mx-board"); g.innerHTML="";
     for(let i=0;i<25;i++){
         const c=document.createElement("button");
@@ -3074,33 +3092,61 @@ async function minesStart(){
     }finally{ minesBusy=false; $("mx-start").disabled=false; $("mx-start").classList.remove("loading"); }
     if(resync) minesSync();
 }
-async function minesOpen(i){
-    if(minesState!=="playing"||minesBusy) return;
-    const c=mxCell(i); if(!c||c.disabled||c.classList.contains("open")) return;
-    minesBusy=true; c.classList.add("pending"); haptic("light");
-    const token=minesRound;
-    try{
-        const d=await apiPost({action:"mines_open",cell:i});
-        if(token!==minesRound) { minesBusy=false; return; }
-        if(d.status!=="success") throw new Error(d.message||"Ошибка хода.");
-        if(d.boom){ minesLose(d,i); }
-        else if(d.finished){ minesGame.opened.push(i); minesFlip(i,"safe",{glow:true}); minesWin(d); }
-        else { minesGame=d.active; minesFlip(i,"safe",{glow:true}); minesRefreshUI(); haptic("medium"); }
-    }catch(e){
-        c.classList.remove("pending"); alert(e.message||"Ошибка хода.");
-        minesBusy=false; minesSync(); return;
-    }
-    c.classList.remove("pending"); minesBusy=false;
+// Ход делается МГНОВЕННО: клетка переворачивается сразу, а сервер подтверждает в фоне.
+// Мина по-прежнему определяется только сервером: если он скажет «мина» — клетка перевернётся обратно в мину, а необработанные клики отменятся.
+let minesChain = Promise.resolve(), minesPending = 0, minesPendingCells = [], minesAbort = false;
+function minesUndoPending() {
+    minesPendingCells.forEach(i => { const c = mxCell(i); if (c) c.classList.remove("open", "safe", "glow", "dim"); });
+    minesPendingCells = []; minesPending = 0;
 }
-async function minesCashout(){
-    if(minesBusy||minesState!=="playing") return;
-    minesBusy=true; $("mx-main").disabled=true; $("mx-main").classList.add("loading");
-    try{
-        const d=await apiPost({action:"mines_cashout"});
-        if(d.status!=="success") throw new Error(d.message||"Не удалось забрать выигрыш.");
-        minesWin(d);
-    }catch(e){ alert(e.message||"Ошибка."); minesBusy=false; minesSync(); return; }
-    minesBusy=false;
+function minesOpen(i) {
+    if (minesState !== "playing" || minesBusy || minesAbort) return;
+    const c = mxCell(i); if (!c || c.disabled || c.classList.contains("open")) return;
+    const g = minesGame; if (!g || g.opened.indexOf(i) >= 0) return;
+    g.opened = g.opened.concat([i]);
+    const n = g.opened.length; g.mult = g.ladder[n - 1] || g.mult;       // множитель из таблицы, пришедшей с сервера
+    minesPendingCells.push(i); minesPending++;
+    minesFlip(i, "safe", { glow: true });
+    minesRefreshUI(); haptic("medium");
+    const token = minesRound;
+    minesChain = minesChain.then(() => minesSendOpen(i, token));
+}
+async function minesSendOpen(i, token) {
+    if (token !== minesRound || minesAbort) return;
+    try {
+        const d = await apiPost({ action: "mines_open", cell: i });
+        if (token !== minesRound) return;
+        if (d.status !== "success") throw new Error(d.message || "Ошибка хода.");
+        minesPendingCells = minesPendingCells.filter(x => x !== i); minesPending = Math.max(0, minesPending - 1);
+        if (d.boom) {
+            minesAbort = true; minesUndoPending();
+            const c = mxCell(i); if (c) c.classList.remove("open", "safe", "glow");
+            minesLose(d, i);
+        } else if (d.finished) {
+            minesAbort = true; minesUndoPending();
+            minesWin(d);
+        } else if (minesPending === 0 && d.active) {
+            minesGame = d.active; minesRefreshUI();
+        }
+    } catch (e) {
+        if (token !== minesRound) return;
+        minesAbort = true; minesPending = 0; minesPendingCells = [];
+        alert(e.message || "Ошибка хода.");
+        await minesSync(); minesAbort = false;
+    }
+}
+async function minesCashout() {
+    if (minesBusy || minesState !== "playing" || minesAbort) return;
+    minesBusy = true; $("mx-main").disabled = true; $("mx-main").classList.add("loading");
+    const token = minesRound;
+    try { await minesChain; } catch (e) {}
+    if (token !== minesRound || minesState !== "playing") { minesBusy = false; minesRefreshUI(); return; }   // пока ждали — попалась мина
+    try {
+        const d = await apiPost({ action: "mines_cashout" });
+        if (d.status !== "success") throw new Error(d.message || "Не удалось забрать выигрыш.");
+        minesAbort = true; minesWin(d);
+    } catch (e) { alert(e.message || "Ошибка."); minesBusy = false; minesSync(); return; }
+    minesBusy = false;
 }
 if($("mx-slider")) $("mx-slider").addEventListener("input",()=>{
     const v=Number($("mx-slider").value);
@@ -3167,7 +3213,7 @@ const UPGRADE_RTP = 88.0; // Серверный RTP; результат всег
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
-    { name: "Подарок", price: 0.35, img: "./box.png" },
+    { name: "Подарок", price: 0.40, img: "./box.png" },
     { name: "Бокс", price: 0.50, img: "./box.png" },
     { name: "Ракетка", price: 0.75, img: "./rocket.png" },
     { name: "Кубок", price: 1.00, img: "./trofei.png" },
@@ -4541,7 +4587,6 @@ function pvFlame(m) {
 }
 
 /* INIT */
-csRenderList(); // старые клиентские кейсы отключены — теперь серверные (cases_open)
 loadUserData();
 buildMines();
 updateCrashHistoryUI();
@@ -4553,44 +4598,50 @@ document.querySelectorAll("#upgrade-speed button").forEach(b => b.classList.togg
 renderRouletteOptions();
 drawRouletteWheel();
 
-// ===================== КЕЙСЫ (v23) =====================
+// ===================== КЕЙСЫ (v25) =====================
 // Всё считает сервер (cases_open). Этот список — запасной, на случай если сервер ещё не ответил.
-const CS_FALLBACK = [{"id": "lite", "name": "Лайт кейс", "price": 0.4, "icon": "🎁", "prizes": [{"value": 0.2, "type": "gift", "name": "Мишка", "img": "./bear.png"}, {"value": 0.35, "type": "gift", "name": "Подарок", "img": "./box.png"}, {"value": 0.5, "type": "cash", "name": "$0.50", "img": ""}, {"value": 0.75, "type": "gift", "name": "Ракетка", "img": "./rocket.png"}, {"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 2.0, "type": "cash", "name": "$2.00", "img": ""}, {"value": 4.0, "type": "cash", "name": "$4.00", "img": ""}]}, {"id": "fun", "name": "Веселый кейс", "price": 1.0, "icon": "🎉", "prizes": [{"value": 0.5, "type": "cash", "name": "$0.50", "img": ""}, {"value": 0.75, "type": "gift", "name": "Ракетка", "img": "./rocket.png"}, {"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 1.5, "type": "cash", "name": "$1.50", "img": ""}, {"value": 3.0, "type": "cash", "name": "$3.00", "img": ""}, {"value": 5.0, "type": "cash", "name": "$5.00", "img": ""}, {"value": 10.0, "type": "cash", "name": "$10.00", "img": ""}]}, {"id": "cloud", "name": "Тучка кейс", "price": 2.0, "icon": "⛈️", "prizes": [{"value": 1.0, "type": "gift", "name": "Кубок", "img": "./trofei.png"}, {"value": 1.5, "type": "cash", "name": "$1.50", "img": ""}, {"value": 2.0, "type": "cash", "name": "$2.00", "img": ""}, {"value": 3.0, "type": "cash", "name": "$3.00", "img": ""}, {"value": 5.0, "type": "cash", "name": "$5.00", "img": ""}, {"value": 10.0, "type": "cash", "name": "$10.00", "img": ""}, {"value": 20.0, "type": "cash", "name": "$20.00", "img": ""}]}, {"id": "mega", "name": "Мега кейс", "price": 5.0, "icon": "💎", "prizes": [{"value": 2.5, "type": "cash", "name": "$2.50", "img": ""}, {"value": 4, "type": "cash", "name": "$4.00", "img": ""}, {"value": 5, "type": "cash", "name": "$5.00", "img": ""}, {"value": 8, "type": "cash", "name": "$8.00", "img": ""}, {"value": 15, "type": "cash", "name": "$15.00", "img": ""}, {"value": 25, "type": "cash", "name": "$25.00", "img": ""}, {"value": 50, "type": "cash", "name": "$50.00", "img": ""}]}, {"id": "gold", "name": "Золотой кейс", "price": 10.0, "icon": "🏆", "prizes": [{"value": 5, "type": "cash", "name": "$5.00", "img": ""}, {"value": 8, "type": "cash", "name": "$8.00", "img": ""}, {"value": 10, "type": "cash", "name": "$10.00", "img": ""}, {"value": 15, "type": "cash", "name": "$15.00", "img": ""}, {"value": 30, "type": "cash", "name": "$30.00", "img": ""}, {"value": 50, "type": "cash", "name": "$50.00", "img": ""}, {"value": 100, "type": "cash", "name": "$100.00", "img": ""}]}, {"id": "vip", "name": "VIP кейс", "price": 25.0, "icon": "👑", "prizes": [{"value": 12.5, "type": "cash", "name": "$12.50", "img": ""}, {"value": 20, "type": "cash", "name": "$20.00", "img": ""}, {"value": 25, "type": "cash", "name": "$25.00", "img": ""}, {"value": 40, "type": "cash", "name": "$40.00", "img": ""}, {"value": 75, "type": "cash", "name": "$75.00", "img": ""}, {"value": 125, "type": "cash", "name": "$125.00", "img": ""}, {"value": 250, "type": "cash", "name": "$250.00", "img": ""}]}];
+const CS_FALLBACK = [{"id":"farm","name":"Фарм кейс","price":0.25,"icon":"🌱","img":"./casep.png","prizes":[{"name":"$0.05","type":"cash","value":0.05,"img":"","chance":98.4},{"name":"Кубок","type":"gift","value":1,"img":"./trofei.png","chance":1.5},{"name":"$5.00","type":"cash","value":5,"img":"","chance":0.1}]},{"id":"lite","name":"Лайт кейс","price":0.4,"icon":"🎁","img":"./casecase.png","prizes":[{"name":"$0.20","type":"cash","value":0.2,"img":"","chance":28.57},{"name":"Мишка","type":"gift","value":0.2,"img":"./bear.png","chance":28.57},{"name":"$0.30","type":"cash","value":0.3,"img":"","chance":16.31},{"name":"Подарок","type":"gift","value":0.4,"img":"./box.png","chance":10.96},{"name":"$0.60","type":"cash","value":0.6,"img":"","chance":6.26},{"name":"Ракетка","type":"gift","value":0.75,"img":"./rocket.png","chance":4.6},{"name":"Кубок","type":"gift","value":1,"img":"./trofei.png","chance":3.09},{"name":"$2.00","type":"cash","value":2,"img":"","chance":1.19},{"name":"$4.00","type":"cash","value":4,"img":"","chance":0.46}]},{"id":"fun","name":"Веселый кейс","price":1,"icon":"🎉","img":"./caser.png","prizes":[{"name":"$0.50","type":"cash","value":0.5,"img":"","chance":37.67},{"name":"Ракетка","type":"gift","value":0.75,"img":"./rocket.png","chance":20.05},{"name":"$0.80","type":"cash","value":0.8,"img":"","chance":18.14},{"name":"Кубок","type":"gift","value":1,"img":"./trofei.png","chance":12.82},{"name":"$1.50","type":"cash","value":1.5,"img":"","chance":6.83},{"name":"$2.50","type":"cash","value":2.5,"img":"","chance":3.08},{"name":"$5.00","type":"cash","value":5,"img":"","chance":1.05},{"name":"$10.00","type":"cash","value":10,"img":"","chance":0.36}]},{"id":"gucci","name":"Гучи кейс","price":2.5,"icon":"👜","img":"./casego.png","prizes":[{"name":"$1.25","type":"cash","value":1.25,"img":"","chance":45.1},{"name":"$1.75","type":"cash","value":1.75,"img":"","chance":26.56},{"name":"$2.50","type":"cash","value":2.5,"img":"","chance":15.16},{"name":"$4.00","type":"cash","value":4,"img":"","chance":7.24},{"name":"$6.00","type":"cash","value":6,"img":"","chance":3.82},{"name":"$10.00","type":"cash","value":10,"img":"","chance":1.71},{"name":"$25.00","type":"cash","value":25,"img":"","chance":0.41}]},{"id":"pro","name":"Про кейс","price":5,"icon":"🏅","img":"./casepro.png","prizes":[{"name":"$2.50","type":"cash","value":2.5,"img":"","chance":45.1},{"name":"$3.50","type":"cash","value":3.5,"img":"","chance":26.56},{"name":"$5.00","type":"cash","value":5,"img":"","chance":15.16},{"name":"$8.00","type":"cash","value":8,"img":"","chance":7.24},{"name":"$12.00","type":"cash","value":12,"img":"","chance":3.82},{"name":"$20.00","type":"cash","value":20,"img":"","chance":1.71},{"name":"$50.00","type":"cash","value":50,"img":"","chance":0.41}]},{"id":"vip","name":"VIP кейс","price":10,"icon":"👑","img":"./casevip.png","prizes":[{"name":"$5.00","type":"cash","value":5,"img":"","chance":44.77},{"name":"$7.00","type":"cash","value":7,"img":"","chance":26.53},{"name":"$10.00","type":"cash","value":10,"img":"","chance":15.24},{"name":"$15.00","type":"cash","value":15,"img":"","chance":8.11},{"name":"$25.00","type":"cash","value":25,"img":"","chance":3.67},{"name":"$50.00","type":"cash","value":50,"img":"","chance":1.25},{"name":"$100.00","type":"cash","value":100,"img":"","chance":0.43}]}];
 let csCases = CS_FALLBACK, csQtyList = [1,3,5,10], csQty = 1, csTurbo = false, csCur = null, csBusy = false;
 
-function csTile(p, big) {
+function csTile(p) {
     const ic = p.type === "gift" && p.img ? `<img src="${p.img}" alt="">` : `<div class="cs-coin">$</div>`;
     const lab = p.type === "gift" ? `<i>${displayGiftName(p.name, p.img)}</i>` : "";
     return `<div class="cs-tile">${ic}<b>$${money(p.value)}</b>${lab}</div>`;
 }
+function csPrizeCell(p) {
+    const ch = Number.isFinite(Number(p.chance)) ? `<em>${Number(p.chance) < 1 ? Number(p.chance).toFixed(2) : Number(p.chance).toFixed(1).replace(/\.0$/, "")}%</em>` : "";
+    const t = csTile(p); return t.slice(0, -6) + ch + "</div>";
+}
 function csRenderList() {
     $("cs-grid").innerHTML = csCases.map(c => {
         const mn = Math.min(...c.prizes.map(p => p.value)), mx = Math.max(...c.prizes.map(p => p.value));
-        return `<div class="cs-card" onclick="csOpenDetail('${c.id}')"><div class="cs-ic">${c.icon}</div><div class="cs-name">${c.name}</div><div class="cs-price">$${money(c.price)}</div><div class="cs-range">$${money(mn)} — $${money(mx)}</div></div>`;
+        const pic = c.img ? `<img src="${c.img}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none">${c.icon}</span>` : `<span>${c.icon}</span>`;
+        return `<div class="cs-card" onclick="csOpenDetail('${c.id}')"><div class="cs-ic">${pic}</div><div class="cs-name">${esc(c.name)}</div><div class="cs-price">$${money(c.price)}</div><div class="cs-range">$${money(mn)} — $${money(mx)}</div></div>`;
     }).join("");
 }
 function csRenderDetail() {
     const c = csCur; if (!c) return;
-    const sorted = c.prizes.slice().sort((a, b) => a.value - b.value), top = sorted.slice(-3);
-    $("cs-preview").innerHTML = top.map(csTile).join("");
-    $("cs-title").innerHTML = `${c.name}<small>$${money(c.price)}</small>`;
-    $("cs-prizes").innerHTML = sorted.map(csTile).join("");
+    const sorted = c.prizes.slice().sort((a, b) => a.value - b.value);
+    $("cs-title").innerHTML = `${esc(c.name)}<small>$${money(c.price)}</small>`;
+    const im = $("cs-caseimg"); if (c.img) { im.src = c.img; im.style.display = "block"; } else im.style.display = "none";
+    $("cs-prizes").innerHTML = sorted.map(csPrizeCell).join("");
     $("cs-qty").innerHTML = csQtyList.map(q => `<button class="${q === csQty ? "active" : ""}" onclick="csSetQty(${q})">×${q}</button>`).join("");
     $("cs-turbo").classList.toggle("active", csTurbo);
     $("cs-open").textContent = `Открыть · $${money(c.price * csQty)}`;
 }
 function csOpenDetail(id) {
     csCur = csCases.find(c => c.id === id); if (!csCur) return;
-    csQty = 1; $("cs-msg").textContent = ""; $("cs-reel").style.display = "none";
+    csQty = 1; $("cs-msg").textContent = "";
     $("cs-list").style.display = "none"; $("cs-detail").style.display = "block";
-    csRenderDetail(); haptic();
+    csRenderDetail(); csReelIdle(); haptic();
 }
-function csBack() { if (csBusy) return; $("cs-detail").style.display = "none"; $("cs-list").style.display = "block"; haptic(); }
+function csBack() { if (csBusy) return; csReelStop(); $("cs-detail").style.display = "none"; $("cs-list").style.display = "block"; haptic(); }
 function csSetQty(q) { if (csBusy) return; csQty = q; csRenderDetail(); haptic(); }
 function csToggleTurbo() { if (csBusy) return; csTurbo = !csTurbo; csRenderDetail(); haptic(); }
 function csCloseModal() { $("cs-modal").classList.remove("active"); }
 async function csInit() {
     csRenderList();
+    if (csCur && $("cs-detail").style.display !== "none") csReelIdle();
     if (!isDBConnected()) return;
     try {
         const d = await apiPost({ action: "cases_list" });
@@ -4600,30 +4651,67 @@ async function csInit() {
         }
     } catch (e) {}
 }
-function csSpin(c, win) { // анимация ленты для одного кейса
-    return new Promise(resolve => {
-        const reel = $("cs-reel"), track = $("cs-track"), W = 84, GAP = 8, N = 40, WIN = 34;
-        reel.style.display = "block";
-        const items = []; for (let i = 0; i < N; i++) items.push(i === WIN ? win : c.prizes[Math.floor(Math.random() * c.prizes.length)]);
-        track.style.transition = "none"; track.style.transform = "translateX(0)";
-        track.innerHTML = items.map(csTile).join("");
-        const center = 6 + WIN * (W + GAP) + W / 2, jitter = (Math.random() - 0.5) * (W * 0.6);
-        const shift = center - reel.clientWidth / 2 + jitter;
-        void track.offsetWidth;
-        track.style.transition = "transform 3.6s cubic-bezier(.12,.7,.1,1)";
-        track.style.transform = `translateX(${-shift}px)`;
-        setTimeout(resolve, 3700);
-    });
+
+/* ---- Рулетка кейса: лента призов, центральная плитка крупнее, боковые наклонены (как на референсе) ---- */
+const CS_W = 92, CS_GAP = 12, CS_STEP = CS_W + CS_GAP;
+let csRaf = null, csOffset = 0, csItems = [], csTiles = [], csSpinning = false, csLastT = 0;
+function csCycle(c) { return c.prizes.slice().sort((a, b) => a.value - b.value); }
+function csBuildTrack(items) {
+    csItems = items; const track = $("cs-track");
+    track.innerHTML = items.map(csTile).join("");
+    csTiles = Array.from(track.children);
+    csTiles.forEach(t => { t.style.width = CS_W + "px"; });
 }
-function csShuffle(c) { // быстрая «крутилка» для ×3/×5/×10
+function csPaintTiles() {
+    const stage = $("cs-reel"), R = stage.clientWidth || 340;
+    $("cs-track").style.transform = `translateX(${-csOffset}px)`;
+    for (let i = 0; i < csTiles.length; i++) {
+        const cx = i * CS_STEP + CS_W / 2 + 8 - csOffset, d = (cx - R / 2) / CS_STEP, a = Math.min(Math.abs(d), 2.4);
+        if (cx < -CS_STEP || cx > R + CS_STEP) { csTiles[i].style.visibility = "hidden"; continue; }
+        csTiles[i].style.visibility = "visible";
+        csTiles[i].style.transform = `translateY(${(a * a * 3).toFixed(1)}px) rotate(${(d * 8).toFixed(1)}deg) scale(${(1.1 - a * 0.14).toFixed(3)})`;
+        csTiles[i].style.opacity = String(Math.max(0.35, 1 - a * 0.2).toFixed(2));
+        csTiles[i].style.zIndex = String(10 - Math.round(a * 3));
+    }
+}
+function csReelIdle() {
+    if (!csCur) return;
+    csReelStop();
+    const cyc = csCycle(csCur), items = []; for (let k = 0; k < 8; k++) cyc.forEach(p => items.push(p));
+    csBuildTrack(items); csOffset = 0; csSpinning = false; csLastT = 0;
+    const period = cyc.length * CS_STEP;
+    const loop = t => {
+        const visible = $("tab-cases").classList.contains("active") && $("cs-detail").style.display !== "none" && !document.hidden;
+        if (!visible) { csRaf = null; return; }
+        if (!csSpinning) {
+            const dt = csLastT ? Math.min(60, t - csLastT) : 16; csLastT = t;
+            csOffset += 0.022 * dt; if (csOffset > period) csOffset -= period;
+            csPaintTiles();
+        }
+        csRaf = requestAnimationFrame(loop);
+    };
+    csRaf = requestAnimationFrame(loop);
+}
+function csReelStop() { if (csRaf) cancelAnimationFrame(csRaf); csRaf = null; }
+// Прокрутка до выигрышного приза. ms — длительность.
+function csSpinTo(c, win, ms) {
     return new Promise(resolve => {
-        const reel = $("cs-reel"), track = $("cs-track"); reel.style.display = "block";
-        track.style.transition = "none"; track.style.transform = "translateX(0)";
-        const t0 = Date.now(), timer = setInterval(() => {
-            const p = c.prizes[Math.floor(Math.random() * c.prizes.length)], q = c.prizes[Math.floor(Math.random() * c.prizes.length)];
-            track.innerHTML = [p, q, p, q].map(csTile).join(""); haptic("light");
-            if (Date.now() - t0 > 1500) { clearInterval(timer); resolve(); }
-        }, 110);
+        csSpinning = true;
+        const cyc = csCycle(c), M = cyc.length * 2 + 6, WIN = M + 14, N = WIN + 8, items = [];
+        for (let i = 0; i < N; i++) items.push(i < M ? cyc[i % cyc.length] : (i === WIN ? win : c.prizes[Math.floor(Math.random() * c.prizes.length)]));
+        const start = csOffset % (cyc.length * CS_STEP);       // тот же вид ленты, что был в простое — без скачка
+        csBuildTrack(items); csOffset = start;
+        const R = $("cs-reel").clientWidth || 340;
+        const target = WIN * CS_STEP + CS_W / 2 + 8 - R / 2 + (Math.random() - 0.5) * CS_W * 0.55;
+        const t0 = performance.now(); let lastTick = -1;
+        const step = now => {
+            const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 4);
+            csOffset = start + (target - start) * e; csPaintTiles();
+            const tick = Math.floor(csOffset / CS_STEP); if (tick !== lastTick && k < 0.97) { lastTick = tick; if (k < 0.85) haptic("light"); }
+            if (k < 1) requestAnimationFrame(step);
+            else { if (csTiles[WIN]) csTiles[WIN].classList.add("cs-win"); setTimeout(resolve, 450); }
+        };
+        requestAnimationFrame(step);
     });
 }
 async function csOpen() {
@@ -4637,11 +4725,12 @@ async function csOpen() {
         const reqId = "cs_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10);
         const d = await apiPost({ action: "cases_open", case_id: c.id, qty: csQty, request_id: reqId });
         if (d.status !== "success") throw new Error(d.message || "Не удалось открыть кейс.");
-        if (!csTurbo) { if (csQty === 1) await csSpin(c, d.results[0]); else await csShuffle(c); }
+        if (!csTurbo) await csSpinTo(c, d.results[0], csQty === 1 ? 4300 : 2600);
         balance = Number(d.balance); if (!Number.isFinite(balance)) balance = 0;
         try { inventory = JSON.parse(d.inventory || "[]"); } catch (e) {}
         inventoryVersion = Number(d.inventory_version) || inventoryVersion;
         renderInventory(); updateBalanceUI(); try { saveLocal(); } catch (e) {}
+        playerTurnover += Number(d.cost) || 0; try { renderGameLevels(); } catch (e) {}
         $("cs-modal-grid").className = "cs-modal-grid" + (d.results.length === 1 ? " one" : "");
         $("cs-modal-grid").innerHTML = d.results.map((p, i) => csTile(p).replace('class="cs-tile"', `class="cs-tile" style="animation-delay:${csTurbo ? 0 : i * 0.07}s"`)).join("");
         $("cs-modal-total").textContent = `Итого: $${money(d.win)} (кейс стоил $${money(d.cost)})`;
@@ -4649,9 +4738,10 @@ async function csOpen() {
     } catch (e) {
         msg.textContent = String(e.message || e); notify("error");
     } finally {
-        $("cs-reel").style.display = "none"; csBusy = false; $("cs-open").disabled = false;
+        csBusy = false; $("cs-open").disabled = false; csSpinning = false; csReelIdle();
     }
 }
+csRenderList();
 </script>
 <script id="v4-extras">
 function soonToast(){ try{ alert("Скоро! Эта игра появится позже."); }catch(e){} haptic("light"); }
