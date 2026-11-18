@@ -2389,8 +2389,8 @@ nav#main-nav button.active{color:#168bd0!important}
     <section id="tab-wheel" class="tab">
         <div class="games-header">🎡 Колесо удачи</div>
         <div class="panel" style="text-align:center;">
-            <div style="font-size:12px;font-weight:800;color:#80621b;margin-bottom:14px;">Одно бесплатное вращение каждые 24 часа</div>
-            <div class="fw-stage"><div class="fw-pointer"></div><canvas id="wheel-canvas" width="300" height="300"></canvas></div>
+            <div style="font-size:12px;font-weight:800;color:#80621b;margin-bottom:14px;">БЕСПЛАТНЫЙ СПИН КАЖДЫЕ 24 ЧАСА</div>
+            <div class="fw-stage"><div class="fw-pointer"></div><canvas id="wheel-canvas" width="480" height="480"></canvas><div class="fw-center-emblem" aria-hidden="true"><span>🎁</span><small>TUCHA</small></div></div>
             <div id="wheel-result" class="fw-result"></div>
             <button id="wheel-btn" class="primary gold" onclick="spinWheel()">ЗАГРУЗКА…</button>
             <div id="wheel-timer" style="margin-top:10px;font-size:12px;font-weight:900;color:#80621b;min-height:16px;"></div>
@@ -4220,21 +4220,39 @@ let wheelData = [], wheelBusy = false, wheelRot = 0, wheelTimer = null, wheelNex
 const WHEEL_COLORS = ["#fde68a", "#fdba74", "#fcd34d", "#fb923c"];
 function drawWheel() {
     const cvs = $("wheel-canvas"); if (!cvs || !wheelData.length) return;
-    const ctx = cvs.getContext("2d"), cx = 150, cy = 150, r = 144, n = wheelData.length, arc = Math.PI * 2 / n;
-    ctx.clearRect(0, 0, 300, 300);
-    wheelData.forEach((p, i) => {
-        const a = i * arc - Math.PI / 2;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a, a + arc); ctx.closePath();
-        ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length]; ctx.fill();
-        ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.stroke();
-        ctx.save(); ctx.translate(cx, cy); ctx.rotate(a + arc / 2);
-        ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillStyle = "#4a3500"; ctx.font = "900 15px Inter, sans-serif";
-        ctx.fillText((p.type === "gift" ? "🎁 " : "") + p.name, r - 14, 0); ctx.restore();
+    const ctx = cvs.getContext("2d"), cx = 240, cy = 240, r = 222, n = wheelData.length, arc = Math.PI * 2 / n;
+    const colors = ["#e51d4f", "#f05b0b", "#e88a08", "#119b58", "#078c83", "#2869df", "#6542d9", "#b51e77", "#d75a0b", "#0b987c"];
+    ctx.clearRect(0, 0, 480, 480);
+    // outer metallic rim
+    const rim = ctx.createRadialGradient(cx-55,cy-75,40,cx,cy,r+18);
+    rim.addColorStop(0,"#68768a"); rim.addColorStop(.55,"#202b3d"); rim.addColorStop(1,"#46536a");
+    ctx.beginPath(); ctx.arc(cx,cy,r+17,0,Math.PI*2); ctx.fillStyle=rim; ctx.fill();
+    wheelData.forEach((p,i)=>{
+        const a=i*arc-Math.PI/2;
+        const grad=ctx.createLinearGradient(cx+Math.cos(a)*r,cy+Math.sin(a)*r,cx,cy);
+        grad.addColorStop(0,colors[i%colors.length]); grad.addColorStop(1,colors[i%colors.length]);
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+arc);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+        ctx.strokeStyle="rgba(255,255,255,.20)";ctx.lineWidth=2;ctx.stroke();
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(a+arc/2);
+        const isGift=p.type==="gift";
+        ctx.textAlign="center";ctx.textBaseline="middle";
+        ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=5;
+        if(isGift){
+            const emoji = /миш|bear/i.test(p.name)?"🧸":/бокс|box/i.test(p.name)?"🎁":/куб|cup/i.test(p.name)?"🏆":"🎁";
+            ctx.font="38px Apple Color Emoji, Segoe UI Emoji, sans-serif";ctx.fillStyle="#fff";ctx.fillText(emoji,r*.70,0);
+            ctx.font="bold 12px Arial";ctx.fillText(p.name,r*.48,0);
+        }else{
+            ctx.font="900 25px Arial";ctx.fillStyle="#fff";ctx.fillText(p.name,r*.70,0);
+            ctx.font="bold 11px Arial";ctx.fillStyle="rgba(255,255,255,.86)";ctx.fillText("ПРИЗ",r*.49,0);
+        }
+        ctx.restore();
     });
-    ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 4; ctx.stroke();
+    // fine inner ring
+    ctx.beginPath();ctx.arc(cx,cy,r-3,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,.26)";ctx.lineWidth=3;ctx.stroke();
 }
+
 function renderWheelPrizes() {
-    $("wheel-prizes").innerHTML = wheelData.map(p => `<div class="fw-prize">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<div style="font-size:26px;">💵</div>`}${esc(p.name)}</div>`).join("");
+    $("wheel-prizes").innerHTML = wheelData.map(p => `<div class="fw-prize">${p.img ? `<img src="${esc(p.img)}" alt="">` : `<div class="fw-prize-emoji">${p.type === "gift" ? "🎁" : "💵"}</div>`}<b>${esc(p.name)}</b><small>${p.type === "gift" ? "ПОДАРОК" : "НА БАЛАНС"}</small></div>`).join("");
 }
 function wheelTick() {
     const btn = $("wheel-btn"), left = wheelNextAt - Date.now();
@@ -4268,7 +4286,7 @@ async function spinWheel() {
         balance = Number(d.balance) || balance;
         if (d.prize.type === "gift") { try { inventory = JSON.parse(d.inventory || "[]"); } catch (e) {} inventoryVersion = Number(d.inventory_version) || inventoryVersion; renderInventory(); }
         updateBalanceUI(); saveLocal(); notify("success");
-        $("wheel-result").textContent = d.prize.type === "gift" ? `🎉 Выпал подарок: ${d.prize.name}!` : `🎉 Выиграно ${d.prize.name}!`;
+        $("wheel-result").textContent = d.prize.type === "gift" ? `🎉 Выпал подарок: ${d.prize.name}!` : `🎉 Выиграно ${d.prize.name}!`; if(window.tuchaFx) window.tuchaFx("win");
         wheelNextAt = Number(d.next_at) || Date.now() + 86400000;
     } catch (e) { $("wheel-result").style.color = "#dc2626"; $("wheel-result").textContent = e.message || "Ошибка"; await loadWheel(); }
     finally { wheelBusy = false; wheelTick(); }
@@ -5352,6 +5370,57 @@ openAdminPanel=async function(){ await _openAdminOrig(); if($("admin-modal").sty
     if(m.type==="cancel_ok"){ b.disabled=false; pvToast("Ставка отменена, деньги вернулись ✓","win"); notify("success"); pvUI(); return; }
     om.apply(this,arguments); if(m.type==="error") b.disabled=false;
   };
+})();
+</script>
+
+
+<style id="tucha-telegram-pattern-wheel-v2">
+:root{--app-bg:#eef0f2;--surface:#fff;--ink:#171b24;--muted:#8a929e;--acc:#3390ec}
+/* Фон приложения — мягкий Telegram doodle, не белый лист и не сплошная заливка. */
+html,body{background-color:#eef0f2!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300' fill='none' stroke='%23c9ced5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' opacity='.42'%3E%3Ccircle cx='45' cy='48' r='20'/%3E%3Ccircle cx='45' cy='48' r='8'/%3E%3Cpath d='M178 23l7 15 16 2-12 11 4 16-15-8-14 8 3-16-12-11 17-2z'/%3E%3Crect x='225' y='100' width='42' height='30' rx='8' transform='rotate(18 225 100)'/%3E%3Cpath d='M20 190q18-22 36 0t36 0M122 178l18 18-18 18-18-18zM218 220q18-26 36 0l-18 28z'/%3E%3Ccircle cx='74' cy='260' r='15'/%3E%3Cpath d='M70 245l8 30M59 260h30M155 88l9 9m0-9-9 9'/%3E%3C/svg%3E")!important;background-attachment:fixed!important;background-size:300px 300px!important}
+body::before{display:none!important}
+body .game-screen,body #screen-pvp{background-color:rgba(238,240,242,.90)!important;background-image:inherit!important}
+#main-content,.tab{background:transparent!important}
+.panel,.case-detail-card,.upgrade-control-card,.upgrade-gift-panel,.upgrade-range-card,.upgrade-stat,.upgrade-result{background:rgba(255,255,255,.94)!important;backdrop-filter:blur(5px)}
+/* Ежедневная рулетка — отдельная тёмно-синяя сцена как на референсе. */
+#tab-wheel .games-header{color:#18253b!important;text-shadow:none!important}
+#tab-wheel .panel:first-of-type{position:relative;overflow:hidden;padding:22px 14px 20px!important;border:1px solid rgba(104,142,198,.28)!important;border-radius:28px!important;background:radial-gradient(ellipse at 50% 45%,#263f65 0%,#1b2c49 52%,#111c32 100%)!important;box-shadow:0 16px 38px rgba(14,27,49,.25),inset 0 1px 0 rgba(255,255,255,.12)!important;color:#fff!important}
+#tab-wheel .panel:first-of-type:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130' fill='none' stroke='%23b8d5ff' stroke-width='1.5'%3E%3Cpath d='M22 20l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1zM90 80q15-18 30 0t0 0M20 95h25m-12-12v24'/%3E%3C/svg%3E")}
+#tab-wheel .panel:first-of-type>div:first-child{position:relative;color:#d7e6ff!important;letter-spacing:1.1px;font-size:11px!important}
+.fw-stage{position:relative;width:min(480px,86vw)!important;margin:14px auto 22px!important;aspect-ratio:1;filter:drop-shadow(0 15px 18px rgba(0,0,0,.38))}
+#wheel-canvas{width:100%!important;height:auto!important;border-radius:50%;box-shadow:0 0 0 7px #303d52,0 0 0 12px rgba(124,150,188,.18),inset 0 0 0 3px rgba(255,255,255,.2)!important;transition:transform 5.2s cubic-bezier(.10,.72,.08,1)!important}
+.fw-pointer{top:-8px!important;border-left:17px solid transparent!important;border-right:17px solid transparent!important;border-top:31px solid #2685ff!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))!important}
+.fw-center-emblem{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:29%;height:29%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;z-index:4;background:radial-gradient(circle at 35% 25%,#425d86,#15233d 72%);border:5px solid #8ea4c3;box-shadow:0 5px 0 #101a2c,0 9px 20px rgba(0,0,0,.5),inset 0 2px 5px rgba(255,255,255,.22);pointer-events:none}
+.fw-center-emblem span{font-size:clamp(28px,9vw,52px);line-height:1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.fw-center-emblem small{font-size:9px;font-weight:1000;letter-spacing:1.5px;color:#dceaff}
+#wheel-result{position:relative;color:#a8f2c6!important;font-size:15px!important;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+#wheel-btn{position:relative;border:0!important;border-radius:18px!important;background:linear-gradient(180deg,#4aa9ff,#1976e8)!important;color:#fff!important;box-shadow:0 6px 0 #1053a9,0 10px 22px rgba(16,103,214,.35)!important;font-weight:1000!important;letter-spacing:.5px;padding:16px 20px!important}
+#wheel-btn:disabled{filter:saturate(.55);opacity:.78}
+#wheel-timer{position:relative;color:#d3e2f8!important}
+#tab-wheel .panel:nth-of-type(2){background:rgba(255,255,255,.96)!important;border:1px solid #e2e8f0!important;border-radius:23px!important}
+#tab-wheel .panel:nth-of-type(2)>div:first-child{color:#26364f}
+.fw-prizes{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+.fw-prize{display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;align-items:center;text-align:left;gap:2px 9px;padding:9px 11px!important;border:1px solid #e2e8f0!important;border-radius:15px!important;background:linear-gradient(145deg,#fff,#f4f7fb)!important;color:#202b3d!important;box-shadow:0 3px 10px rgba(30,50,80,.06)}
+.fw-prize img,.fw-prize-emoji{grid-row:1/3;width:40px;height:40px;object-fit:contain;display:grid;place-items:center;font-size:27px}
+.fw-prize b{font-size:13px;font-weight:950}.fw-prize small{font-size:9px;letter-spacing:.7px;color:#8995a7;font-weight:900}
+@media(max-width:380px){.fw-stage{width:min(390px,84vw)!important}.fw-prize{padding:8px!important;grid-template-columns:34px 1fr}.fw-prize img,.fw-prize-emoji{width:32px;height:32px}}
+</style>
+<script>
+/* Звуковая полировка: короткие многослойные звуки для колеса, выигрыша и нажатий. */
+(function(){
+  function ctx(){try{if(typeof tuchaSoundsEnabled!=="undefined"&&!tuchaSoundsEnabled)return null;var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;window.tuchaAudioCtx=window.tuchaAudioCtx||new C();if(window.tuchaAudioCtx.state==="suspended")window.tuchaAudioCtx.resume();return window.tuchaAudioCtx;}catch(e){return null;}}
+  window.tuchaFx=function(kind){var c=ctx();if(!c)return;var t=c.currentTime;
+    function tone(f1,f2,d,wave,vol,delay){var o=c.createOscillator(),g=c.createGain(),at=t+(delay||0);o.type=wave||"sine";o.frequency.setValueAtTime(f1,at);if(f2)o.frequency.exponentialRampToValueAtTime(f2,at+d);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(vol||.045,at+.012);g.gain.exponentialRampToValueAtTime(.0001,at+d);o.connect(g);g.connect(c.destination);o.start(at);o.stop(at+d+.02);}
+    if(kind==="spin"){for(var i=0;i<9;i++)tone(260+i*24,180+i*18,.075,"triangle",.025,i*.13);}
+    else if(kind==="tick")tone(950,620,.035,"square",.018);
+    else if(kind==="win"){[523,659,784,1047,1318].forEach(function(f,i){tone(f,f*1.04,.24,"sine",.055,i*.09);});}
+    else if(kind==="tap")tone(520,680,.055,"sine",.025);
+  };
+  var oldSpin=window.spinWheel;
+  if(typeof oldSpin==="function")window.spinWheel=async function(){if(wheelBusy)return;window.tuchaFx("spin");return oldSpin.apply(this,arguments);};
+  var oldTick=window.wheelTick;
+  if(typeof oldTick==="function")window.wheelTick=function(){return oldTick.apply(this,arguments);};
+  document.addEventListener("click",function(e){if(e.target.closest("#wheel-btn"))window.tuchaFx("tap");},true);
 })();
 </script>
 
