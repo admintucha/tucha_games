@@ -2042,6 +2042,119 @@ main { color:#292929 !important; }
 .logo-text{font-size:21px!important;font-weight:1000!important;letter-spacing:1px!important;line-height:1;background:linear-gradient(180deg,#3b2a03,#b86a00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent!important}
 .logo-text small{-webkit-text-fill-color:#c98a00!important;font-size:10px!important;letter-spacing:3.4px!important;margin-top:3px!important}
 </style>
+<style id="tucha-v26">
+/* ===== TUCHA SKY v26: свежая лавандово-небесная тема вместо жёлтой ===== */
+:root{--bg1:#f1f3f7;--bg2:#e6eaf0;--ink:#23264d;--acc:#3390ec;--acc2:#5ab0ff;--line:#e3e7ee;--ok:#19c37d;--bad:#ff6b81;--gold:#ffb300}
+html,body{background:linear-gradient(180deg,var(--bg1),var(--bg2)) fixed!important;color:var(--ink)!important}
+body::before{background:radial-gradient(circle,rgba(51,144,236,.16),transparent 70%)!important}
+header{background:rgba(250,250,255,.88)!important;border-bottom:1px solid var(--line)!important}
+.balance{border:2px solid var(--line)!important;box-shadow:0 4px 14px rgba(51,144,236,.14)!important;transition:transform .15s}
+.balance:active{transform:scale(.95)}
+.balance-icon{color:var(--gold)!important}
+.logo-icon{background:linear-gradient(145deg,#3390ec,#5ab0ff)!important;box-shadow:0 6px 16px rgba(51,144,236,.4),inset 0 0 0 2px rgba(255,255,255,.55)!important;animation:tvFloat 3.2s ease-in-out infinite}
+.logo-text{background:linear-gradient(180deg,#1f6fc5,#3390ec)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.logo-text small{-webkit-text-fill-color:#3390ec!important}
+.panel,.grid,.tower-container,.mines-content .panel,.dice-panel,.upgrade-panel{border-color:var(--line)!important;box-shadow:0 8px 22px rgba(51,144,236,.1)!important}
+body .game-screen{background:linear-gradient(180deg,var(--bg1),var(--bg2))!important;color:var(--ink)!important}
+body .game-top-bar{background:rgba(250,250,255,.94)!important;border-bottom:1px solid var(--line)!important}
+.game-back-btn{color:var(--acc)!important}
+.game-card,.hub-hero.hub-banner{border-color:#fff!important;box-shadow:0 10px 26px rgba(51,144,236,.18)!important;transition:transform .18s,box-shadow .18s}
+.hub-hero.hub-banner{background:#3390ec!important}
+nav button.active{color:var(--acc)!important;filter:drop-shadow(0 2px 6px rgba(51,144,236,.35))!important}
+nav button{transition:transform .15s,color .15s}nav button.active .nav-icon{animation:tvPop .35s}
+.tab.active{animation:tvIn .3s ease-out}
+.game-card:hover,.case-card:hover{transform:translateY(-3px)}
+button:active{transition:transform .08s}
+@keyframes tvIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes tvPop{0%{transform:scale(.7)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes tvFloat{50%{transform:translateY(-3px)}}
+@keyframes tvShine{from{background-position:-200% 0}to{background-position:200% 0}}
+@keyframes tvShake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes tvBounce{0%{transform:scale(.3) rotate(-12deg)}60%{transform:scale(1.18) rotate(4deg)}100%{transform:none}}
+/* Мины: приятные эффекты открытия */
+#screen-mines .mx-cell.safe .mx-back{animation:tvBounce .45s cubic-bezier(.3,1.5,.5,1)}
+#screen-mines .mx-cell.mine .mx-back{animation:tvShake .45s}
+#screen-mines .mx-cell:not(:disabled) .mx-front{transition:transform .12s,filter .15s}
+#screen-mines .mx-cell:not(:disabled):hover .mx-front{filter:brightness(1.08);transform:translateY(-2px)}
+/* PvP: светлый дизайн */
+body #screen-pvp{background:linear-gradient(180deg,#eef1f5,#e6eaf0)!important}
+body #screen-pvp .game-top-bar{background:rgba(250,250,255,.95)!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important}
+body #screen-pvp .game-back-btn{color:var(--acc)!important}
+body #screen-pvp .pv-kicker{color:var(--acc)!important;text-shadow:none!important}
+body #screen-pvp .pv-title{color:var(--ink)!important;text-shadow:none!important}
+body #screen-pvp .pv-round-pill,body #screen-pvp .pv-status{background:#fff!important;border:1px solid var(--line)!important;color:#4b4f8a!important;box-shadow:0 4px 12px rgba(51,144,236,.1)!important}
+body #screen-pvp .pv-round-pill b{color:var(--acc)!important}
+body #screen-pvp .pv-status.win{background:#e6fbf1!important;color:#0c8a55!important;border-color:#8fe3bd!important}
+body #screen-pvp .pv-status.lose{background:#fff0f2!important;color:#d6405a!important;border-color:#ffb3bf!important}
+body #screen-pvp .pv-wheel-card{background:linear-gradient(160deg,#fff,#eef3fa)!important;border:1px solid var(--line)!important;box-shadow:0 12px 30px rgba(51,144,236,.16)!important}
+body #screen-pvp .pv-wheelbox canvas{box-shadow:0 8px 24px rgba(51,144,236,.3),0 0 0 6px #fff,0 0 0 9px #a8cdf3!important}
+body #screen-pvp .pv-pointer{border-top-color:var(--acc)!important;filter:drop-shadow(0 3px 4px rgba(51,144,236,.5))!important}
+body #screen-pvp .pv-center{background:radial-gradient(circle at 35% 28%,#fff,#e6f0fb)!important;border:4px solid #fff!important;box-shadow:0 6px 18px rgba(51,144,236,.3)!important}
+body #screen-pvp .pv-center small{color:#7a7fb8!important}
+body #screen-pvp .pv-center b{color:var(--ink)!important;text-shadow:none!important}
+body #screen-pvp .pv-timer{color:#4b4f8a!important;text-shadow:none!important}
+body #screen-pvp .pv-boost{color:#e08a00!important}
+body #screen-pvp .pv-bet,body #screen-pvp .pv-box{background:#fff!important;border:1px solid var(--line)!important;box-shadow:0 6px 18px rgba(51,144,236,.1)!important}
+body #screen-pvp .pv-bet-top span,body #screen-pvp .pv-box-heading span:first-child,body #screen-pvp .pv-box-title{color:var(--acc)!important}
+body #screen-pvp .pv-min-label,body #screen-pvp .pv-box-heading span:last-child{color:#9a9ed0!important}
+body #screen-pvp .pv-chips button,body #screen-pvp .pv-bet-row .pv-adjust,body #screen-pvp .pv-emos button{background:#eaf3ff!important;border:1px solid #bcd8f8!important;color:#1f6fc5!important;box-shadow:0 3px 0 #cfe3fa!important}
+body #screen-pvp .pv-bet-row input{background:#f7f8ff!important;border:1px solid var(--line)!important;color:var(--ink)!important;box-shadow:none!important}
+body #screen-pvp .pv-go{background:linear-gradient(180deg,#5aa9f5,#3390ec)!important;color:#fff!important;box-shadow:0 6px 0 #1f6fc5,0 14px 22px rgba(51,144,236,.35)!important}
+body #screen-pvp .pv-go:not(:disabled){background-image:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%),linear-gradient(180deg,#5aa9f5,#3390ec)!important;background-size:200% 100%,100% 100%!important;animation:tvShine 2.6s linear infinite}
+body #screen-pvp .pv-go:disabled{background:#c9cbe6!important;box-shadow:0 5px 0 #aeb1d4!important}
+body #screen-pvp .pv-note{color:#7a7fb8!important}
+body #screen-pvp .pv-row{background:#f7f8ff!important;border:1px solid var(--line)!important;color:var(--ink)!important;box-shadow:none!important}
+body #screen-pvp .pv-row .a{color:#d98200!important}body #screen-pvp .pv-row .p{color:#7a7fb8!important}
+body #screen-pvp .pv-row.me{outline:2px solid var(--acc)!important}
+body #screen-pvp .pv-row.won{background:#e6fbf1!important;outline:2px solid var(--ok)!important}
+body #screen-pvp .pv-empty{color:#9a9ed0!important}
+#pv-cancel{display:none;width:100%;margin-top:-4px;padding:13px;border:2px solid #ffb3bf;border-radius:16px;background:#fff0f2;color:#d6405a;font-weight:900;font-size:14px;transition:transform .1s}
+#pv-cancel:active{transform:scale(.97)}#pv-cancel.on{display:block;animation:tvIn .25s}
+</style>
+
+<style id="tucha-v27">
+/* ===== v27: светлый стиль как на референсе (голубой + белые карточки + узор) ===== */
+:root{--acc:#3390ec;--acc2:#5ab0ff;--line:#e3e7ee;--ink:#14161a}
+html,body{background-color:#eef1f5!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' fill='none' stroke='%23c7ccd6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' opacity='.55'%3E%3Ccircle cx='28' cy='30' r='11'/%3E%3Cpath d='M92 22l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z'/%3E%3Crect x='136' y='20' width='24' height='24' rx='6'/%3E%3Cpath d='M20 92h26M33 79v26'/%3E%3Cpath d='M84 96q12-16 24 0t24 0'/%3E%3Ccircle cx='156' cy='100' r='8'/%3E%3Cpath d='M30 150l12-14 12 14z'/%3E%3Crect x='86' y='136' width='22' height='22' rx='11'/%3E%3Cpath d='M140 140l18 18M158 140l-18 18'/%3E%3C/svg%3E")!important;background-attachment:fixed!important}
+body::before{display:none!important}
+body .game-screen{background-color:#eef1f5!important;background-image:inherit!important}
+body #screen-pvp{background:#eef1f5!important}
+body .game-top-bar,header{background:rgba(255,255,255,.9)!important}
+/* Нижнее меню — плавающая «таблетка» */
+nav{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;padding:7px!important;border:0!important;border-radius:28px!important;background:rgba(255,255,255,.94)!important;box-shadow:0 10px 30px rgba(30,45,80,.16)!important}
+nav button{border-radius:22px!important;padding:7px 2px!important;color:#7d8696!important}
+nav button.active{color:var(--acc)!important;background:#eaf3ff!important;filter:none!important}
+.primary{background:linear-gradient(180deg,#4aa3f5,#3390ec)!important;box-shadow:0 8px 20px rgba(51,144,236,.32)!important;border-radius:999px!important}
+/* ===== АПГРЕЙД ===== */
+#screen-upgrade .game-back-btn{font-size:26px!important;font-weight:900!important;color:#000!important;padding:0!important}
+#screen-upgrade .upgrade-content{padding:8px 14px 120px}
+#screen-upgrade .upg-stage{background:radial-gradient(circle at 50% 40%,#1c1d22,#0b0c0f 70%)!important;box-shadow:0 14px 34px rgba(20,25,40,.35),inset 0 0 0 3px #26272d!important}
+#screen-upgrade circle[stroke="#2c2411"]{stroke:#17181c}
+#screen-upgrade #upg-arc{stroke:#3390ec;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(51,144,236,.8))}
+#screen-upgrade circle[fill="#15110a"]{fill:#0d0e11;stroke:rgba(255,255,255,.06)}
+#screen-upgrade #upg-ticks *{stroke:#3a3c45;fill:#3a3c45}
+#screen-upgrade .upg-rotor polygon{fill:#fff;stroke:#fff}
+#screen-upgrade .upg-emblem{display:none}
+#screen-upgrade .upg-chance{color:#fff;font-size:clamp(40px,14vw,58px);letter-spacing:-1px}
+#screen-upgrade .upg-mult{color:#8fc6ff;font-size:14px}
+#screen-upgrade .upg-caption{color:#ff6b5e;font-size:11px}
+#screen-upgrade .upgrade-mode-switch{background:#fff!important;border:0!important;border-radius:999px!important;box-shadow:0 4px 14px rgba(30,45,80,.07)}
+#screen-upgrade .upgrade-mode-btn{border-radius:999px!important;color:#7d8696!important}
+#screen-upgrade .upgrade-mode-btn.active{background:var(--acc)!important;color:#fff!important;box-shadow:0 4px 12px rgba(51,144,236,.35)!important}
+#screen-upgrade .upgrade-control-card,#screen-upgrade .upgrade-gift-panel,#screen-upgrade .upgrade-range-card,#screen-upgrade .upgrade-stat,#screen-upgrade .upgrade-result{background:#fff!important;border:0!important;border-radius:24px!important;box-shadow:0 6px 20px rgba(30,45,80,.07)!important}
+#screen-upgrade .upgrade-control-label,#screen-upgrade .upgrade-range-label,#screen-upgrade .upgrade-stat-label{color:#8a93a3!important;font-weight:700!important}
+#screen-upgrade .upgrade-range-label b{color:var(--ink)!important}
+#screen-upgrade .upgrade-step-btn,#screen-upgrade .upgrade-mini-btn{background:#eef1f5!important;border:0!important;border-radius:999px!important;color:#2b2f38!important;font-weight:800!important}
+#screen-upgrade .upgrade-bet-input{color:var(--ink)!important}
+#screen-upgrade .upgrade-gift-choice{border-color:#e6eaf0!important;background:#f6f8fb!important;border-radius:18px!important}
+#screen-upgrade .upgrade-gift-choice.selected{border-color:var(--acc)!important;background:#eaf3ff!important}
+#screen-upgrade input[type=range]{accent-color:var(--acc)}
+#screen-upgrade .upgrade-speed button{border-radius:999px!important}
+#screen-upgrade .upgrade-speed button.active{background:var(--acc)!important;color:#fff!important}
+#screen-upgrade .upgrade-action{position:relative;padding:18px!important;font-size:16px!important;letter-spacing:.3px}
+#screen-upgrade .upgrade-action:not(:disabled){background-image:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%),linear-gradient(180deg,#4aa3f5,#3390ec)!important;background-size:200% 100%,100% 100%!important;animation:tvShine 2.8s linear infinite}
+</style>
+
 </head>
 
 <body>
@@ -5044,7 +5157,7 @@ openAdminPanel=async function(){ await _openAdminOrig(); if($("admin-modal").sty
   function drawArc(){
     var ch=Math.min(95,Math.max(1,chanceNow())),arc=document.getElementById("upg-arc");
     if(arc){arc.setAttribute("stroke-dasharray",(C*ch/100)+" "+C);arc.setAttribute("transform","rotate("+(180-ch*1.8-90)+" 150 150)");}
-    var sl=document.getElementById("upgrade-slider");if(sl)sl.style.background="linear-gradient(90deg,#ffc928 "+(sl.value/85*100)+"%,#e9e2c8 "+(sl.value/85*100)+"%)";
+    var sl=document.getElementById("upgrade-slider");if(sl)sl.style.background="linear-gradient(90deg,#3390ec "+(sl.value/85*100)+"%,#d8dee8 "+(sl.value/85*100)+"%)";
   }
   var orig=window.updateUpgradeUI;
   window.updateUpgradeUI=function(){orig.apply(this,arguments);drawArc();};
@@ -5070,5 +5183,27 @@ openAdminPanel=async function(){ await _openAdminOrig(); if($("admin-modal").sty
   window.updateUpgradeUI();
 })();
 </script>
+<script>
+/* v26: отмена ставки в PvP (пока раунд не закрыт). Сервер: {type:"cancel_bet"} -> {type:"cancel_ok"} + state/balance */
+(function(){
+  var go=document.getElementById("pv-go"); if(!go) return;
+  var b=document.createElement("button"); b.id="pv-cancel"; b.type="button"; b.textContent="✕ Отменить ставку";
+  go.parentNode.insertBefore(b,go.nextSibling);
+  function mine(){ var r=pv.st; return r&&r.players&&r.players.find(function(p){return String(p.userid)===String(userId);}); }
+  function can(){ var r=pv.st; return pv.ready&&r&&(r.phase==="waiting"||r.phase==="countdown")&&mine(); }
+  b.onclick=function(){
+    if(!can()||!pv.ws||pv.ws.readyState!==1||b.disabled) return;
+    b.disabled=true; haptic("medium");
+    pv.ws.send(JSON.stringify({type:"cancel_bet"}));
+    setTimeout(function(){b.disabled=false;},4000);
+  };
+  var ui=window.pvUI; window.pvUI=function(){ ui.apply(this,arguments); b.classList.toggle("on",!!can()); };
+  var om=window.pvOnMsg; window.pvOnMsg=function(m){
+    if(m.type==="cancel_ok"){ b.disabled=false; pvToast("Ставка отменена, деньги вернулись ✓","win"); notify("success"); pvUI(); return; }
+    om.apply(this,arguments); if(m.type==="error") b.disabled=false;
+  };
+})();
+</script>
+
 </body>
 </html>
