@@ -2491,9 +2491,9 @@ main { color:#292929 !important; }
 
         <div id="upgrade-result" class="upgrade-result">Настрой ставку и шанс, затем нажми «АПГРЕЙД»</div>
         <div class="upgrade-speed" id="upgrade-speed"><span>СКОРОСТЬ</span>
-            <button data-s="slow" onclick="setUpgradeSpeed('slow')">Медленно</button>
-            <button data-s="normal" class="active" onclick="setUpgradeSpeed('normal')">Обычно</button>
-            <button data-s="fast" onclick="setUpgradeSpeed('fast')">Быстро</button>
+            <button data-s="slow" onclick="setUpgradeSpeed('slow')">Медленно · 15с</button>
+            <button data-s="normal" class="active" onclick="setUpgradeSpeed('normal')">Обычно · 7с</button>
+            <button data-s="fast" onclick="setUpgradeSpeed('fast')">Быстро · 3с</button>
         </div>
         <button id="upgrade-button" class="primary upgrade-action" onclick="playUpgrade()">АПГРЕЙД</button>
     </div>
@@ -2576,6 +2576,9 @@ main { color:#292929 !important; }
         <input id="deposit-amount" type="number" min="0.09" step="0.01" value="5" oninput="updateStarsHint()">
         <div id="deposit-stars" style="margin:6px 0 10px;text-align:center;font-weight:900;color:#d97706;">= 550 ⭐</div>
         <button id="deposit-pay" class="primary green" onclick="createDeposit()">ОПЛАТИТЬ ЗВЁЗДАМИ ⭐</button>
+        <div style="margin-top:14px;padding:12px;border-radius:14px;background:#fff8d6;border:2px solid #f0dc6a;text-align:center;font-size:12px;font-weight:800;color:#6b5a10;line-height:1.5;">
+            🚀 Пополнение через <b>xRocket</b>: напиши в <a href="https://t.me/tuchasupport_bot" target="_blank" onclick="if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.openTelegramLink('https://t.me/tuchasupport_bot');return false;}" style="color:#d97706;font-weight:1000;">@tuchasupport_bot</a>
+        </div>
         <div id="deposit-status" style="min-height:18px; margin-top:12px; text-align:center; font-size:12px; font-weight:900;"></div>
     </div>
 </div>
@@ -3603,7 +3606,7 @@ function upgradeReadRotation(el) {
     const a = m[1].split(",").map(Number);
     return Math.atan2(a[1], a[0]) * 180 / Math.PI;
 }
-const UPGRADE_SPEEDS = {slow: 4600, normal: 3000, fast: 1700};
+const UPGRADE_SPEEDS = {slow: 15000, normal: 7500, fast: 3500};   // медленно 15 с, обычно 6–9 с, быстро 3–4 с
 let upgradeSpeed = (function () { try { return localStorage.getItem("upgrade_speed") || "normal"; } catch (e) { return "normal"; } })();
 function setUpgradeSpeed(k) {
     if (!UPGRADE_SPEEDS[k]) return;
