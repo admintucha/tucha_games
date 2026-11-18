@@ -2020,6 +2020,27 @@ main { color:#292929 !important; }
 .mx-cell.mine .mx-back svg{animation:mxBoom .5s ease-out .4s both}
 @keyframes mxBoom{0%{transform:scale(.3)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
 .mx-cell.nt .mx-back svg{animation:none}
+
+/* ===== UPGRADE v2 + LOGO v2 (override) ===== */
+#screen-upgrade .upg-stage{position:relative;width:min(92%,340px);aspect-ratio:1;margin:8px auto 4px;border-radius:50%;background:radial-gradient(circle at 50% 36%,#2a2210 0%,#15110a 68%,#0b0905 100%);box-shadow:0 18px 40px rgba(60,40,0,.35),inset 0 0 0 2px rgba(255,201,40,.18);transition:box-shadow .35s}
+#screen-upgrade .upg-stage:has(.upg-rotor.won){box-shadow:0 0 0 3px #22c55e,0 0 44px rgba(34,197,94,.5)}
+#screen-upgrade .upg-stage:has(.upg-rotor.lost){box-shadow:0 0 0 3px #ef4444,0 0 36px rgba(239,68,68,.4)}
+.upg-svg,.upg-rotor{position:absolute;inset:0;width:100%;height:100%}
+.upg-rotor{transform-origin:50% 50%;will-change:transform;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+@keyframes upgSpin{to{transform:rotate(360deg)}}
+.upg-rotor.preview-spinning{animation:upgSpin .85s linear infinite}
+.upg-face{position:absolute;inset:19%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}
+.upg-emblem{width:24%;height:auto;margin-bottom:2px}
+.upg-chance{color:#fff7e0;font-size:clamp(32px,11vw,46px);font-weight:1000;line-height:1}
+.upg-mult{color:#ffc928;font-size:15px;font-weight:950}
+.upg-caption{color:#a89a6c;font-size:10px;font-weight:900;letter-spacing:1.2px}
+#screen-upgrade .upgrade-content{gap:11px}
+#upgrade-button{background:linear-gradient(135deg,#ffd83a,#f2a900)!important;color:#2b1f00!important;box-shadow:0 8px 22px rgba(191,137,0,.35)!important}
+@media (prefers-reduced-motion:reduce){.upg-rotor.preview-spinning{animation-duration:2s}}
+.logo-icon{width:46px!important;height:46px!important;border-radius:15px!important;background:linear-gradient(145deg,#2b2008,#100d06)!important;box-shadow:0 6px 16px rgba(80,55,0,.35),inset 0 0 0 2px rgba(255,201,40,.55)!important;display:grid;place-items:center}
+.logo-icon .logo-cloud-art{width:36px!important;height:36px!important}
+.logo-text{font-size:21px!important;font-weight:1000!important;letter-spacing:1px!important;line-height:1;background:linear-gradient(180deg,#3b2a03,#b86a00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent!important}
+.logo-text small{-webkit-text-fill-color:#c98a00!important;font-size:10px!important;letter-spacing:3.4px!important;margin-top:3px!important}
 </style>
 </head>
 
@@ -2029,34 +2050,7 @@ main { color:#292929 !important; }
 <header id="main-header">
     <div class="logo">
         <div class="logo-icon" aria-label="Тучка Tucha Games">
-            <svg class="logo-cloud-art" viewBox="0 0 80 64" role="img" aria-hidden="true">
-                <defs>
-                    <linearGradient id="tuchaCloudFill" x1="0" y1="0" x2="0.15" y2="1">
-                        <stop offset="0" stop-color="#ffffff"/>
-                        <stop offset=".42" stop-color="#dff7ff"/>
-                        <stop offset="1" stop-color="#6fc9f5"/>
-                    </linearGradient>
-                    <linearGradient id="tuchaCloudSide" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#a6e5ff"/>
-                        <stop offset="1" stop-color="#399bdc"/>
-                    </linearGradient>
-                    <linearGradient id="tuchaCrown" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#fff6a6"/>
-                        <stop offset="1" stop-color="#f59e0b"/>
-                    </linearGradient>
-                </defs>
-                <path d="M23 49C12 49 7 42 8 33c1-8 8-13 16-13 3-10 12-15 22-12 8 2 13 8 14 16 8 0 13 6 13 13 0 8-6 13-15 13H23Z" fill="url(#tuchaCloudSide)" stroke="#248ecb" stroke-width="2"/>
-                <path d="M22 45C13 45 10 39 12 32c2-6 7-9 14-8 2-8 10-13 18-10 7 2 11 7 12 15 7-1 12 4 12 10 0 7-5 11-13 11H22Z" fill="url(#tuchaCloudFill)" stroke="#ffffff" stroke-width="2.4"/>
-                <ellipse cx="30" cy="19" rx="14" ry="5" fill="#ffffff" opacity=".52" transform="rotate(-18 30 19)"/>
-                <ellipse cx="28" cy="35" rx="2.5" ry="4" fill="#173b69"/>
-                <ellipse cx="48" cy="35" rx="2.5" ry="4" fill="#173b69"/>
-                <path d="M34 41Q39 46 44 41" fill="none" stroke="#2674a8" stroke-width="2.5" stroke-linecap="round"/>
-                <ellipse cx="21" cy="40" rx="4" ry="2" fill="#ff9aa7" opacity=".65"/>
-                <ellipse cx="55" cy="40" rx="4" ry="2" fill="#ff9aa7" opacity=".65"/>
-                <path d="M34 8 38 2 43 8 49 5 47 14 34 14Z" fill="url(#tuchaCrown)" stroke="#d58a08" stroke-width="1.4" stroke-linejoin="round"/>
-                <circle cx="38" cy="4" r="1.7" fill="#fff8c8"/>
-                <path d="M69 14l2.2 4.3 4.8 1-4.8 1.2-2.2 4.2-1.2-4.2-4.3-1.2 4.3-1Z" fill="#ffd44d" stroke="#efa600" stroke-width=".8"/>
-            </svg>
+            <svg class="logo-cloud-art" viewBox="0 0 64 64" role="img" aria-hidden="true"><defs><linearGradient id="tcG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset="1" stop-color="#ffb800"/></linearGradient></defs><path d="M20 47c-8 0-13-5-12-12 1-6 6-10 12-10 2-8 10-12 18-9 6 2 9 6 10 11 6 0 10 5 10 10 0 6-5 10-11 10Z" fill="url(#tcG)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><ellipse cx="27" cy="36" rx="2.4" ry="3.6" fill="#1b1407"/><ellipse cx="41" cy="36" rx="2.4" ry="3.6" fill="#1b1407"/><path d="M30 42q4 4 8 0" fill="none" stroke="#1b1407" stroke-width="2.2" stroke-linecap="round"/><path d="M24 15l4 4 4-7 4 7 4-4-1 8H25Z" fill="#fff" stroke="#1b1407" stroke-width="1.6" stroke-linejoin="round"/></svg>
         </div>
         <div class="logo-text">
             TUCHA
@@ -2418,19 +2412,24 @@ main { color:#292929 !important; }
     </div>
 
     <div class="upgrade-content">
-        <div class="upgrade-wheel-stage">
-            <div class="upgrade-wheel-wrap">
-                <div id="upgrade-wheel-ring" class="upgrade-wheel-ring"></div>
-                <div class="upgrade-wheel-pointer"></div>
-                <div class="upgrade-wheel-face">
-                    <div class="upgrade-face-arrow">⬆</div>
-                    <div id="upgrade-wheel-chance" class="upgrade-face-chance">47%</div>
-                    <div id="upgrade-wheel-mult" class="upgrade-face-mult">x2.01</div>
-                    <div id="upgrade-wheel-caption" class="upgrade-face-caption">ШАНС ПОБЕДЫ</div>
-                </div>
+        <div class="upg-stage" id="upg-stage">
+            <svg class="upg-svg" viewBox="0 0 300 300" aria-hidden="true">
+                <g id="upg-ticks"></g>
+                <circle cx="150" cy="150" r="118" fill="none" stroke="#2c2411" stroke-width="18"/>
+                <circle id="upg-arc" cx="150" cy="150" r="118" fill="none" stroke="#ffc928" stroke-width="18" stroke-dasharray="0 999" transform="rotate(-90 150 150)"/>
+                <circle cx="150" cy="150" r="108" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+                <circle cx="150" cy="150" r="96" fill="#15110a" stroke="rgba(255,201,40,.22)" stroke-width="2"/>
+            </svg>
+            <div class="upg-face">
+                <svg class="upg-emblem" viewBox="0 0 80 80" aria-hidden="true"><path d="M40 4 71 22v36L40 76 9 58V22Z" fill="none" stroke="#ffc928" stroke-width="3" stroke-linejoin="round"/><path d="M28 55c-7 0-11-4-10-10 1-5 5-8 10-8 2-7 9-10 15-8 5 2 8 5 9 10 5 0 8 4 8 8 0 5-4 8-9 8Z" fill="#ffc928"/><circle cx="34" cy="46" r="2" fill="#15110a"/><circle cx="46" cy="46" r="2" fill="#15110a"/></svg>
+                <div id="upgrade-wheel-chance" class="upg-chance">47%</div>
+                <div id="upgrade-wheel-mult" class="upg-mult">x2.01</div>
+                <div id="upgrade-wheel-caption" class="upg-caption">ШАНС ПОБЕДЫ</div>
+            </div>
+            <div id="upgrade-wheel-ring" class="upg-rotor">
+                <svg class="upg-svg" viewBox="0 0 300 300" aria-hidden="true"><polygon points="150,48 137,20 163,20" fill="#fff4c2" stroke="#ffc928" stroke-width="3" stroke-linejoin="round"/></svg>
             </div>
         </div>
-
         <div class="upgrade-mode-switch">
             <button id="upgrade-mode-money" class="upgrade-mode-btn active" type="button" onclick="setUpgradeMode('money')">💵 Ставка балансом</button>
             <button id="upgrade-mode-gift" class="upgrade-mode-btn" type="button" onclick="setUpgradeMode('gift')">🎁 Ставка подарком</button>
@@ -2475,7 +2474,7 @@ main { color:#292929 !important; }
 
         <div class="upgrade-range-card">
             <div class="upgrade-range-label">Шанс: <b id="upgrade-range-label">47%</b></div>
-            <input id="upgrade-slider" type="range" min="1" max="95" value="47" step="1" oninput="setUpgradeChance(this.value)">
+            <input id="upgrade-slider" type="range" min="1" max="85" value="47" step="1" oninput="setUpgradeChance(this.value)">
             <div id="upgrade-gift-lock-hint" class="upgrade-gift-lock-hint" style="display:none;">Шанс рассчитан автоматически по стоимости следующего подарка</div>
         </div>
 
@@ -5031,6 +5030,42 @@ async function adminToggleGame(game,on){
 }
 const _openAdminOrig=openAdminPanel;
 openAdminPanel=async function(){ await _openAdminOrig(); if($("admin-modal").style.display==="flex") adminTab("over"); };
+</script>
+
+<script>
+/* ===== UPGRADE v2: стрелка крутится по кольцу, зона успеха — дуга ===== */
+(function(){
+  var C=2*Math.PI*118, ticks=document.getElementById("upg-ticks");
+  if(ticks){var h="";for(var i=0;i<72;i++){var big=i%6===0;h+='<line x1="150" y1="4" x2="150" y2="'+(big?15:9)+'" stroke="'+(big?"rgba(255,226,150,.9)":"rgba(255,226,150,.38)")+'" stroke-width="'+(big?3:1.6)+'" stroke-linecap="round" transform="rotate('+(i*5)+' 150 150)"/>';}ticks.innerHTML=h;}
+  function chanceNow(){var r=document.getElementById("upgrade-wheel-ring");var v=parseFloat(r&&r.style.getPropertyValue("--upgrade-chance"));return isFinite(v)?v:47;}
+  function drawArc(){
+    var ch=Math.min(95,Math.max(1,chanceNow())),arc=document.getElementById("upg-arc");
+    if(arc){arc.setAttribute("stroke-dasharray",(C*ch/100)+" "+C);arc.setAttribute("transform","rotate("+(180-ch*1.8-90)+" 150 150)");}
+    var sl=document.getElementById("upgrade-slider");if(sl)sl.style.background="linear-gradient(90deg,#ffc928 "+(sl.value/85*100)+"%,#e9e2c8 "+(sl.value/85*100)+"%)";
+  }
+  var orig=window.updateUpgradeUI;
+  window.updateUpgradeUI=function(){orig.apply(this,arguments);drawArc();};
+  window.setUpgradeChance=function(v){
+    if(upgradeBusy||upgradeMode==="gift")return;
+    upgradeChance=Math.min(85,Math.max(1,Math.round(Number(v)||1)));   // выше 85% множитель < 1.03 — смысла нет
+    document.getElementById("upgrade-slider").value=upgradeChance;
+    updateUpgradeUI();
+  };
+  window.upgradeStopSpin=async function(el,isWin,chance){
+    var T=UPGRADE_SPEEDS[upgradeSpeed]||3000,start=upgradeReadRotation(el);
+    el.classList.remove("preview-spinning");el.style.animation="none";el.style.transition="none";el.style.transform="rotate("+start+"deg)";
+    var k=0.06+0.88*Math.random();
+    var roll=isWin?chance*k:chance+(100-chance)*k;
+    var theta=(((180-chance*1.8)+roll*3.6)%360+360)%360;
+    var cur=((start%360)+360)%360,delta=((theta-cur)%360+360)%360;
+    var want=(360/0.85)*(T/1000)/3,D=delta+360*Math.max(1,Math.round((want-delta)/360));
+    await new Promise(function(res){var t0=performance.now();(function f(now){var t=Math.min(1,(now-t0)/T),e=1-Math.pow(1-t,3);el.style.transform="rotate("+(start+D*e)+"deg)";t<1?requestAnimationFrame(f):res();})(t0);});
+  };
+  /* ошибки — через окно Telegram, а не браузерный alert */
+  var nativeAlert=window.alert.bind(window);
+  window.alert=function(m){try{if(typeof tg!=="undefined"&&tg&&tg.showAlert){tg.showAlert(String(m));return;}}catch(e){}nativeAlert(m);};
+  window.updateUpgradeUI();
+})();
 </script>
 </body>
 </html>
