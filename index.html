@@ -2302,18 +2302,34 @@ nav#main-nav button.active{color:#168bd0!important}
 }
 </style>
 
-<style id="pvp-cancel-controls">
-#screen-pvp .pv-cancel{
-  display:block;width:100%;margin-top:10px;padding:14px 16px;
-  border:1px solid rgba(255,145,145,.55);border-radius:16px;
-  background:linear-gradient(180deg,#ff7777,#d9364d);
-  color:#fff;font-size:14px;font-weight:950;letter-spacing:.25px;
-  box-shadow:0 5px 0 #8f2033,0 10px 20px rgba(190,38,67,.22);
-  transition:transform .12s,filter .12s,opacity .12s;
+
+<style id="tucha-mines-screenshot-layout">
+/* Mines: clean 5x5 starting grid, matching the supplied reference image. */
+#screen-mines .mx-wrap{width:100%!important;max-width:520px!important;padding:12px 26px 34px!important;gap:12px!important}
+#screen-mines .mx-board{
+  width:100%!important;display:grid!important;grid-template-columns:repeat(var(--n,5),minmax(0,1fr))!important;
+  gap:10px!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;
 }
-#screen-pvp .pv-cancel:active{transform:translateY(3px);filter:brightness(.96)}
-#screen-pvp .pv-cancel:disabled{opacity:.55;cursor:default;box-shadow:none}
-#screen-pvp .pv-cancel[hidden]{display:none!important}
+#screen-mines .mx-cell{width:100%!important;aspect-ratio:1/1!important;min-width:0!important;}
+#screen-mines .mx-front{
+  background:#f0f0f0!important;border:0!important;border-radius:20px!important;
+  box-shadow:none!important;overflow:hidden!important;transform:none;
+}
+#screen-mines .mx-cell:not(:disabled):active .mx-front{transform:scale(.96)!important;box-shadow:none!important}
+#screen-mines .mx-cell:not(:disabled):hover .mx-front{filter:brightness(.98)!important}
+/* Closed cells stay completely empty. The chest appears only while a tap is being processed. */
+#screen-mines .mx-front .mx-chest{opacity:0!important;transform:scale(.65)!important;transition:opacity .18s ease,transform .22s ease!important}
+#screen-mines .mx-cell.pending .mx-front .mx-chest{opacity:1!important;transform:scale(1)!important}
+#screen-mines .mx-cell.open .mx-front{opacity:0!important;pointer-events:none!important}
+#screen-mines .mx-back{border-radius:20px!important;box-shadow:none!important}
+#screen-mines .mx-cell.safe .mx-back{background:#e7f8ef!important}
+#screen-mines .mx-cell.mine .mx-back{background:#fff0f0!important}
+@media(max-width:390px){
+  #screen-mines .mx-wrap{padding-left:20px!important;padding-right:20px!important}
+  #screen-mines .mx-board{gap:8px!important}
+  #screen-mines .mx-front,#screen-mines .mx-back{border-radius:17px!important}
+}
 </style>
 
 </head>
@@ -4856,7 +4872,7 @@ document.addEventListener("click", function(e) {
 /* ===== PvP ДЖЕКПОТ: realtime через WebSocket ===== */
 // !!! ВСТАВЬ СЮДА АДРЕС СВОЕГО СЕРВЕРА С RENDER (начинается с wss://) !!!
 const PVP_WS_URL = "wss://tucha-pvp.onrender.com";
-let pv = {ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null, tick: null, busy: false, busyT: null, cancelBusy: false, drawKey: "", wonShown: ""};
+let pv = {ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null, tick: null, busy: false, busyT: null, drawKey: "", wonShown: ""};
 
 function pvEsc(s) { return String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
 function pvNow() { return Date.now() + pv.off; }
@@ -4888,13 +4904,9 @@ function pvConnect() {
     ws.onopen = () => { pv.tries = 0; ws.send(JSON.stringify({type: "auth", initData: tg.initData})); };
     ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (x) { return; } pvOnMsg(m); };
     ws.onclose = () => {
-        pv.ready = false;
-        if (pv.ws === ws) pv.ws = null;
-        clearTimeout(pv.busyT);
-        pv.busy = false;
-        pv.cancelBusy = false;
+        pv.ready = false; if (pv.ws === ws) pv.ws = null;
         if (!pv.open) return;
-        pvToast("Связь потеряна, переподключаюсь… Ставка проверится при подключении.", "lose"); pvUI();
+        pvToast("Связь потеряна, переподключаюсь…", "lose"); pvUI();
         pv.rt = setTimeout(pvConnect, Math.min(6000, 1000 + pv.tries++ * 1000));
     };
     ws.onerror = () => {};
@@ -4903,93 +4915,22 @@ function pvOnMsg(m) {
     if (m.type === "ready") { pv.ready = true; pvToast("Онлайн ✓ Делай ставку", ""); pvUI(); }
     else if (m.type === "balance") { balance = Number(m.balance) || 0; updateBalanceUI(); saveLocal(); }
     else if (m.type === "state") pvApplyState(m);
-    else if (m.type === "bet_ok") {
-        pv.busy = false; clearTimeout(pv.busyT);
-        notify("success"); pvToast("Ставка принята ✓", "win"); pvUI();
-    }
-    else if (m.type === "cancel_ok") {
-        pv.cancelBusy = false; clearTimeout(pv.busyT);
-        const amount = Number(m.amount) || 0;
-        if (m.balance !== undefined) { balance = Number(m.balance) || 0; updateBalanceUI(); saveLocal(); }
-        pvToast(amount > 0 ? "Ставка отменена · возвращено $" + money(amount) : "Ставка уже была отменена", "win");
-        notify("success"); haptic("medium"); pvUI();
-    }
+    else if (m.type === "bet_ok") { pv.busy = false; clearTimeout(pv.busyT); notify("success"); pvUI(); }
     else if (m.type === "info") pvToast(m.message, "");
     else if (m.type === "emote") { if (String(m.userid) !== String(userId)) pvEmote(m.userid, m.id); }
     else if (m.type === "flame") pvFlame(m);
     else if (m.type === "flame_result") { pvToast("🔥 Множитель x" + m.mult + "! Выиграешь раунд — выигрыш ×" + m.mult, "win"); notify("success"); haptic("heavy"); }
-    else if (m.type === "error") {
-        pv.busy = false; pv.cancelBusy = false; clearTimeout(pv.busyT);
-        pvToast(m.message, "lose"); notify("error"); pvUI();
-    }
+    else if (m.type === "error") { pv.busy = false; clearTimeout(pv.busyT); pvToast(m.message, "lose"); notify("error"); pvUI(); }
 }
 function pvBet() {
-    if (pv.busy || pv.cancelBusy || !pv.ready || !pv.ws || pv.ws.readyState !== 1) return;
+    if (pv.busy || !pv.ready || !pv.ws || pv.ws.readyState !== 1) return;
     const a = pvGetBet();
     if (!(a >= 0.1)) { pvToast("Минимальная ставка — $0.10", "lose"); notify("error"); return; }
     if (a > 100) { pvToast("Максимальная ставка — $100", "lose"); notify("error"); return; }
     if (a > balance) { pvToast("Недостаточно средств", "lose"); notify("error"); return; }
-
     pv.busy = true; pvUI(); haptic("medium");
-    try {
-        pv.ws.send(JSON.stringify({type: "bet", amount: a}));
-        clearTimeout(pv.busyT);
-        pv.busyT = setTimeout(() => {
-            // Не разблокируем интерфейс вслепую: сервер мог уже списать деньги.
-            // После reconnect клиент получает серверное состояние раунда.
-            if (!pv.busy || !pv.open) return;
-            pvToast("Проверяем статус ставки…", "");
-            if (pv.ws && pv.ws.readyState === 1) {
-                try { pv.ws.close(); } catch (e) {}
-            } else {
-                pv.busy = false; pvUI(); pvConnect();
-            }
-        }, 25000);
-    } catch (e) {
-        pv.busy = false; clearTimeout(pv.busyT);
-        pvToast("Не удалось отправить ставку. Проверь соединение.", "lose");
-        pvUI();
-    }
-}
-
-function pvMyStake() {
-    const players = pv.st && Array.isArray(pv.st.players) ? pv.st.players : [];
-    const me = players.find(p => String(p.userid) === String(userId));
-    return me ? Math.round((Number(me.amount) || 0) * 100) / 100 : 0;
-}
-
-function pvCancelBet() {
-    if (pv.cancelBusy || pv.busy || !pv.ready || !pv.ws || pv.ws.readyState !== 1) return;
-    const r = pv.st;
-    const canCancelPhase = r && (r.phase === "waiting" || r.phase === "countdown");
-    const amount = pvMyStake();
-    if (!canCancelPhase || amount <= 0) {
-        pvToast("Сейчас нет ставки, которую можно отменить.", "lose");
-        pvUI();
-        return;
-    }
-
-    pv.cancelBusy = true;
-    pvUI();
-    pvToast("Отменяем ставку и возвращаем деньги…", "");
-    haptic("medium");
-    try {
-        pv.ws.send(JSON.stringify({type: "cancel_bet"}));
-        clearTimeout(pv.busyT);
-        pv.busyT = setTimeout(() => {
-            if (!pv.cancelBusy || !pv.open) return;
-            pvToast("Проверяем возврат ставки…", "");
-            if (pv.ws && pv.ws.readyState === 1) {
-                try { pv.ws.close(); } catch (e) {}
-            } else {
-                pv.cancelBusy = false; pvUI(); pvConnect();
-            }
-        }, 25000);
-    } catch (e) {
-        pv.cancelBusy = false; clearTimeout(pv.busyT);
-        pvToast("Не удалось отправить отмену. Проверь соединение.", "lose");
-        pvUI();
-    }
+    pv.busyT = setTimeout(() => { pv.busy = false; pvUI(); }, 30000);
+    pv.ws.send(JSON.stringify({type: "bet", amount: a}));
 }
 
 /* --- состояние раунда --- */
@@ -5121,25 +5062,11 @@ function pvTickFn() {
     else t.textContent = "Новый раунд скоро…";
 }
 function pvUI() {
-    const go = $("pv-go"), cancel = $("pv-cancel");
-    if (!go) return;
-    const r = pv.st;
-    const canBet = pv.ready && r && (r.phase === "waiting" || r.phase === "countdown");
-    const myStake = pvMyStake();
-    const canCancel = !!(canBet && myStake > 0 && !pv.busy && !pv.cancelBusy);
-
-    go.disabled = !canBet || pv.busy || pv.cancelBusy;
-    go.textContent = pv.busy ? "ПРИНИМАЕМ СТАВКУ…" : (pv.cancelBusy ? "ОТМЕНЯЕМ СТАВКУ…" : (canBet ? "ИГРАТЬ · $" + money(pvGetBet()) : (pv.ready ? "РАУНД ЗАКРЫТ" : "НЕТ СВЯЗИ")));
-
-    if (cancel) {
-        cancel.hidden = !(canBet && myStake > 0);
-        cancel.disabled = !canCancel;
-        cancel.textContent = pv.cancelBusy ? "ВОЗВРАЩАЕМ $" + money(myStake) + "…" : "ОТМЕНИТЬ МОЮ СТАВКУ · $" + money(myStake);
-    }
-
-    document.querySelectorAll(".pv-bet button, .pv-bet input").forEach(el => {
-        el.disabled = pv.busy || pv.cancelBusy;
-    });
+    const go = $("pv-go"), inp = $("pv-bet"); if (!go) return;
+    const r = pv.st, canBet = pv.ready && r && (r.phase === "waiting" || r.phase === "countdown");
+    go.disabled = !canBet || pv.busy;
+    go.textContent = pv.busy ? "ОТПРАВЛЯЕМ…" : (canBet ? "ИГРАТЬ · $" + money(pvGetBet()) : (pv.ready ? "РАУНД ЗАКРЫТ" : "НЕТ СВЯЗИ"));
+    document.querySelectorAll(".pv-bet button, .pv-bet input").forEach(el => { el.disabled = pv.busy; });
 }
 
 
