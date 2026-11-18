@@ -2564,18 +2564,19 @@ main { color:#292929 !important; }
             <button class="deposit-close" onclick="closeDeposit()">✕</button>
         </div>
         <div style="margin: 8px 0 14px; color: #9c841a; font-size: 12px; font-weight: 800; line-height: 1.45;">
-            Оплата криптовалютой через @CryptoBot. Сколько $ оплатили — столько придёт на баланс.
+            Оплата Telegram Stars ⭐. $1 = 110 ⭐. Минимум 10 ⭐. Баланс пополнится сразу после оплаты.
         </div>
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:14px;">
-            <button class="qty-btn" onclick="$('deposit-amount').value=1">$1</button>
-            <button class="qty-btn" onclick="$('deposit-amount').value=5">$5</button>
-            <button class="qty-btn" onclick="$('deposit-amount').value=10">$10</button>
-            <button class="qty-btn" onclick="$('deposit-amount').value=25">$25</button>
-            <button class="qty-btn" onclick="$('deposit-amount').value=50">$50</button>
+            <button class="qty-btn" onclick="updateStarsHintSoon(); $('deposit-amount').value=1">$1</button>
+            <button class="qty-btn" onclick="updateStarsHintSoon(); $('deposit-amount').value=5">$5</button>
+            <button class="qty-btn" onclick="updateStarsHintSoon(); $('deposit-amount').value=10">$10</button>
+            <button class="qty-btn" onclick="updateStarsHintSoon(); $('deposit-amount').value=25">$25</button>
+            <button class="qty-btn" onclick="updateStarsHintSoon(); $('deposit-amount').value=50">$50</button>
         </div>
         <label>Сумма ($)</label>
-        <input id="deposit-amount" type="number" min="1" step="0.01" value="5">
-        <button id="deposit-pay" class="primary green" onclick="createDeposit()">ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT</button>
+        <input id="deposit-amount" type="number" min="0.09" step="0.01" value="5" oninput="updateStarsHint()">
+        <div id="deposit-stars" style="margin:6px 0 10px;text-align:center;font-weight:900;color:#d97706;">= 550 ⭐</div>
+        <button id="deposit-pay" class="primary green" onclick="createDeposit()">ОПЛАТИТЬ ЗВЁЗДАМИ ⭐</button>
         <div id="deposit-status" style="min-height:18px; margin-top:12px; text-align:center; font-size:12px; font-weight:900;"></div>
     </div>
 </div>
@@ -4308,14 +4309,29 @@ async function adminTogglePromo(code,active){
 function openDeposit() { $("deposit-modal").classList.add("active"); haptic(); }
 function closeDeposit() { $("deposit-modal").classList.remove("active"); }
 
+const STARS_MIN = 10;
+const STARS_PER_USD = 110; // должно совпадать с stars.gs
+function updateStarsHintSoon(){ setTimeout(updateStarsHint,0); }
+function updateStarsHint() {
+    const a = Number($("deposit-amount").value) || 0, el = $("deposit-stars");
+    if (el) el.textContent = "= " + Math.round(a * STARS_PER_USD) + " ⭐";
+}
 function createDeposit() {
-    const a = Number($("deposit-amount").value); if(a<1)return;
+    const a = Number($("deposit-amount").value);
+    if(Math.round(a*STARS_PER_USD)<STARS_MIN){ $("deposit-status").textContent="Минимум "+STARS_MIN+" ⭐"; return; }
     if(!isDBConnected()){ $("deposit-status").textContent="База не подключена"; return; }
     $("deposit-pay").disabled=true; $("deposit-pay").textContent="СОЗДАЁМ СЧЁТ...";
-    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_invoice", userid:userId, username:userName, amount:a, initData:tg?.initData || ""}) })
+    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({action:"create_stars_invoice", userid:userId, username:userName, amount:a, initData:tg?.initData || ""}) })
     .then(r=>r.json()).then(d=>{
-        if(d.status==="success"){ $("deposit-status").textContent="Оплатите в Crypto Bot"; window.open(d.pay_url,"_blank"); setInterval(()=>checkPayments(true),10000); }
-    }).finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЧЕРЕЗ CRYPTO BOT"; });
+        if(d.status!=="success"){ $("deposit-status").textContent=d.message||"Ошибка"; return; }
+        const done = st => {
+            if(st==="paid"){ $("deposit-status").textContent="Оплачено! Зачисляем..."; notify("success"); let n=0; const t=setInterval(()=>{ loadUserData(); if(++n>=8) clearInterval(t); },2500); }
+            else if(st==="cancelled"){ $("deposit-status").textContent="Оплата отменена"; }
+            else if(st==="failed"){ $("deposit-status").textContent="Оплата не прошла"; }
+        };
+        if(tg && tg.openInvoice) tg.openInvoice(d.invoice_url, done); else window.open(d.invoice_url,"_blank");
+    }).catch(()=>{ $("deposit-status").textContent="Нет связи с сервером"; })
+    .finally(()=>{ $("deposit-pay").disabled=false; $("deposit-pay").textContent="ОПЛАТИТЬ ЗВЁЗДАМИ ⭐"; });
 }
 
 function checkPayments(sil) {
