@@ -3107,11 +3107,24 @@ async function minesPost(payload) {
     return data;
 }
 async function apiPost(payload) {
-    const securedPayload = { ...payload, initData: tg?.initData || "", userid: payload.userid || userId, username: payload.username || userName };
-    const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(securedPayload) });
-    const data = await response.json();
-    if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
-    return data;
+    const body = JSON.stringify({ ...payload, initData: tg?.initData || "", userid: payload.userid || userId, username: payload.username || userName });
+    // Повтор безопасен только для операций с request_id: сервер вернёт тот же результат, ставка не задвоится.
+    const tries = payload.request_id ? 3 : 1;
+    let lastErr;
+    for (let a = 0; a < tries; a++) {
+        const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 25000);
+        try {
+            const response = await fetch(SCRIPT_URL, { method: "POST", body: body, signal: ctl.signal });
+            const text = await response.text();
+            let data; try { data = JSON.parse(text); } catch (e) { throw new Error("Сервер ответил не так, как ожидалось. Попробуй ещё раз."); }
+            if (!data || typeof data !== "object") throw new Error("Сервер вернул пустой ответ.");
+            return data;
+        } catch (e) {
+            lastErr = e && e.name === "AbortError" ? new Error("Сервер долго отвечает. Проверь соединение.") : e;
+            if (a < tries - 1) await new Promise(r => setTimeout(r, 700 * (a + 1)));
+        } finally { clearTimeout(to); }
+    }
+    throw lastErr;
 }
 let wagerLeft = 0, wagerTotal = 0;
 function updateWagerUI() {
@@ -3370,6 +3383,7 @@ async function confirmCrashBet() {
    никакого «сначала зелёная, потом мина». Поля 3×3 / 5×5 / 7×7 / 10×10, звуки, иконка. */
 let minesState="idle", minesBusy=false, minesWait=false, minesGame=null, minesMaxBet=100, minesHist=[], minesRound=0, minesWinTimer=null, minesToastTimer=null, minesSize=5;
 // n — сторона поля, cells — клеток, min/max — сколько мин можно выбрать (должно совпадать с server.js)
+const MX_RTP=0.92; // должно совпадать с MINES_RTP в server.js на Render
 const MX_SIZES={3:{cells:9,min:1,max:8},5:{cells:25,min:1,max:24},7:{cells:49,min:2,max:40},10:{cells:100,min:3,max:50}};
 const MX_STAR=`<svg viewBox="0 0 24 24" width="54%" height="54%"><path d="M17.5 18C19.985 18 22 15.985 22 13.5C22 11.156 20.206 9.231 17.9 9.024C17.434 5.587 14.484 3 10.9 3C7.034 3 3.9 6.134 3.9 10C3.9 10.238 3.912 10.474 3.935 10.706C2.236 11.355 1 12.988 1 14.9C1 17.164 2.836 19 5.1 19H17.5Z" fill="#bfe0fa" stroke="#8ec2ee" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
 const MX_CHEST=`<div class="mx-chest"><i class="mx-burst"></i><svg class="mx-body" viewBox="0 0 64 64"><rect x="8" y="30" width="48" height="27" rx="4" fill="#a8581f" stroke="#4a2208" stroke-width="2"/><rect x="10" y="32" width="44" height="7" rx="2" fill="#c8762f"/><rect x="8" y="40" width="48" height="5" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/><rect x="14" y="30" width="6" height="27" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/><rect x="44" y="30" width="6" height="27" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/><rect x="28" y="29" width="8" height="11" rx="2" fill="#ffe27a" stroke="#4a2208" stroke-width="1.5"/><circle cx="32" cy="33.5" r="1.7" fill="#4a2208"/></svg><svg class="mx-lid" viewBox="0 0 64 64"><path d="M8 32V25Q8 11 32 11Q56 11 56 25V32Z" fill="#d98a3a" stroke="#4a2208" stroke-width="2"/><path d="M12 30V26Q12 17 24 14Q15 20 17 30Z" fill="#f4b266" opacity=".7"/><rect x="14" y="12" width="6" height="20" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/><rect x="44" y="12" width="6" height="20" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/><rect x="8" y="27" width="48" height="5" fill="#ffd45e" stroke="#4a2208" stroke-width="1"/></svg></div>`;
@@ -3380,7 +3394,7 @@ function mxN(){ return (minesGame&&minesGame.size)||minesSize; }
 // Превью лесенки до старта (настоящие значения приходят с сервера)
 function minesLadderLocal(mines,size){
     const cells=MX_SIZES[size||minesSize].cells, out=[]; let prob=1;
-    for(let s=1;s<=cells-mines;s++){ prob*=(cells-mines-(s-1))/(cells-(s-1)); out.push(Math.max(1.01,Math.floor(0.88/prob*100)/100)); }
+    for(let s=1;s<=cells-mines;s++){ prob*=(cells-mines-(s-1))/(cells-(s-1)); out.push(Math.max(1.01,Math.floor(MX_RTP/prob*100)/100)); }
     return out;
 }
 /* ---------- звуки Мин (Web Audio, без файлов) ---------- */
@@ -3695,7 +3709,7 @@ let upgradeChance = 47;
 let upgradeBusy = false;
 let upgradeMode = "money";
 let upgradeGiftIndex = null;
-const UPGRADE_RTP = 88.0; // Серверный RTP; результат всегда определяется сервером.
+const UPGRADE_RTP = 92.0; // Серверный RTP; результат всегда определяется сервером.
 
 const UPGRADE_GIFTS = [
     { name: "Мишка", price: 0.20, img: "./bear.png" },
@@ -3998,7 +4012,7 @@ async function playUpgrade() {
 /* ROULETTE LOGIC — 38 SECTORS, UNBIASED OUTCOMES, CORRECT PAYOUTS */
 const ROULETTE_NUMBERS = [0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1, "00", 27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2];
 const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-const ROULETTE_RTP_FACTOR = 36; // 38 секторов, выплата 36 к 1 для одного сектора: RTP 36/38.
+const ROULETTE_RTP_FACTOR = 36.5; // 38 секторов, выплата 36 к 1 для одного сектора: RTP 36/38.
 
 let rouletteCategory = "colors";
 let rouletteSelectedOption = "red";
@@ -5454,5 +5468,166 @@ body .game-screen,body #screen-pvp{background-color:rgba(238,240,242,.90)!import
 })();
 </script>
 
+<style id="ny26">
+/* ===== NEW YEAR 26: снег, гирлянда, полировка игр ===== */
+#ny-snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9997;
+  box-shadow:inset 0 0 70px rgba(170,220,255,.38),inset 0 0 150px rgba(255,255,255,.22)}
+/* гирлянда под шапкой */
+header::after,header::before{content:"";position:absolute;left:0;right:0;bottom:-15px;height:15px;pointer-events:none}
+header::before{background:
+  radial-gradient(circle at 12px 9px,#ff4d5a 0 4px,transparent 5.5px) 0 0/96px 15px repeat-x,
+  radial-gradient(circle at 60px 9px,#35d07f 0 4px,transparent 5.5px) 0 0/96px 15px repeat-x;
+  filter:drop-shadow(0 0 4px rgba(255,90,100,.8));animation:nyBlinkA 1.6s ease-in-out infinite}
+header::after{background:
+  radial-gradient(circle at 36px 9px,#ffd84d 0 4px,transparent 5.5px) 0 0/96px 15px repeat-x,
+  radial-gradient(circle at 84px 9px,#4db8ff 0 4px,transparent 5.5px) 0 0/96px 15px repeat-x;
+  filter:drop-shadow(0 0 4px rgba(255,216,77,.9));animation:nyBlinkB 1.6s ease-in-out infinite}
+@keyframes nyBlinkA{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes nyBlinkB{0%,100%{opacity:.35}50%{opacity:1}}
+/* шапка Деда Мороза на аватаре */
+.top-profile{position:relative;overflow:visible}
+.top-profile::after{content:"";position:absolute;left:-4px;top:-10px;width:26px;height:22px;transform:rotate(-18deg);z-index:2;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 34'><path d='M4 28C6 10 18 2 34 6 30 8 28 14 30 22Z' fill='%23e5283a'/><rect x='2' y='24' width='30' height='8' rx='4' fill='%23fff'/><circle cx='34' cy='6' r='4.5' fill='%23fff'/></svg>") center/contain no-repeat;pointer-events:none}
+/* сугробы на баннерах */
+.hub-hero{position:relative}
+.hub-hero::after{content:"";position:absolute;left:0;right:0;top:0;height:16px;z-index:3;pointer-events:none;
+  background:radial-gradient(circle at 14px 0,#fff 0 11px,transparent 12px) 0 0/28px 16px repeat-x,
+             radial-gradient(circle at 30px 0,#eaf6ff 0 8px,transparent 9px) 0 0/44px 12px repeat-x;
+  filter:drop-shadow(0 2px 2px rgba(120,170,210,.35))}
+/* кнопка снега */
+#ny-toggle{position:fixed;left:8px;top:96px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid rgba(120,180,230,.5);
+  background:rgba(255,255,255,.75);backdrop-filter:blur(6px);font-size:15px;line-height:1;padding:0;opacity:.8}
+#ny-toggle.off{opacity:.45;filter:grayscale(1)}
+/* блеск главных кнопок */
+.mx-btn,.upgrade-action{position:relative;overflow:hidden}
+.mx-btn:not(:disabled)::after,.upgrade-action:not(:disabled)::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:nyShine 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes nyShine{0%,55%{left:-60%}100%{left:130%}}
+.mx-btn:active,.upgrade-action:active{transform:translateY(2px) scale(.985)}
+/* конфетти-снежинки при выигрыше */
+.ny-conf{position:fixed;top:-20px;z-index:9999;pointer-events:none;font-size:16px;animation:nyFall var(--d,1.4s) cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes nyFall{to{transform:translate(var(--x,0),105vh) rotate(var(--r,360deg));opacity:0}}
+/* АПГРЕЙД: быстрый разгон + резкий «удар» при остановке */
+.upgrade-wheel-ring.preview-spinning{animation-duration:.36s!important}
+.upgrade-wheel-wrap.ny-thump{animation:nyThump .38s ease-out}
+@keyframes nyThump{0%{transform:scale(1)}30%{transform:scale(1.06)}60%{transform:scale(.98)}100%{transform:scale(1)}}
+/* МИНЫ: серия, риск, авто-вывод */
+#mx-extra{display:flex;flex-direction:column;gap:8px;margin:2px 0 10px}
+.mxe-row{display:none;grid-template-columns:1fr 1.3fr auto;gap:8px;align-items:stretch}
+#mx-extra.on .mxe-row{display:grid}
+.mxe-streak,.mxe-risk,.mxe-rand{border-radius:14px;border:2px solid rgba(255,190,40,.45);background:rgba(255,255,255,.88);padding:7px 8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;color:#4a3a05;line-height:1.1}
+.mxe-streak b{font-size:20px}.mxe-streak span{font-size:19px}.mxe-streak small,.mxe-risk small,.mxe-rand small{font-size:9px;opacity:.7;font-weight:800}
+.mxe-streak{flex-direction:row;gap:4px;flex-wrap:wrap}
+.mxe-streak.s1{border-color:#ff9f1a;box-shadow:0 0 12px rgba(255,159,26,.45)}
+.mxe-streak.s2{border-color:#ff5a1f;box-shadow:0 0 16px rgba(255,90,31,.6);animation:nyPulse .8s infinite}
+.mxe-streak.s3{border-color:#e5283a;box-shadow:0 0 22px rgba(229,40,58,.75);animation:nyPulse .55s infinite}
+@keyframes nyPulse{50%{transform:scale(1.05)}}
+.mxe-risk b{font-size:19px}.mxe-risk.ok b{color:#16a34a}.mxe-risk.mid b{color:#d97706}.mxe-risk.bad b{color:#e11d48}
+.mxe-rand{font-size:20px;min-width:74px;background:linear-gradient(145deg,#fff,#fff3c4)}
+.mxe-rand:active{transform:scale(.95)}
+.mxe-auto{display:flex;align-items:center;gap:6px}
+.mxe-auto span{font-size:11px;font-weight:900;color:#75630f;white-space:nowrap}
+.mxe-auto button{flex:1;border:2px solid #eadc50;background:#fffbd4;color:#665900;border-radius:999px;padding:6px 0;font-weight:900;font-size:12px}
+.mxe-auto button.on{background:linear-gradient(180deg,#ffed4d,#ffda21);box-shadow:0 2px 0 #dfb800;color:#292929}
+@media(prefers-reduced-motion:reduce){header::before,header::after,.mx-btn::after,.upgrade-action::after,.mxe-streak{animation:none!important}}
+</style>
+<script id="ny26-js">
+/* ===== NEW YEAR 26 ===== */
+(function(){
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){}return null;}
+  /* --- снег: лёгкий canvas, мелкие снежинки, пауза в фоне --- */
+  var cv=document.createElement("canvas");cv.id="ny-snow";document.body.appendChild(cv);
+  var cx=cv.getContext("2d"),W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1),fl=[],on=ls("ny_snow")!=="off",raf=0,last=0;
+  function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+    var n=Math.max(22,Math.min(55,Math.round(W/9)));if(reduce)n=14;
+    while(fl.length<n)fl.push(mk(true));fl.length=n;}
+  function mk(init){var r=.8+Math.random()*2.2;return{x:Math.random()*W,y:init?Math.random()*H:-6,r:r,v:.25+r*.28,ph:Math.random()*6.28,sw:.4+Math.random()*.9,o:.45+Math.random()*.5};}
+  function tick(t){
+    raf=requestAnimationFrame(tick);var dt=Math.min(40,t-last)/16.7;last=t;
+    cx.clearRect(0,0,W,H);
+    for(var i=0;i<fl.length;i++){var f=fl[i];
+      f.y+=f.v*dt;f.ph+=.012*dt;f.x+=Math.sin(f.ph)*f.sw*.5*dt;
+      if(f.y>H+6||f.x<-10||f.x>W+10){fl[i]=mk(false);fl[i].x=Math.random()*W;continue;}
+      cx.globalAlpha=f.o;cx.beginPath();cx.arc(f.x,f.y,f.r,0,6.283);
+      cx.fillStyle=f.r>2?"#ffffff":"#eef8ff";cx.shadowColor="rgba(120,180,230,.8)";cx.shadowBlur=f.r>2?4:2;cx.fill();}
+    cx.globalAlpha=1;cx.shadowBlur=0;
+  }
+  function start(){if(!raf&&on&&!document.hidden){last=performance.now();raf=requestAnimationFrame(tick);}}
+  function stop(){if(raf){cancelAnimationFrame(raf);raf=0;}cx.clearRect(0,0,W,H);}
+  size();addEventListener("resize",size);
+  document.addEventListener("visibilitychange",function(){document.hidden?stop():start();});
+  var tg=document.createElement("button");tg.id="ny-toggle";tg.type="button";tg.textContent="❄";tg.title="Снег";tg.setAttribute("aria-label","Включить или выключить снег");
+  if(!on)tg.classList.add("off");
+  tg.onclick=function(){on=!on;ls("ny_snow",on?"on":"off");tg.classList.toggle("off",!on);on?start():stop();};
+  document.body.appendChild(tg);if(on)start();
+  /* --- падающие снежинки/звёзды при выигрыше --- */
+  var lastBurst=0,sy=["❄","❄","✨","⭐","🎄","❄"];
+  window.nyBurst=function(n){
+    var now=Date.now();if(now-lastBurst<1200||reduce)return;lastBurst=now;
+    for(var i=0;i<(n||16);i++){var e=document.createElement("i");e.className="ny-conf";e.textContent=sy[i%sy.length];
+      e.style.left=(8+Math.random()*84)+"vw";e.style.setProperty("--x",(Math.random()*120-60)+"px");
+      e.style.setProperty("--r",(Math.random()*720-360)+"deg");e.style.setProperty("--d",(1.1+Math.random()*.9)+"s");
+      e.style.fontSize=(12+Math.random()*12)+"px";document.body.appendChild(e);setTimeout(function(x){x.remove();},2200,e);}
+  };
+  var n0=window.notify;if(typeof n0==="function")window.notify=function(t){n0.apply(this,arguments);if(t==="success"||t===undefined)window.nyBurst();};
+  /* --- АПГРЕЙД: разгон быстрее, время то же, торможение резкое --- */
+  window.upgradeStopSpin=async function(el,isWin,chance){
+    var T=UPGRADE_SPEEDS[upgradeSpeed]||7500,start=upgradeReadRotation(el);
+    el.classList.remove("preview-spinning");el.style.animation="none";el.style.transition="none";el.style.transform="rotate("+start+"deg)";
+    var k=.06+.88*Math.random(),roll=isWin?chance*k:chance+(100-chance)*k;
+    var theta=(((180-chance*1.8)+roll*3.6)%360+360)%360,cur=((start%360)+360)%360,delta=((theta-cur)%360+360)%360;
+    var Tb=Math.min(1100,T*.24),Tc=T-Tb,V0=1000;                 /* 1000°/с = 0.36 с на оборот, как в CSS */
+    var eff=(Tc+Tb/4)/1000,n=Math.max(1,Math.round((V0*eff-delta)/360)),D=delta+360*n,v=D/eff;
+    await new Promise(function(res){var t0=performance.now();
+      (function f(now){var t=now-t0,a;
+        if(t>=T)a=D;else if(t<=Tc)a=v*t/1000;else{var u=(t-Tc)/Tb;a=v*Tc/1000+v*(Tb/1000)/4*(1-Math.pow(1-u,4));}
+        el.style.transform="rotate("+(start+a)+"deg)";
+        t<T?requestAnimationFrame(f):res();})(t0);});
+    try{haptic("heavy");}catch(e){}
+    var w=el.parentElement;if(w){w.classList.remove("ny-thump");void w.offsetWidth;w.classList.add("ny-thump");setTimeout(function(){w.classList.remove("ny-thump");},450);}
+  };
+  /* --- МИНЫ: серия, шанс безопасной клетки, случайная клетка, авто-вывод --- */
+  var auto=0,fired=false;
+  function initMines(){
+    var main=document.getElementById("mx-main");if(!main||document.getElementById("mx-extra"))return;
+    var d=document.createElement("div");d.id="mx-extra";
+    d.innerHTML='<div class="mxe-row"><div id="mxe-streak" class="mxe-streak"><b>🔥</b><span id="mxe-n">0</span><small>подряд</small></div>'+
+      '<div id="mxe-risk" class="mxe-risk"><small>Шанс безопасной клетки</small><b id="mxe-v">—</b></div>'+
+      '<button type="button" id="mxe-rand" class="mxe-rand">🎲<small>Случайная</small></button></div>'+
+      '<div class="mxe-auto"><span>🎯 Авто-вывод</span><button type="button" data-x="0" class="on">Выкл</button><button type="button" data-x="2">x2</button><button type="button" data-x="5">x5</button><button type="button" data-x="10">x10</button></div>';
+    main.parentNode.insertBefore(d,main);
+    d.querySelector(".mxe-auto").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+      auto=Number(b.dataset.x)||0;d.querySelectorAll(".mxe-auto button").forEach(function(x){x.classList.toggle("on",x===b);});
+      try{haptic("light");}catch(_){}});
+    document.getElementById("mxe-rand").onclick=function(){
+      if(typeof minesState==="undefined"||minesState!=="playing")return;
+      var cells=[].slice.call(document.getElementById("mx-board").children).filter(function(c){return !c.disabled&&!c.classList.contains("open");});
+      if(!cells.length)return;var a=new Uint32Array(1);crypto.getRandomValues(a);cells[a[0]%cells.length].click();};
+  }
+  function updMines(){
+    var d=document.getElementById("mx-extra");if(!d||typeof minesState==="undefined")return;
+    var g=minesGame,pl=minesState==="playing"&&g;d.classList.toggle("on",!!pl);
+    if(!pl){fired=false;return;}
+    var op=(g.opened||[]).length,sz=MX_SIZES[g.size||minesSize],cells=sz?sz.cells:25,
+        mines=Number(g.mines||g.mines_count||(document.getElementById("mx-slider")||{}).value)||1,
+        p=Math.max(0,Math.min(1,(cells-mines-op)/Math.max(1,cells-op)));
+    document.getElementById("mxe-n").textContent=op;
+    document.getElementById("mxe-streak").className="mxe-streak"+(op>=10?" s3":op>=6?" s2":op>=3?" s1":"");
+    var r=document.getElementById("mxe-risk");r.className="mxe-risk "+(p>=.75?"ok":p>=.5?"mid":"bad");
+    document.getElementById("mxe-v").textContent=Math.round(p*100)+"%";
+    if(auto>0&&!fired&&Number(g.mult)>=auto&&!minesBusy&&!minesWait){fired=true;
+      setTimeout(function(){if(minesState==="playing"&&!minesBusy){try{minesToast("Авто-вывод x"+auto,"забираем выигрыш");}catch(e){}minesCashout();}},500);}
+  }
+  initMines();
+  if(typeof window.minesRefreshUI==="function"){var o=window.minesRefreshUI;window.minesRefreshUI=function(){o.apply(this,arguments);try{updMines();}catch(e){}};}
+  /* --- сеть: плашка «нет соединения» --- */
+  var off=document.createElement("div");off.style.cssText="position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10000;background:#e11d48;color:#fff;font:800 12px system-ui;padding:8px 14px;border-radius:999px;display:none";
+  off.textContent="Нет соединения. Ждём сеть…";document.body.appendChild(off);
+  addEventListener("offline",function(){off.style.display="block";});addEventListener("online",function(){off.style.display="none";});
+})();
+</script>
 </body>
 </html>
