@@ -5498,6 +5498,8 @@ header::after{background:
 /* кнопка снега */
 #ny-toggle{position:fixed;left:8px;top:96px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid rgba(120,180,230,.5);
   background:rgba(255,255,255,.75);backdrop-filter:blur(6px);font-size:15px;line-height:1;padding:0;opacity:.8}
+#ny-music{position:fixed;left:8px;top:132px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid rgba(120,180,230,.5);background:rgba(255,255,255,.75);backdrop-filter:blur(6px);font-size:15px;line-height:1;padding:0;opacity:.85}
+#ny-music.off{opacity:.45;filter:grayscale(1)}
 #ny-toggle.off{opacity:.45;filter:grayscale(1)}
 /* блеск главных кнопок */
 .mx-btn,.upgrade-action{position:relative;overflow:hidden}
@@ -5573,22 +5575,71 @@ header::after{background:
       e.style.fontSize=(12+Math.random()*12)+"px";document.body.appendChild(e);setTimeout(function(x){x.remove();},2200,e);}
   };
   var n0=window.notify;if(typeof n0==="function")window.notify=function(t){n0.apply(this,arguments);if(t==="success"||t===undefined)window.nyBurst();};
-  /* --- АПГРЕЙД: разгон быстрее, время то же, торможение резкое --- */
+  /* --- ЗВУК: тики колеса, победа/проигрыш, новогодняя музыка (всё синтезируется, без файлов) --- */
+  var AC=null;
+  function ac(){try{if(typeof tuchaSoundsEnabled!=="undefined"&&!tuchaSoundsEnabled)return null;
+    var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+    AC=AC||window.tuchaAudioCtx||new C();window.tuchaAudioCtx=AC;if(AC.state==="suspended")AC.resume();return AC;}catch(e){return null;}}
+  function tone(f,t0,dur,type,vol,dest){var c=AC;var o=c.createOscillator(),g=c.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t0);
+    g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.008);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    o.connect(g);g.connect(dest||c.destination);o.start(t0);o.stop(t0+dur+.03);}
+  var lastTick=0;
+  function tick(speed){var c=ac();if(!c)return;var n=performance.now();if(n-lastTick<22)return;lastTick=n;
+    var f=900+Math.min(1,speed/1000)*700;tone(f,c.currentTime,.05,"triangle",.07);}
+  function whoosh(){var c=ac();if(!c)return;var t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type="sawtooth";
+    o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(700,t+.35);g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(.05,t+.1);g.gain.exponentialRampToValueAtTime(.0001,t+.45);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.5);}
+  function resultSnd(win){var c=ac();if(!c)return;var t=c.currentTime;
+    if(win){[523.25,659.25,783.99,1046.5,1318.5].forEach(function(f,i){tone(f,t+i*.09,.55,"sine",.12);tone(f*2,t+i*.09,.35,"triangle",.03);});}
+    else{tone(220,t,.35,"sawtooth",.07);tone(165,t+.18,.5,"sawtooth",.07);tone(110,t+.36,.7,"triangle",.09);}}
+  /* --- АПГРЕЙД: быстрый старт, потом плавное замедление. 7 с — несколько оборотов, 3 с — 1–2 оборота --- */
+  var TURNS={slow:9,normal:6,fast:2};
   window.upgradeStopSpin=async function(el,isWin,chance){
     var T=UPGRADE_SPEEDS[upgradeSpeed]||7500,start=upgradeReadRotation(el);
     el.classList.remove("preview-spinning");el.style.animation="none";el.style.transition="none";el.style.transform="rotate("+start+"deg)";
     var k=.06+.88*Math.random(),roll=isWin?chance*k:chance+(100-chance)*k;
     var theta=(((180-chance*1.8)+roll*3.6)%360+360)%360,cur=((start%360)+360)%360,delta=((theta-cur)%360+360)%360;
-    var Tb=Math.min(1100,T*.24),Tc=T-Tb,V0=1000;                 /* 1000°/с = 0.36 с на оборот, как в CSS */
-    var eff=(Tc+Tb/4)/1000,n=Math.max(1,Math.round((V0*eff-delta)/360)),D=delta+360*n,v=D/eff;
+    var V0=1000,want=TURNS[upgradeSpeed]||6;
+    var D=delta+360*Math.max(1,Math.round(want-delta/360));
+    var n=Math.max(1.6,V0*(T/1000)/D);                       /* степень замедления: скорость на старте = скорости разгона, без рывка */
+    var prevStep=0;
     await new Promise(function(res){var t0=performance.now();
-      (function f(now){var t=now-t0,a;
-        if(t>=T)a=D;else if(t<=Tc)a=v*t/1000;else{var u=(t-Tc)/Tb;a=v*Tc/1000+v*(Tb/1000)/4*(1-Math.pow(1-u,4));}
+      (function f(now){var t=Math.min(1,(now-t0)/T),e=1-Math.pow(1-t,n),a=D*e;
         el.style.transform="rotate("+(start+a)+"deg)";
-        t<T?requestAnimationFrame(f):res();})(t0);});
-    try{haptic("heavy");}catch(e){}
+        var step=Math.floor(a/30);if(step!==prevStep){prevStep=step;tick(D*n/T*Math.pow(1-t,n-1));}
+        t<1?requestAnimationFrame(f):res();})(t0);});
+    el.style.transform="rotate("+(start+D)+"deg)";
+    resultSnd(isWin);try{haptic(isWin?"heavy":"medium");}catch(e){}
     var w=el.parentElement;if(w){w.classList.remove("ny-thump");void w.offsetWidth;w.classList.add("ny-thump");setTimeout(function(){w.classList.remove("ny-thump");},450);}
   };
+  var pu=window.playUpgrade;
+  if(typeof pu==="function")window.playUpgrade=function(){
+    var r=pu.apply(this,arguments);
+    var ring=document.getElementById("upgrade-wheel-ring");
+    if(ring&&ring.classList.contains("preview-spinning")){whoosh();
+      var iv=setInterval(function(){if(!ring.classList.contains("preview-spinning")){clearInterval(iv);return;}tick(1000);},30);}
+    return r;};
+  /* --- МУЗЫКА: нежная новогодняя музыкальная шкатулка, кнопка 🎵 --- */
+  var mus={on:false,timer:0,next:0,step:0,gain:null};
+  var CH=[[261.63,329.63,392],[220,261.63,329.63],[174.61,220,261.63],[196,246.94,293.66]];   /* C Am F G */
+  var MEL=[0,2,1,2,0,1,2,1];
+  function musTick(){var c=AC;if(!c||!mus.on)return;
+    while(mus.next<c.currentTime+.4){var bar=Math.floor(mus.step/8)%4,i=mus.step%8,ch=CH[bar],t=mus.next;
+      var f=ch[MEL[i]]*(i%4===3?2:1);tone(f*2,t,.9,"sine",.5,mus.gain);tone(f*4,t,.35,"triangle",.1,mus.gain);
+      if(i===0){tone(ch[0]/2,t,1.6,"triangle",.35,mus.gain);}
+      if(i%2===1){tone(3200+Math.random()*600,t,.08,"square",.02,mus.gain);}      /* бубенчики */
+      mus.next+=.36;mus.step++;}
+  }
+  function musStart(){var c=ac();if(!c)return false;if(!mus.gain){mus.gain=c.createGain();mus.gain.gain.value=.16;mus.gain.connect(c.destination);}
+    mus.on=true;mus.next=c.currentTime+.1;clearInterval(mus.timer);mus.timer=setInterval(musTick,120);musTick();return true;}
+  function musStop(){mus.on=false;clearInterval(mus.timer);}
+  var mb=document.createElement("button");mb.id="ny-music";mb.type="button";mb.textContent="🎵";mb.title="Музыка";mb.className="off";mb.setAttribute("aria-label","Включить или выключить музыку");
+  mb.onclick=function(){if(mus.on){musStop();mb.classList.add("off");ls("ny_music","off");}else if(musStart()){mb.classList.remove("off");ls("ny_music","on");}};
+  document.body.appendChild(mb);
+  /* если музыка была включена раньше — запускаем её при первом касании экрана (Telegram разрешает звук только после жеста) */
+  if(ls("ny_music")==="on"){var first=function(){document.removeEventListener("pointerdown",first,true);if(!mus.on&&musStart())mb.classList.remove("off");};
+    document.addEventListener("pointerdown",first,true);}
+  document.addEventListener("visibilitychange",function(){if(document.hidden){if(mus.on)clearInterval(mus.timer);}else if(mus.on){mus.next=AC.currentTime+.1;clearInterval(mus.timer);mus.timer=setInterval(musTick,120);}});
   /* --- МИНЫ: серия, шанс безопасной клетки, случайная клетка, авто-вывод --- */
   var auto=0,fired=false;
   function initMines(){
