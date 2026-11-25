@@ -2484,7 +2484,7 @@ nav#main-nav button.active{color:#168bd0!important}
                 <div id="ref-status" style="font-size:11px;text-align:center;margin-top:7px;min-height:14px;"></div>
             </div>
 </div>
-<button type="button" class="prof-row" onclick="toggleTheme()"><span class="pi">🌗</span><span class="pt">Тёмная тема / Новогодняя</span><span class="prof-sw"></span></button>
+<button type="button" class="prof-row" onclick="toggleTheme()"><span class="pi">🌗</span><span class="pt">Тёмная / Светлая тема</span><span class="prof-sw"></span></button>
 <button type="button" class="prof-row" onclick="try{Telegram.WebApp.openTelegramLink('https://t.me/tuchasupport_bot')}catch(e){window.open('https://t.me/tuchasupport_bot')}"><span class="pi">🛟</span><span class="pt">Поддержка</span><span class="pc">›</span></button>
 <button type="button" class="prof-row" onclick="openAdminPanel()"><span class="pi">⚙️</span><span class="pt">Админ-панель</span><span class="pc">›</span></button>
             </div>
@@ -5964,7 +5964,7 @@ G.openPromoFromHub=function(){G.switchTab("profile");setTimeout(function(){var s
 
 /* ---------- АПГРЕЙД ---------- */
 var RTP=92,MAXC=85,MINC=1,MAXWIN=500,MAXBET=100;
-var CASH=[0.5,1,2,3,5,10,15,25,50,100,250,500];
+var CASH=[0.2,0.3,0.4,0.5,0.6,0.75,1,1.5,2,3,4,5,7.5,10,15,25,50,100,250,500];
 var U={src:{t:"money"},bet:1,dst:null,busy:false,mySort:"asc",dstSort:"asc",myQ:"",dstQ:"",rot:0,mult:0};
 function chanceOf(s,t){return(s>0&&t>s)?Math.floor(RTP*s/t*100)/100:0;}
 function giftsOf(){return(Array.isArray(inventory)?inventory:[]).filter(function(x){return x&&x.id!=null&&Number(x.price)>0;});}
@@ -6199,7 +6199,16 @@ G.csOpen=async function(){
   csBusy=true;q("cs-open").disabled=true;q("cs-open").textContent="Открываем…";haptic("medium");
   try{
     var res,d=null;
-    if(csDemo){res=[];for(var i=0;i<csQty;i++)res.push(pickW(c));}
+    if(csDemo){
+      // Демо не затрагивает баланс и инвентарь. Для тренировочного режима чаще показываем призы.
+      res=[];
+      for(var i=0;i<csQty;i++){
+        var demoWeights=c.prizes.map(function(p){var v=Number(p.value)||0;var boost=(p.type==="gift"?2.8:(v>=c.price?2.1:1.25));return Math.max(.01,(Number(p.chance)||1)*boost);});
+        var total=demoWeights.reduce(function(a,b){return a+b;},0),roll=Math.random()*total,pick=c.prizes[0];
+        for(var j=0;j<c.prizes.length;j++){roll-=demoWeights[j];if(roll<=0){pick=c.prizes[j];break;}}
+        res.push(pick);
+      }
+    }
     else{
       var reqId="cs_"+Date.now()+"_"+Math.random().toString(36).slice(2,10);
       d=await apiPost({action:"cases_open",case_id:c.id,qty:csQty,request_id:reqId});
@@ -6233,5 +6242,162 @@ setTimeout(function(){try{G.u2Render();}catch(e){}},300);
 })();
 
 </script>
+
+<style id="tucha-v29-polish">
+/* Спокойная графитовая тема: читаемые серые поверхности, без случайных белых блоков */
+html body.dark{
+  --k-pan:#20262f;--k-line:#343d49;--k-ink:#edf1f6;--k-mut:#a0aab8;
+  --k-acc:#398cf5;--k-tile:#292f39;--k-ok:#35c98a;--k-bad:#ff6577;--k-ring:#3a424e;
+  background:#171c23!important;color:#edf1f6!important;
+}
+html body.dark::before{display:none!important}
+html body.dark #main-content,html body.dark .tab,html body.dark .game-screen,
+html body.dark #screen-mines,html body.dark #screen-pvp,html body.dark #screen-crash,
+html body.dark #screen-dice,html body.dark #screen-roulette,html body.dark #screen-upgrade,
+html body.dark #screen-tower{background:#171c23!important;color:#edf1f6!important}
+html body.dark header#main-header,html body.dark .game-top-bar{
+  background:#1d232c!important;border-color:#343d49!important;box-shadow:none!important
+}
+html body.dark .panel,html body.dark .promo-card,html body.dark .cs3-stage,
+html body.dark .u2-stage,html body.dark .u2-side,html body.dark .u2-mults,
+html body.dark .roulette-stage,html body.dark .roulette-nav-tabs,
+html body.dark .dice-result-wrapper,html body.dark .dice-info-box,
+html body.dark .tower-container,html body.dark .grid,html body.dark .mx-wrap,
+html body.dark .mx-sheet,html body.dark .mx-win-card{
+  background:#20262f!important;border-color:#343d49!important;color:#edf1f6!important;box-shadow:none!important
+}
+html body.dark .mx-top,html body.dark .mx-sheet-wrap .mx-sheet,
+html body.dark .mx-cell,html body.dark .mx-step,html body.dark .mx-ladder,
+html body.dark .u2-t,html body.dark .cs3-p,html body.dark .cs-tile,
+html body.dark .prof-row,html body.dark .inventory-item,html body.dark .game-card,
+html body.dark .roulette-opt-btn,html body.dark .tower-row,html body.dark .tower-cell{
+  background:#292f39!important;border-color:#3a4451!important;color:#edf1f6!important
+}
+html body.dark .mx-cell:not(.open){background:linear-gradient(145deg,#343c48,#252c36)!important;border-bottom-color:#151a21!important}
+html body.dark .mx-cell.safe,html body.dark .mx-cell.open.safe{background:linear-gradient(145deg,#244d48,#1e3e3a)!important}
+html body.dark .mx-cell.mine,html body.dark .mx-cell.open.mine{background:linear-gradient(145deg,#63313a,#40242b)!important}
+html body.dark .mx-hint,html body.dark .mx-info,html body.dark .mx-hist-h,
+html body.dark .hub-label,html body.dark .cs-sub{color:#aab4c2!important}
+html body.dark .games-header,html body.dark .u2-title,html body.dark .cs3-top #cs-title,
+html body.dark .top-username,html body.dark .game-back-btn,html body.dark .mx-backbtn{color:#f0f3f7!important}
+html body.dark input,html body.dark select,html body.dark textarea{
+  background:#252c36!important;color:#f0f3f7!important;border-color:#414b59!important
+}
+html body.dark .deposit-sheet,html body.dark .cs-modal-box,html body.dark .withdraw-sheet,
+html body.dark .admin-panel,html body.dark .modal-content{background:#20262f!important;color:#edf1f6!important;border-color:#343d49!important}
+html body.dark .prof-actions .primary,html body.dark .prof-row{box-shadow:none!important}
+html body.dark .balance,html body.dark .top-balance,html body.dark .top-profile,
+html body.dark .top-withdraw{background:#292f39!important;color:#edf1f6!important;border-color:#3a4451!important}
+html body.dark nav#main-nav{background:#1d232c!important;border-color:#343d49!important}
+html body.dark nav#main-nav button{color:#9ba6b4!important}
+html body.dark nav#main-nav button.active{color:#fff!important;background:#293b54!important}
+html body.dark .roulette-opt-btn.selected:not(.red-opt):not(.black-opt):not(.green-opt){background:#394252!important;color:#fff!important}
+html body.dark .dice-result-val,html body.dark .dice-info-value,html body.dark .tower-mult{color:#f0f3f7!important}
+html body.dark .mx-win{background:rgba(5,8,12,.82)!important}
+html body.dark .mx-bet-box,html body.dark .mx-size-box,html body.dark .mx-chips{background:#252c36!important;border-color:#3a4451!important;color:#edf1f6!important}
+html body.dark .mx-chips button,html body.dark .mx-size-box button{background:#303946!important;color:#edf1f6!important;border-color:#465261!important}
+html body.dark .mx-size-box button.on{background:#347fe0!important;color:white!important}
+html body.dark .u2-rotor i{border-top-color:#f4f6f8!important}
+/* Деньги и вывод доступны только из профиля; в шапке остаётся только индикатор баланса */
+.hub-quick{display:none!important}
+#main-header .top-withdraw{display:none!important}
+#main-header .top-balance{pointer-events:none!important;cursor:default!important}
+#main-header .top-balance .balance-plus{display:none!important}
+/* Чуть плотнее и чище сетка подарков апгрейда */
+.u2-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.u2-t{min-width:0;overflow:hidden}
+@media(max-width:380px){.u2-stage{grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr);gap:5px;padding:8px}.u2-side{min-height:132px}.u2-ringwrap{max-width:112px}.u2-ic{width:52px;height:52px}}
+.mx-demo-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 12px;padding:5px;border-radius:13px;background:#eef1f5}
+.mx-demo-switch button{border:0;border-radius:10px;padding:10px 6px;font-size:12px;font-weight:950;background:transparent;color:#687385}
+.mx-demo-switch button.active{background:#398cf5;color:white;box-shadow:0 3px 10px #398cf533}
+html body.dark .mx-demo-switch{background:#171d26}
+html body.dark .mx-demo-switch button{color:#aab4c2}
+html body.dark .mx-demo-switch button.active{background:#347fe0;color:#fff}
+.mx-demo-note{font-size:11px;font-weight:800;text-align:center;color:#7e8998;margin:0 0 8px}
+html body.dark .mx-demo-note{color:#aab4c2}
+</style>
+
+<script id="tucha-v29-js">
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var oldSetTheme=window.toggleTheme;
+window.toggleTheme=function(){
+  var dark=document.body.classList.contains("dark");
+  document.body.classList.toggle("dark",!dark);
+  try{localStorage.setItem("tucha_theme",dark?"light":"dark");}catch(e){}
+  try{if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.setHeaderColor&&Telegram.WebApp.setHeaderColor(dark?"#fffde2":"#1d232c");Telegram.WebApp.setBackgroundColor&&Telegram.WebApp.setBackgroundColor(dark?"#fffde2":"#171c23");}}catch(e){}
+  if(typeof haptic==="function")haptic("light");
+};
+/* Убираем старые быстрые кнопки полностью, а кнопки пополнения/вывода оставляем в профиле. */
+document.querySelectorAll(".hub-quick").forEach(function(x){x.remove();});
+var hdr=document.getElementById("main-header");
+if(hdr){
+  var wd=hdr.querySelector(".top-withdraw");if(wd)wd.remove();
+  var bal=hdr.querySelector(".top-balance");if(bal){bal.removeAttribute("onclick");bal.setAttribute("aria-label","Текущий баланс");}
+document.querySelectorAll(".game-screen .balance.clickable,.game-screen .mx-bal").forEach(function(b){b.removeAttribute("onclick");b.style.pointerEvents="none";b.style.cursor="default";});
+}
+/* Демо-режим Мин: локальная тренировка без ставок, запросов к серверу и изменения баланса. */
+var demo=false,demoMines=[];
+function ensureDemoUI(){
+  var sheet=$("mx-sheet"),title=sheet&&sheet.querySelector(".mx-sheet-t");
+  if(!sheet||$("mx-demo-switch"))return;
+  var sw=document.createElement("div");sw.id="mx-demo-switch";sw.className="mx-demo-switch";
+  sw.innerHTML='<button type="button" data-mode="real" class="active">Реальная игра</button><button type="button" data-mode="demo">Демо</button>';
+  var note=document.createElement("div");note.id="mx-demo-note";note.className="mx-demo-note";note.textContent="В демо-режиме баланс не меняется.";
+  title.insertAdjacentElement("afterend",sw);sw.insertAdjacentElement("afterend",note);
+  sw.addEventListener("click",function(e){var b=e.target.closest("button[data-mode]");if(!b)return;demo=b.dataset.mode==="demo";sw.querySelectorAll("button").forEach(function(x){x.classList.toggle("active",x===b);});if(demo){var sl=$("mx-slider");if(sl){sl.value=sl.min;mxSliderUi();}}note.textContent=demo?"Тренировка: виртуальные выигрыши, минимум мин для более высокого шанса. Деньги не начисляются.":"Реальная игра: ставка и выплаты обрабатываются сервером.";var start=$("mx-start");if(start)start.textContent=demo?"Начать демо":"Сделать ставку";});
+}
+ensureDemoUI();
+var realStart=window.minesStart,realOpen=window.minesOpen,realCashout=window.minesCashout;
+function shuffleMines(total,count){var a=Array.from({length:total},function(_,i){return i;});for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a.slice(0,count);}
+function demoFinish(win){
+  var g=minesGame,board=$("mx-board"),payout=win?Math.floor(g.bet*g.mult*100)/100:0;
+  minesState="finished";board.classList.remove("mx-idle");board.classList.add(win?"mx-win":"mx-lose");
+  minesRevealRest(demoMines);
+  minesRecord(g.bet,win?g.mult:0,win?payout:0);
+  minesRefreshUI();
+  minesInfo(win?"ДЕМО-ВЫИГРЫШ +$"+money(payout)+" · x"+Number(g.mult).toFixed(2):"ДЕМО: ПОПАЛ В МИНУ",win?"win":"lose");
+  if(win){mxCash();$("mx-win-amt").textContent="+$"+money(payout);$("mx-win-sub").textContent="Демо-раунд · виртуальный выигрыш";$("mx-win").classList.add("on");clearTimeout(minesWinTimer);minesWinTimer=setTimeout(minesCloseWin,3000);notify("success");}
+  else{mxBoom();notify("error");}
+  var start=$("mx-start");if(start)start.textContent="Начать демо";
+}
+window.minesStart=async function(){
+  if(!demo){return realStart.apply(this,arguments);}
+  if(minesBusy)return;
+  var size=minesSize,S=MX_SIZES[size],bet=Math.round((Number($("mx-bet").value)||0.1)*100)/100,mines=Number($("mx-slider").value);
+  if(!S||mines<S.min||mines>S.max)return alert("Проверь количество мин.");
+  if(!(bet>=0.01))return alert("Введи сумму для демо-раунда.");
+  minesBusy=true;$("mx-start").disabled=true;
+  try{
+    demoMines=shuffleMines(S.cells,mines);
+    minesGame={bet:bet,mines:mines,size:size,cells:S.cells,opened:[],mult:1,ladder:minesLadderLocal(mines,size)};
+    minesState="playing";minesPaint(true);minesCloseSheet();mxStartSnd();minesToast("Демо запущено","открывай сундуки без мин");
+    var hint=document.querySelector("#screen-mines .mx-hint");if(hint)hint.textContent="ДЕМО: тренировка без списания и начисления денег";
+  }finally{minesBusy=false;$("mx-start").disabled=false;}
+};
+window.minesOpen=async function(i){
+  if(!demo){return realOpen.apply(this,arguments);}
+  if(minesState!=="playing"||minesBusy||minesWait)return;
+  var g=minesGame,c=mxCell(i);if(!g||!c||c.disabled||g.opened.indexOf(i)>=0)return;
+  minesWait=true;c.classList.add("pending");$("mx-board").classList.add("mx-wait");
+  await new Promise(function(r){setTimeout(r,120);});
+  c.classList.remove("pending");minesWait=false;
+  if(demoMines.indexOf(i)>=0){minesFlip(i,"mine");demoFinish(false);return;}
+  g.opened.push(i);g.mult=g.ladder[g.opened.length-1]||g.mult;minesFlip(i,"safe",{glow:true});mxGem(g.opened.length);
+  if(g.opened.length>=g.cells-g.mines){demoFinish(true);return;}
+  minesRefreshUI();minesInfo("ДЕМО · множитель x"+g.mult.toFixed(2),"");
+};
+window.minesCashout=async function(){
+  if(!demo){return realCashout.apply(this,arguments);}
+  if(minesBusy||minesWait||minesState!=="playing"||!minesGame.opened.length)return;
+  demoFinish(true);
+};
+var oldSheet=window.minesOpenSheet;
+window.minesOpenSheet=function(){if(minesState==="playing")return;ensureDemoUI();var sw=$("mx-demo-switch");if(sw)sw.querySelectorAll("button").forEach(function(b){b.classList.toggle("active",(b.dataset.mode==="demo")===demo);});var st=$("mx-start");if(st)st.textContent=demo?"Начать демо":"Сделать ставку";return oldSheet.apply(this,arguments);};
+window.minesMainBtn=function(){if(minesBusy||minesWait)return;if(minesState==="playing")window.minesCashout();else window.minesOpenSheet();};
+})();
+</script>
+
 </body>
 </html>
