@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -2720,7 +2711,7 @@ nav#main-nav button.active{color:#168bd0!important}
  <div class="u2-stage">
   <div class="u2-side" id="u2-src"></div>
   <div class="u2-ringwrap" id="u2-ring">
-   <svg viewBox="0 0 200 200"><circle class="u2-track" cx="100" cy="100" r="84" fill="none" stroke-width="12"/><circle id="u2-arc" class="u2-arc" cx="100" cy="100" r="84" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 999" transform="rotate(-90 100 100)"/></svg>
+   <svg viewBox="0 0 200 200"><circle class="u2-track" cx="100" cy="100" r="84" fill="none" stroke-width="12"/><g id="u2-arc-rotor" style="transform-origin:100px 100px;transform-box:view-box"><circle id="u2-arc" class="u2-arc" cx="100" cy="100" r="84" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 999" transform="rotate(-90 100 100)"/></g></svg>
    <div class="u2-rotor" id="u2-rotor"><i></i></div>
    <div class="u2-center"><div class="u2-pct" id="u2-pct">—</div><div class="u2-cap" id="u2-cap">ВЫБЕРИ ЦЕЛЬ</div></div>
   </div>
@@ -6009,9 +6000,17 @@ function tileHtml(it,sel,fn){
   return '<div class="u2-t'+(sel?" sel":"")+'" onclick="'+fn+'"><div class="u2-ic">'+G.csIcon(it)+'</div><div class="u2-nm">'+esc2(it.name)+'</div><div class="u2-pr">$'+fx(it.value)+'</div></div>';
 }
 function pctText(c){return(Math.round(c*10)/10).toFixed(1).replace(".",",")+"%";}
+function u2ChanceTone(c){
+  if(!(c>0))return "chance-green";
+  if(c<=10)return "chance-red";
+  var n=Math.round(c*10)/10;
+  if(Math.abs(n-17)<0.06||Math.abs(n-20)<0.06||Math.abs(n-30)<0.06)return "chance-yellow";
+  return "chance-green";
+}
 function paintRing(){
-  var s=srcVal(),t=dstVal(),c=chanceOf(s,t),C=2*Math.PI*84,a=q("u2-arc");
+  var s=srcVal(),t=dstVal(),c=chanceOf(s,t),C=2*Math.PI*84,a=q("u2-arc"),ring=q("u2-ring");
   if(a)a.setAttribute("stroke-dasharray",(C*Math.min(100,c)/100)+" "+C);
+  if(ring){ring.classList.remove("chance-red","chance-yellow","chance-green");ring.classList.add(u2ChanceTone(c));}
   var p=q("u2-pct");if(p)p.textContent=c>0?pctText(c):"—";
   var cap=q("u2-cap");if(cap)cap.textContent=c>0?"ШАНС":"ВЫБЕРИ ЦЕЛЬ";
   return c;
@@ -6084,21 +6083,25 @@ G.u2Sort=function(which){if(which==="my")U.mySort=U.mySort==="asc"?"desc":"asc";
   var b=q("u2-sort-"+which);if(b)b.textContent=(which==="my"?U.mySort:U.dstSort)==="asc"?"По росту ↑":"По убыв. ↓";G.u2Render();};
 G.u2Search=function(which,v){if(which==="my")U.myQ=v||"";else U.dstQ=v||"";G.u2Render();};
 function resetRing(){
-  var r=q("u2-ring"),rot=q("u2-rotor");if(!r||!rot)return;
-  r.classList.remove("won","lost");rot.style.transition="none";rot.style.transform="rotate(0deg)";
+  var r=q("u2-ring"),rot=q("u2-rotor"),arcRot=q("u2-arc-rotor");if(!r)return;
+  r.classList.remove("won","lost");
+  if(rot){rot.style.transition="none";rot.style.transform="none";}
+  if(arcRot){arcRot.style.transition="none";arcRot.style.transform="rotate(0deg)";}
+  paintRing();
 }
 function spinTo(c,win){
   return new Promise(function(res){
-    var rot=q("u2-rotor");
-    rot.style.transition="none";rot.style.transform="rotate(0deg)";void rot.offsetWidth;
-    var pad=Math.min(3,c*0.15),a;
-    if(win)a=(pad+Math.random()*Math.max(0.1,c-2*pad))*3.6;
-    else{var lo=c+3,hi=100-3;if(hi<=lo){lo=c+0.5;hi=100-0.5;}a=(lo+Math.random()*(hi-lo))*3.6;}
-    var total=360*5+a,ms=5200;
-    rot.style.transition="transform "+ms+"ms cubic-bezier(.12,.62,.08,1)";
-    rot.style.transform="rotate("+total+"deg)";
-    var hv=setInterval(function(){haptic("light");},200);setTimeout(function(){clearInterval(hv);},ms*0.85);
-    setTimeout(res,ms+250);
+    var arcRot=q("u2-arc-rotor");if(!arcRot){res();return;}
+    arcRot.style.transition="none";arcRot.style.transform="rotate(0deg)";void arcRot.getBoundingClientRect();
+    /* Дуга с шансом вращается под неподвижным указателем внизу по центру. */
+    var rel=win?(Math.random()*Math.max(.01,c)):(c+(100-c)*Math.random());
+    var end=((180-rel*3.6)%360+360)%360;
+    var total=360*5+end,ms=5600;
+    arcRot.style.transition="transform "+ms+"ms cubic-bezier(.10,.72,.12,1)";
+    arcRot.style.transform="rotate("+total+"deg)";
+    var hv=setInterval(function(){haptic("light");},220);
+    setTimeout(function(){clearInterval(hv);},ms*.86);
+    setTimeout(res,ms+260);
   });
 }
 G.u2Go=async function(){
@@ -6586,6 +6589,48 @@ html body.dark #ny-toggle,html body.dark #ny-music{background:rgba(39,49,61,.9)!
 })();
 </script>
 
+<style id="tucha-upgrade-wheel-reference-fix">
+/* Только колесо экрана Апгрейд: фиксированный нижний указатель и цвет по шансу */
+#screen-upgrade #u2 .u2-ringwrap{
+  --u2-tone:#36d17c;--u2-glow:rgba(54,209,124,.34);
+  isolation:isolate;overflow:visible;
+}
+#screen-upgrade #u2 .u2-ringwrap.chance-red{--u2-tone:#ff3154;--u2-glow:rgba(255,35,75,.42)}
+#screen-upgrade #u2 .u2-ringwrap.chance-yellow{--u2-tone:#ffbd22;--u2-glow:rgba(255,189,34,.38)}
+#screen-upgrade #u2 .u2-ringwrap.chance-green{--u2-tone:#35d17b;--u2-glow:rgba(53,209,123,.38)}
+#screen-upgrade #u2 .u2-ringwrap:before{
+  content:"";position:absolute;inset:12%;border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle, var(--u2-glow) 0%,rgba(10,14,20,.10) 67%,transparent 76%);
+  filter:blur(9px);transition:background .25s ease,filter .25s ease;
+}
+#screen-upgrade #u2 .u2-ringwrap>svg{position:relative;z-index:1;overflow:visible}
+#screen-upgrade #u2 .u2-track{stroke:#303a47!important}
+#screen-upgrade #u2 .u2-arc{stroke:var(--u2-tone)!important;filter:drop-shadow(0 0 5px var(--u2-glow));transition:stroke .25s ease}
+#screen-upgrade #u2 .u2-ringwrap.won .u2-arc,
+#screen-upgrade #u2 .u2-ringwrap.lost .u2-arc{stroke:var(--u2-tone)!important}
+#screen-upgrade #u2 .u2-rotor{position:absolute;inset:0;z-index:4;pointer-events:none;transform:none!important}
+#screen-upgrade #u2 .u2-rotor i{
+  position:absolute;left:50%;top:auto;bottom:-2px;width:0;height:0;margin-left:-7px;
+  border-left:7px solid transparent;border-right:7px solid transparent;
+  border-top:0;border-bottom:13px solid #fff;
+  filter:drop-shadow(0 0 4px rgba(0,0,0,.75));
+}
+#screen-upgrade #u2 .u2-center{
+  z-index:2;inset:17%;border-radius:50%;
+  background:radial-gradient(circle at 50% 42%,rgba(22,28,38,.82),rgba(10,14,20,.98) 72%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),0 0 22px var(--u2-glow);
+  transition:box-shadow .25s ease,background .25s ease;
+}
+#screen-upgrade #u2 .u2-pct{color:#f7f8fb!important;font-size:clamp(23px,6vw,30px);letter-spacing:-.04em}
+#screen-upgrade #u2 .u2-cap{color:var(--u2-tone)!important;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+@media(max-width:520px){
+  #screen-upgrade #u2 .u2-ringwrap{max-width:112px}
+  #screen-upgrade #u2 .u2-center{inset:17%}
+  #screen-upgrade #u2 .u2-pct{font-size:21px}
+  #screen-upgrade #u2 .u2-cap{font-size:7px}
+}
+</style>
+
 <style id="tucha-v30-profile-contrast">
 html body.dark #tab-profile .panel *{color:#eef2f7!important}
 html body.dark #tab-profile .panel .balance-icon{color:#31cf91!important}
@@ -6652,224 +6697,3 @@ body.cs-modal-open #ny-toggle,body.cs-modal-open #ny-music,body.cs-modal-open #t
   watch("mx-sheet","mx-sheet-open");watch("cs-modal","cs-modal-open");
 })();
 </script>
-
-
-<style id="tucha-dark-pvp-inventory-fix-v32">
-/* ===== v32: FIX ТЁМНОЙ ТЕМЫ — PvP + ИНВЕНТАРЬ ===== */
-/* Принцип: эти правила стоят последними и действуют только при body.dark. */
-html body.dark{
-  --app-bg:#0b0e13;
-  --surface:#111821;
-  --ink:#edf2f8;
-  --muted:#9aa7b7;
-  --line:#273342;
-  --acc:#398cff;
-}
-html body.dark #tab-inventory,
-html body.dark #tab-inventory .panel{
-  background:#111821!important;
-  color:#edf2f8!important;
-}
-html body.dark #tab-inventory .panel{
-  border:1px solid #273342!important;
-  border-radius:22px!important;
-  box-shadow:0 10px 28px rgba(0,0,0,.22)!important;
-  padding:16px!important;
-}
-html body.dark #tab-inventory .panel > div:first-child{
-  color:#edf2f8!important;
-  align-items:center!important;
-  flex-wrap:wrap!important;
-  gap:10px!important;
-}
-html body.dark #tab-inventory .panel > div:first-child b{
-  color:#edf2f8!important;
-}
-html body.dark #inventory-count{
-  color:#a78bfa!important;
-  white-space:nowrap!important;
-}
-html body.dark #sell-all-btn{
-  color:#fff!important;
-  background:linear-gradient(180deg,#df5474,#b93658)!important;
-  border:1px solid rgba(255,140,165,.25)!important;
-  box-shadow:0 4px 12px rgba(185,54,88,.22)!important;
-}
-html body.dark #sell-all-btn:disabled{
-  color:#8490a0!important;
-  background:#252e39!important;
-  border:1px solid #354252!important;
-  box-shadow:none!important;
-  opacity:1!important;
-}
-html body.dark #inventory-list{
-  margin-top:12px!important;
-  color:#edf2f8!important;
-  gap:10px!important;
-}
-html body.dark #inventory-list > p{
-  grid-column:1/-1!important;
-  margin:0!important;
-  padding:28px 12px!important;
-  border:1px dashed #344253!important;
-  border-radius:16px!important;
-  background:#151d27!important;
-  color:#a78bfa!important;
-  text-align:center!important;
-  font-weight:900!important;
-}
-html body.dark .inventory-item{
-  min-width:0!important;
-  background:linear-gradient(160deg,#1b2531,#141c26)!important;
-  border:1px solid #2b3949!important;
-  border-radius:18px!important;
-  color:#edf2f8!important;
-  box-shadow:0 6px 18px rgba(0,0,0,.2)!important;
-}
-html body.dark .inventory-item img{
-  object-fit:contain!important;
-  filter:drop-shadow(0 5px 10px rgba(0,0,0,.35))!important;
-}
-html body.dark .inventory-item-name{color:#edf2f8!important}
-html body.dark .inventory-item-price{color:#58a6ff!important}
-html body.dark .inventory-item .primary{color:#fff!important}
-
-/* PvP: remove the later light-theme overrides when the dark theme is active. */
-html body.dark #screen-pvp{
-  background:radial-gradient(ellipse 110% 52% at 50% 0%,#1a3267 0%,#111d38 48%,#0b101a 100%)!important;
-  background-color:#101722!important;
-  background-image:radial-gradient(ellipse 110% 52% at 50% 0%,#1a3267 0%,#111d38 48%,#0b101a 100%)!important;
-  color:#edf3ff!important;
-}
-html body.dark #screen-pvp .game-top-bar{
-  background:rgba(11,16,27,.96)!important;
-  border-bottom:1px solid #263b60!important;
-  box-shadow:0 5px 18px rgba(0,0,0,.28)!important;
-}
-html body.dark #screen-pvp .game-back-btn{color:#8fc2ff!important}
-html body.dark #screen-pvp .balance{
-  background:#172235!important;
-  border:1px solid #30466c!important;
-  color:#f2f6ff!important;
-}
-html body.dark #screen-pvp .pv-wrap{
-  width:100%!important;
-  max-width:560px!important;
-  margin:0 auto!important;
-  padding:14px 14px calc(34px + env(safe-area-inset-bottom))!important;
-  color:#edf3ff!important;
-}
-html body.dark #screen-pvp .pv-kicker{color:#79adff!important;text-shadow:0 0 10px #2869c966!important}
-html body.dark #screen-pvp .pv-title{color:#f5f8ff!important;text-shadow:0 3px 14px #2468d966!important}
-html body.dark #screen-pvp .pv-round-pill,
-html body.dark #screen-pvp .pv-status{
-  background:linear-gradient(180deg,#1b2c4c,#121f38)!important;
-  border:1px solid #385783!important;
-  color:#c9dcff!important;
-  box-shadow:0 4px 12px rgba(0,0,0,.25)!important;
-}
-html body.dark #screen-pvp .pv-round-pill b{color:#7db7ff!important}
-html body.dark #screen-pvp .pv-status.win{
-  background:linear-gradient(180deg,#124d38,#103727)!important;
-  color:#a7f3cd!important;border-color:#21865f!important;
-}
-html body.dark #screen-pvp .pv-status.lose{
-  background:linear-gradient(180deg,#541d31,#351522)!important;
-  color:#ffc0cd!important;border-color:#a83d5a!important;
-}
-html body.dark #screen-pvp .pv-wheel-card{
-  background:linear-gradient(155deg,#1b3158,#111e38 65%,#0e172b)!important;
-  border:1px solid #365887!important;
-  border-radius:24px!important;
-  box-shadow:0 10px 26px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.08)!important;
-  color:#edf3ff!important;
-}
-html body.dark #screen-pvp .pv-wheelbox canvas{
-  box-shadow:0 10px 24px rgba(0,0,0,.48),0 0 0 6px #172c55,0 0 0 9px #4c8ee8,0 0 24px 8px #347fff55!important;
-}
-html body.dark #screen-pvp .pv-pointer{
-  border-top-color:#8bc7ff!important;
-  filter:drop-shadow(0 0 7px #398cff)!important;
-}
-html body.dark #screen-pvp .pv-center{
-  background:radial-gradient(circle at 35% 25%,#f8fbff,#dceaff)!important;
-  border:4px solid #fff!important;
-  box-shadow:0 6px 18px rgba(0,0,0,.38)!important;
-}
-html body.dark #screen-pvp .pv-center small{color:#657da8!important}
-html body.dark #screen-pvp .pv-center b{color:#111827!important;text-shadow:none!important}
-html body.dark #screen-pvp .pv-timer{color:#e3edff!important;text-shadow:0 2px 8px #347fff55!important}
-html body.dark #screen-pvp .pv-boost{color:#ffd078!important}
-html body.dark #screen-pvp .pv-emos button,
-html body.dark #screen-pvp .pv-chips button,
-html body.dark #screen-pvp .pv-bet-row .pv-adjust{
-  background:linear-gradient(180deg,#263f68,#1a2d4f)!important;
-  border:1px solid #456b9f!important;
-  color:#eaf3ff!important;
-  box-shadow:0 3px 0 #0b1730,0 6px 12px rgba(0,0,0,.22)!important;
-}
-html body.dark #screen-pvp .pv-bet,
-html body.dark #screen-pvp .pv-box{
-  background:linear-gradient(180deg,#192943,#121f35)!important;
-  border:1px solid #304b73!important;
-  border-radius:18px!important;
-  box-shadow:0 6px 18px rgba(0,0,0,.25)!important;
-  color:#eaf2ff!important;
-}
-html body.dark #screen-pvp .pv-bet-top span,
-html body.dark #screen-pvp .pv-box-heading span:first-child,
-html body.dark #screen-pvp .pv-box-title{color:#91bdff!important}
-html body.dark #screen-pvp .pv-min-label,
-html body.dark #screen-pvp .pv-box-heading span:last-child{color:#9aafd0!important}
-html body.dark #screen-pvp .pv-bet-row input{
-  background:#0c1524!important;
-  border:1px solid #365783!important;
-  color:#f5f8ff!important;
-  box-shadow:inset 0 3px 8px rgba(0,0,0,.38)!important;
-}
-html body.dark #screen-pvp .pv-go{
-  color:#fff!important;
-  background:linear-gradient(180deg,#559fff,#2874e8 58%,#1d59bd)!important;
-  border:1px solid #75b5ff!important;
-  border-radius:17px!important;
-  box-shadow:0 6px 0 #123d83,0 12px 22px rgba(25,92,190,.28)!important;
-}
-html body.dark #screen-pvp .pv-go:disabled{
-  background:linear-gradient(180deg,#43516c,#303c53)!important;
-  color:#a9b6ca!important;
-  border-color:#53627b!important;
-  box-shadow:0 4px 0 #202b3e!important;
-  opacity:1!important;
-}
-html body.dark #screen-pvp .pv-note{color:#a7bbda!important}
-html body.dark #screen-pvp .pv-row{
-  background:linear-gradient(180deg,#1b3154,#142440)!important;
-  border:1px solid #304d79!important;
-  color:#edf4ff!important;
-  box-shadow:0 3px 0 #0c172b!important;
-}
-html body.dark #screen-pvp .pv-row .a{color:#ffda82!important}
-html body.dark #screen-pvp .pv-row .p{color:#9bbce9!important}
-html body.dark #screen-pvp .pv-row.me{outline:2px solid #65a5ff!important}
-html body.dark #screen-pvp .pv-row.won{
-  background:linear-gradient(180deg,#14543c,#103b2c)!important;
-  outline:2px solid #2acb87!important;
-}
-html body.dark #screen-pvp .pv-empty{color:#9bb6df!important}
-html body.dark #screen-pvp #pv-cancel{
-  background:#3a1d2a!important;color:#ffb8c7!important;border-color:#a64b65!important;
-}
-@media(max-width:380px){
-  html body.dark #tab-inventory .panel{padding:13px!important}
-  html body.dark #tab-inventory .panel > div:first-child{align-items:flex-start!important}
-  html body.dark #inventory-count{font-size:12px!important}
-  html body.dark #sell-all-btn{padding:7px 9px!important;font-size:10px!important}
-  html body.dark #screen-pvp .pv-wrap{padding-left:10px!important;padding-right:10px!important}
-  html body.dark #screen-pvp .pv-wheel-card{padding-left:8px!important;padding-right:8px!important}
-}
-</style>
-
-
-
-
-
