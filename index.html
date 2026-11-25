@@ -1,3 +1,34 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5583,7 +5614,7 @@ header::after{background:
   function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){}return null;}
   /* --- снег: лёгкий canvas, мелкие снежинки, пауза в фоне --- */
   var cv=document.createElement("canvas");cv.id="ny-snow";document.body.appendChild(cv);
-  var cx=cv.getContext("2d"),W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1),fl=[],on=ls("ny_snow")!=="off",raf=0,last=0;
+  var cx=cv.getContext("2d"),W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1),fl=[],on=true,raf=0,last=0;
   function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
     var n=Math.max(22,Math.min(55,Math.round(W/9)));if(reduce)n=14;
     while(fl.length<n)fl.push(mk(true));fl.length=n;}
@@ -6401,3 +6432,158 @@ window.minesMainBtn=function(){if(minesBusy||minesWait)return;if(minesState==="p
 
 </body>
 </html>
+
+
+<style id="tucha-v30-dark-fix">
+/* V30: единая графитовая палитра без белых карточек в тёмной теме */
+html body.dark{
+  background:#171c23!important;color:#eef2f7!important;
+  --k-pan:#222a34;--k-line:#3a4654;--k-ink:#eef2f7;--k-mut:#aab5c3;
+  --k-tile:#2b3440;--k-acc:#398cf5;--k-ok:#31c987;--k-bad:#ff687b;
+}
+html body.dark .tab,html body.dark .tab .panel,html body.dark #tab-profile .panel,
+html body.dark #tab-games .panel,html body.dark #tab-cases .panel,
+html body.dark #tab-inventory .panel,html body.dark #tab-wheel .panel,
+html body.dark #tab-profile,html body.dark #main-content{
+  background:#1b222b!important;color:#eef2f7!important;border-color:#394451!important;
+}
+html body.dark #tab-profile .panel{
+  background:linear-gradient(145deg,#252e39,#202832)!important;
+  border:1px solid #3a4654!important;box-shadow:0 10px 28px rgba(0,0,0,.22)!important;
+}
+html body.dark #tab-profile h2,html body.dark #username,
+html body.dark #tab-profile .panel *{color:inherit}
+html body.dark #tab-profile #username{color:#f4f6fa!important}
+html body.dark .tab .panel [style*="background:#fff"],
+html body.dark .tab .panel [style*="background: #fff"],
+html body.dark .tab .panel [style*="background:white"],
+html body.dark .game-screen [style*="background:#fff"],
+html body.dark .game-screen [style*="background: #fff"],
+html body.dark .game-screen [style*="background:white"]{
+  background:#2a333e!important;color:#eef2f7!important;border-color:#414d5b!important;
+}
+html body.dark .tab button:not(.primary):not(.active):not(.on),
+html body.dark .game-screen button:not(.primary):not(.active):not(.on):not(.mx-cell){
+  color:#e5eaf0!important;border-color:#465261!important;
+}
+html body.dark .tab input,html body.dark .tab select,html body.dark .tab textarea,
+html body.dark .game-screen input,html body.dark .game-screen select,html body.dark .game-screen textarea{
+  background:#252e39!important;color:#f1f4f8!important;border-color:#465261!important;
+}
+html body.dark .tab input::placeholder,html body.dark .game-screen input::placeholder{color:#9ca8b7!important}
+html body.dark .game-top-bar,html body.dark .game-screen .panel,
+html body.dark .game-screen .card,html body.dark .game-screen .sheet,
+html body.dark .game-screen .modal-content{
+  background:#202832!important;color:#eef2f7!important;border-color:#3a4654!important;
+}
+/* Профиль: баланс, имя и строки меню читаются на сером фоне */
+html body.dark #tab-profile .balance,
+html body.dark #tab-profile .prof-row,
+html body.dark #tab-profile .prof-menu,
+html body.dark #tab-profile .prof-actions{color:#eef2f7!important}
+html body.dark #tab-profile .prof-row{background:#2a333e!important;border-color:#414d5b!important}
+html body.dark #tab-profile .prof-row .pt{color:#edf2f7!important}
+html body.dark #tab-profile .prof-row .pc{color:#aab5c3!important}
+html body.dark #tab-profile .prof-actions .primary.green{background:linear-gradient(135deg,#20b96a,#159653)!important;color:#fff!important}
+html body.dark #tab-profile .prof-actions .primary:not(.green){background:linear-gradient(135deg,#f5d92d,#e8bb16)!important;color:#222!important}
+/* Колесо и игровые экраны */
+html body.dark .fw-stage,html body.dark .fw-result,html body.dark .fw-prizes,
+html body.dark .fw-prize,html body.dark .roulette-stage,html body.dark .roulette-wheel-wrap{
+  background:#252e39!important;border-color:#3d4957!important;color:#eef2f7!important;
+}
+html body.dark .fw-prizes>*,html body.dark .fw-result>*{color:#eef2f7!important}
+html body.dark .fw-pointer{filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+/* Апгрейд: ровные карточки источника/цели, баланс и подарки в одной системе */
+html body.dark #u2 .u2-stage{background:linear-gradient(145deg,#222a34,#1e252e)!important;border-color:#3d4855!important}
+html body.dark #u2 .u2-side{background:#2b3440!important;border-color:#465261!important;color:#f0f3f7!important}
+html body.dark #u2 .u2-side .u2-lab{color:#aab5c3!important}
+html body.dark #u2 .u2-side .u2-nm{color:#edf2f7!important}
+html body.dark #u2 .u2-side .u2-pr{color:#ffd34d!important}
+html body.dark #u2 .u2-bet button{background:#354150!important;color:#f2f5f8!important;border-color:#536171!important}
+html body.dark #u2 .u2-bet input{background:#202832!important;color:#fff!important;border-color:#536171!important}
+html body.dark #u2 .u2-mults{background:#252e39!important;border-color:#3d4957!important}
+html body.dark #u2 .u2-mults button{color:#bdc7d3!important}
+html body.dark #u2 .u2-mults button.active,html body.dark #u2 .u2-mults button.on{background:#347fe0!important;color:#fff!important}
+html body.dark #u2 .u2-go{background:linear-gradient(135deg,#398cf5,#246bd0)!important;color:#fff!important}
+html body.dark #u2 .u2-ch h3{color:#edf2f7!important}
+html body.dark #u2 .u2-ch button{background:#29333e!important;color:#dbe3ec!important;border-color:#465261!important}
+html body.dark #u2 .u2-list .u2-t{background:#29333e!important;border-color:#414d5b!important;color:#eef2f7!important}
+html body.dark #u2 .u2-list .u2-t.selected{border-color:#398cf5!important;box-shadow:0 0 0 1px #398cf5!important}
+html body.dark #u2 .u2-msg{color:#b9c4d1!important}
+html body.dark #u2 .u2-msg.ok{color:#42d69b!important}
+html body.dark #u2 .u2-msg.bad{color:#ff7c8c!important}
+html body.dark #u2 .u2-ringwrap .u2-center{color:#f5f7fa!important}
+html body.dark #u2 .u2-track{stroke:#3b4653!important}
+html body.dark #u2 .u2-rotor i{border-top-color:#f5f7fa!important}
+/* Мины: модалка и поля ставки не должны становиться белыми/чёрными пятнами */
+html body.dark .mx-sheet,html body.dark .mx-sheet-wrap,html body.dark .mx-sheet-t,
+html body.dark .mx-bet-box,html body.dark .mx-size-box,html body.dark .mx-chips,
+html body.dark .mx-info,html body.dark .mx-hist,html body.dark .mx-win-card{
+  background:#242d37!important;color:#eef2f7!important;border-color:#3d4957!important;
+}
+html body.dark .mx-sheet button:not(.mx-cell),html body.dark .mx-sheet label,
+html body.dark .mx-sheet span,html body.dark .mx-sheet strong{color:#edf2f7!important}
+html body.dark .mx-sheet .mx-start,html body.dark #mx-start{
+  background:linear-gradient(135deg,#398cf5,#2471d8)!important;color:#fff!important;
+}
+/* Кейсы: затемнённая лента и сохранённая зелёная кнопка открытия как в референсе */
+html body.dark .cs3-stage,html body.dark .cs3-col,html body.dark .cs3-it,
+html body.dark .cs3-ctrl,html body.dark .cs3-side,html body.dark .cs3-grid .cs-tile,
+html body.dark .cs-modal-box{
+  background:#202832!important;border-color:#3b4653!important;color:#eef2f7!important;
+}
+html body.dark .cs3-it b,html body.dark .cs3-sub,html body.dark .cs-msg{color:#dce4ed!important}
+html body.dark .cs-open,html body.dark #cs-open{
+  background:linear-gradient(180deg,#20bd69,#138747)!important;border:1px solid #35d889!important;
+  color:#fff!important;box-shadow:0 4px 0 #0c6535,0 8px 18px rgba(16,185,95,.18)!important;
+}
+html body.dark .cs-open:disabled{opacity:.55!important}
+html body.dark .cs3-mode,html body.dark .cs3-mode button,
+html body.dark #cs-qty,html body.dark #cs-qty button{
+  background:#252e39!important;color:#dce4ed!important;border-color:#465261!important;
+}
+html body.dark .cs3-mode button.on,html body.dark #cs-qty button.active{background:#347fe0!important;color:#fff!important}
+html body.dark .cs-modal{background:rgba(5,9,14,.78)!important}
+html body.dark .cs-modal-box{background:linear-gradient(155deg,#29333e,#202832)!important}
+html body.dark .cs-modal-head,html body.dark .cs-modal-total{color:#f3f6fa!important}
+html body.dark .cs-tile{background:#2b3440!important;border-color:#465261!important;color:#eef2f7!important}
+/* Снег возвращён; кнопка переключения остаётся доступной */
+#ny-snow{display:block!important;pointer-events:none!important}
+html body.dark #ny-toggle,html body.dark #ny-music{background:rgba(39,49,61,.9)!important;color:#f4f7fb!important;border-color:#526174!important}
+@media(max-width:520px){
+ html body.dark #u2 .u2-stage{grid-template-columns:minmax(0,1fr) 112px minmax(0,1fr)!important;gap:6px!important;padding:9px!important}
+ html body.dark #u2 .u2-side{min-height:138px!important;padding:7px 4px!important}
+ html body.dark #u2 .u2-ic{width:54px!important;height:54px!important}
+}
+</style>
+<script id="tucha-v30-fixes">
+(function(){
+  /* Snow should start enabled after this update; the on-screen snow button can still disable it. */
+  try{localStorage.setItem("ny_snow","on");}catch(e){}
+  /* Upgrade result feedback: make the win/loss label explicit and keep it visible until next choice. */
+  var msg=document.getElementById("u2-msg");
+  if(msg && !msg.dataset.v30){msg.dataset.v30="1";}
+  /* Give the single-case result modal a larger hero tile, while multi-case results stay in a grid. */
+  var modal=document.getElementById("cs-modal-grid");
+  if(modal){
+    var obs=new MutationObserver(function(){
+      modal.classList.toggle("one",modal.children.length===1);
+    });
+    obs.observe(modal,{childList:true});
+  }
+})();
+</script>
+
+<style id="tucha-v30-profile-contrast">
+html body.dark #tab-profile .panel *{color:#eef2f7!important}
+html body.dark #tab-profile .panel .balance-icon{color:#31cf91!important}
+html body.dark #tab-profile .panel .global-balance{color:#f4f6fa!important}
+html body.dark #tab-profile .prof-actions .primary.green{color:#fff!important}
+html body.dark #tab-profile .prof-actions .primary:not(.green){color:#222!important}
+html body.dark #tab-profile .prof-sw{background:#398cf5!important}
+html body.dark #tab-profile .prof-row .pc{color:#aab5c3!important}
+</style>
+
+
+
+
