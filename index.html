@@ -3679,7 +3679,12 @@ async function minesOpen(i){
         alert(e.message||"Ошибка хода.");
         minesWait=false; await minesSync(); return;
     }finally{
-        if(token===minesRound){ minesWait=false; $("mx-board").classList.remove("mx-wait"); }
+        if(token===minesRound){
+            minesWait=false;
+            $("mx-board").classList.remove("mx-wait");
+            // Проверяем авто-вывод после завершения ожидания ответа сервера.
+            if(minesState==="playing") minesRefreshUI();
+        }
     }
 }
 async function minesCashout(){
@@ -5916,15 +5921,12 @@ setTheme(saved==="light"?"light":"dark");
 /* ---------- ИКОНКИ ДОЛЛАРОВ ---------- */
 G.csIcon=function(p){
   var v=Number(p&&p.value)||0;
-  if(p&&p.type==="gift"&&p.img) return '<img src="'+esc2(p.img)+'" alt="">';
-  var coin='<g><ellipse cx="32" cy="36" rx="22" ry="22" fill="#b97a05"/><circle cx="32" cy="32" r="22" fill="url(#gGold)"/><circle cx="32" cy="32" r="16.5" fill="none" stroke="#fff6c9" stroke-opacity=".7" stroke-width="2"/><text x="32" y="41" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="26" fill="#8a5a00">$</text></g>';
-  if(v<2) return '<svg viewBox="0 0 64 64">'+coin+'</svg>';
-  if(v<10) return '<svg viewBox="0 0 64 64"><g transform="translate(-9 5) scale(.78)">'+coin+'</g><g transform="translate(13 -2) scale(.82)">'+coin+'</g></svg>';
-  if(v<50) return '<svg viewBox="0 0 64 64"><rect x="4" y="16" width="56" height="32" rx="6" fill="url(#gGreen)" stroke="#0f6b3a" stroke-width="2"/><circle cx="32" cy="32" r="10" fill="#0f6b3a" opacity=".35"/><text x="32" y="40" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="22" fill="#eafff2">$</text><circle cx="12" cy="24" r="3" fill="#eafff2" opacity=".7"/><circle cx="52" cy="40" r="3" fill="#eafff2" opacity=".7"/></svg>';
-  return '<svg viewBox="0 0 64 64"><path d="M8 50 14 34h36l6 16z" fill="#c78a0a"/><path d="M14 34l4-12h28l4 12z" fill="url(#gGold)"/><path d="M20 22l3-9h18l3 9z" fill="#ffe27a"/><rect x="4" y="50" width="56" height="8" rx="3" fill="#8a5a00"/><text x="32" y="47" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="15" fill="#8a5a00">$</text></svg>';
+  if(p&&p.type==="gift"&&p.img) return '<img src="'+esc2(p.img)+'" alt="'+esc2(p.name||"Подарок")+'">';
+  var isCoin=v<=2.50;
+  return '<img style="width:54px;height:54px;object-fit:contain;display:block" class="cs-currency-icon" src="'+(isCoin?"./coin.png":"./mone.png")+'" alt="'+(isCoin?"Монетка":"Деньги")+'">';
 };
 G.csTile=function(p){
-  var lab=p.type==="gift"?"<i>"+esc2(displayGiftName(p.name,p.img))+"</i>":"";
+  var lab=p.type==="gift"?"<i>"+esc2(displayGiftName(p.name,p.img))+"</i>":'<i>'+(Number(p.value)<=2.50?"Монетка":"Деньги")+'</i>';
   return '<div class="cs-tile">'+G.csIcon(p)+"<b>$"+fx(p.value)+"</b>"+lab+"</div>";
 };
 
@@ -6002,10 +6004,7 @@ function tileHtml(it,sel,fn){
 function pctText(c){return(Math.round(c*10)/10).toFixed(1).replace(".",",")+"%";}
 function u2ChanceTone(c){
   if(!(c>0))return "chance-green";
-  if(c<=10)return "chance-red";
-  var n=Math.round(c*10)/10;
-  if(Math.abs(n-17)<0.06||Math.abs(n-20)<0.06||Math.abs(n-30)<0.06)return "chance-yellow";
-  return "chance-green";
+  return c<45 ? "chance-yellow" : "chance-green";
 }
 function paintRing(){
   var s=srcVal(),t=dstVal(),c=chanceOf(s,t),C=2*Math.PI*84,a=q("u2-arc"),ring=q("u2-ring");
@@ -6018,7 +6017,7 @@ function paintRing(){
   if(ring){ring.classList.remove("chance-red","chance-yellow","chance-green");ring.classList.add(u2ChanceTone(c));}
   var p=q("u2-pct");if(p)p.textContent=c>0?pctText(c):"—";
   var cap=q("u2-cap");
-  if(cap)cap.textContent=c>0?(c<=10?"НИЗКИЙ ШАНС":(u2ChanceTone(c)==="chance-yellow"?"СРЕДНИЙ ШАНС":"ВЫСОКИЙ ШАНС")):"ВЫБЕРИ ЦЕЛЬ";
+  if(cap)cap.textContent=c>0?(c<45?"СРЕДНИЙ ШАНС":"ВЫСОКИЙ ШАНС"):"ВЫБЕРИ ЦЕЛЬ";
   return c;
 }
 function validate(){
