@@ -6009,10 +6009,16 @@ function u2ChanceTone(c){
 }
 function paintRing(){
   var s=srcVal(),t=dstVal(),c=chanceOf(s,t),C=2*Math.PI*84,a=q("u2-arc"),ring=q("u2-ring");
-  if(a)a.setAttribute("stroke-dasharray",(C*Math.min(100,c)/100)+" "+C);
+  var safe=Math.max(0,Math.min(100,c));
+  /* Цветная дуга остаётся неподвижной снизу и растёт пропорционально шансу. */
+  if(a){
+    a.setAttribute("stroke-dasharray",(C*safe/100)+" "+C);
+    a.setAttribute("transform","rotate("+(90-safe*1.8)+" 100 100)");
+  }
   if(ring){ring.classList.remove("chance-red","chance-yellow","chance-green");ring.classList.add(u2ChanceTone(c));}
   var p=q("u2-pct");if(p)p.textContent=c>0?pctText(c):"—";
-  var cap=q("u2-cap");if(cap)cap.textContent=c>0?"ШАНС":"ВЫБЕРИ ЦЕЛЬ";
+  var cap=q("u2-cap");
+  if(cap)cap.textContent=c>0?(c<=10?"НИЗКИЙ ШАНС":(u2ChanceTone(c)==="chance-yellow"?"СРЕДНИЙ ШАНС":"ВЫСОКИЙ ШАНС")):"ВЫБЕРИ ЦЕЛЬ";
   return c;
 }
 function validate(){
@@ -6083,22 +6089,29 @@ G.u2Sort=function(which){if(which==="my")U.mySort=U.mySort==="asc"?"desc":"asc";
   var b=q("u2-sort-"+which);if(b)b.textContent=(which==="my"?U.mySort:U.dstSort)==="asc"?"По росту ↑":"По убыв. ↓";G.u2Render();};
 G.u2Search=function(which,v){if(which==="my")U.myQ=v||"";else U.dstQ=v||"";G.u2Render();};
 function resetRing(){
-  var r=q("u2-ring"),rot=q("u2-rotor"),arcRot=q("u2-arc-rotor");if(!r)return;
+  var r=q("u2-ring"),rot=q("u2-rotor");if(!r)return;
   r.classList.remove("won","lost");
-  if(rot){rot.style.transition="none";rot.style.transform="none";}
-  if(arcRot){arcRot.style.transition="none";arcRot.style.transform="rotate(0deg)";}
+  if(rot){rot.style.transition="none";rot.style.transform="rotate(0deg)";}
   paintRing();
 }
 function spinTo(c,win){
   return new Promise(function(res){
-    var arcRot=q("u2-arc-rotor");if(!arcRot){res();return;}
-    arcRot.style.transition="none";arcRot.style.transform="rotate(0deg)";void arcRot.getBoundingClientRect();
-    /* Дуга с шансом вращается под неподвижным указателем внизу по центру. */
-    var rel=win?(Math.random()*Math.max(.01,c)):(c+(100-c)*Math.random());
-    var end=((180-rel*3.6)%360+360)%360;
+    var rotor=q("u2-rotor");if(!rotor){res();return;}
+    /* Указатель обходит окружность, а цветная дуга с шансом остаётся снизу. */
+    var half=Math.max(0,Math.min(100,c))*1.8;
+    var end;
+    if(win){
+      end=180+(Math.random()*2-1)*Math.max(.5,half*.92);
+    }else{
+      var outside=360-Math.min(360,half*2);
+      end=(180+half+Math.random()*Math.max(.1,outside))%360;
+    }
+    rotor.style.transition="none";
+    rotor.style.transform="rotate(0deg)";
+    void rotor.getBoundingClientRect();
     var total=360*5+end,ms=5600;
-    arcRot.style.transition="transform "+ms+"ms cubic-bezier(.10,.72,.12,1)";
-    arcRot.style.transform="rotate("+total+"deg)";
+    rotor.style.transition="transform "+ms+"ms cubic-bezier(.10,.72,.12,1)";
+    rotor.style.transform="rotate("+total+"deg)";
     var hv=setInterval(function(){haptic("light");},220);
     setTimeout(function(){clearInterval(hv);},ms*.86);
     setTimeout(res,ms+260);
@@ -6116,8 +6129,9 @@ G.u2Go=async function(){
     var r=await apiPost(payload);
     if(r.status!=="success")throw new Error(r.message||"Не удалось сыграть.");
     var c=Number(r.chance)||chanceOf(s,dstVal());
-    var a=q("u2-arc"),C=2*Math.PI*84;if(a)a.setAttribute("stroke-dasharray",(C*c/100)+" "+C);
+    var a=q("u2-arc"),C=2*Math.PI*84,cc=Math.max(0,Math.min(100,c));if(a){a.setAttribute("stroke-dasharray",(C*cc/100)+" "+C);a.setAttribute("transform","rotate("+(90-cc*1.8)+" 100 100)");}
     q("u2-pct").textContent=pctText(c);
+    q("u2-cap").textContent=c<=10?"НИЗКИЙ ШАНС":(u2ChanceTone(c)==="chance-yellow"?"СРЕДНИЙ ШАНС":"ВЫСОКИЙ ШАНС");
     await spinTo(c,!!r.win);
     q("u2-ring").classList.add(r.win?"won":"lost");
     q("u2-pct").textContent=r.win?"Успех":"Провал";q("u2-cap").textContent=r.win?"ТЫ ПОЛУЧИЛ":"ПОПРОБУЙ ЕЩЁ";
@@ -6445,6 +6459,35 @@ window.minesMainBtn=function(){if(minesBusy||minesWait)return;if(minesState==="p
 })();
 </script>
 
+
+
+<style id="tucha-upgrade-video-wheel-v36">
+/* Апгрейд: внешний указатель вращается по окружности, шанс-дуга закреплена снизу. */
+#screen-upgrade #u2 .u2-rotor{
+  position:absolute!important;inset:0!important;
+  transform-origin:50% 50%!important;
+  pointer-events:none!important;z-index:3!important;
+}
+#screen-upgrade #u2 .u2-rotor i{
+  position:absolute!important;left:50%!important;top:-1px!important;
+  width:0!important;height:0!important;margin-left:-6px!important;
+  border-left:6px solid transparent!important;
+  border-right:6px solid transparent!important;
+  border-top:11px solid #f7f8fb!important;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.8))!important;
+}
+#screen-upgrade #u2 #u2-arc-rotor{
+  transform:none!important;
+}
+#screen-upgrade #u2 .u2-center{z-index:2!important}
+#screen-upgrade #u2 #u2-arc{transition:stroke .25s ease,filter .25s ease}
+#screen-upgrade #u2 #u2-ring.chance-red #u2-arc{stroke:#ff244d!important;filter:drop-shadow(0 0 7px rgba(255,36,77,.55))}
+#screen-upgrade #u2 #u2-ring.chance-yellow #u2-arc{stroke:#ffbd16!important;filter:drop-shadow(0 0 7px rgba(255,189,22,.55))}
+#screen-upgrade #u2 #u2-ring.chance-green #u2-arc{stroke:#22d879!important;filter:drop-shadow(0 0 7px rgba(34,216,121,.55))}
+#screen-upgrade #u2 #u2-ring.chance-red{--u2-glow:rgba(255,36,77,.28)!important}
+#screen-upgrade #u2 #u2-ring.chance-yellow{--u2-glow:rgba(255,189,22,.28)!important}
+#screen-upgrade #u2 #u2-ring.chance-green{--u2-glow:rgba(34,216,121,.25)!important}
+</style>
 </body>
 </html>
 
