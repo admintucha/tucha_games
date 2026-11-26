@@ -6880,5 +6880,15 @@ G.snkResume=function(){if(!S.playing)return;ovHide();S.paused=false;S.tm=setTime
 bind();
 })();
 </script>
+<style id="tucha-snake-fit">
+#screen-snake .snk-wrap{touch-action:pan-y}
+#screen-snake .snk-board{
+  width:min(100%, max(220px, calc(100vh - 420px)));
+  width:min(100%, max(220px, calc(100dvh - 420px)));
+  margin:0 auto;
+}
+#screen-snake .snk-pad{touch-action:none}
+#screen-snake .snk-padwrap{padding-bottom:12px}
+</style>
 </body>
 </html>
