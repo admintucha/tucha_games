@@ -6787,7 +6787,9 @@ function draw(now){
     cx.fillStyle="#fff";cx.fillRect(-cell*.32,-cell*.26,cell*.64,cell*.1);cx.beginPath();cx.arc(cell*.02,-cell*.74,cell*.07,0,6.2832);cx.fill();cx.restore();}
 }
 // плавный цикл кадров, пока открыт экран Змейки
-function snkLoop(now){var s=q("screen-snake");if(!s||!s.classList.contains("active")){S.raf=0;return;}if(cx)draw(now);S.raf=requestAnimationFrame(snkLoop);}
+function snkLoop(now){var s=q("screen-snake");if(!s||!s.classList.contains("active")){S.raf=0;return;}
+  if(cx){if(S.playing&&!S.paused&&S.nextAt&&now>=S.nextAt)step(now);draw(now);}
+  S.raf=requestAnimationFrame(snkLoop);}
 /* ---------- интерфейс ---------- */
 function tiers(){var el=q("snk-tiers");if(!el)return;el.innerHTML=S.tiers.map(function(t){return'<span class="'+(S.score>=t.apples?"ok":"")+'"><b>'+t.apples+' 🍎</b>$'+money(t.reward)+'</span>';}).join("");}
 function recUI(){q("snk-rec-name").textContent=S.rec.score>0?S.rec.name:"Пока никого";q("snk-rec-score").textContent=S.rec.score+" 🍎";}
@@ -6810,19 +6812,19 @@ function over(r,err){
 }
 /* ---------- игра ---------- */
 function input(d){if(!S.playing||S.paused)return;var last=S.q.length?S.q[S.q.length-1]:S.dir;if(d===last||d===(last+2)%4||S.q.length>=2)return;S.q.push(d);}
-function step(){
+function step(now){
   if(!S.playing||S.paused)return;
   var m=S.q.length?S.q.shift():-1;if(m>=0&&m!==S.dir&&m!==(S.dir+2)%4){S.dir=m;S.moves.push(S.t+":"+m);}
   var h=S.body[0],nx=h[0]+DX[S.dir],ny=h[1]+DY[S.dir];S.t++;
   if(nx<0||ny<0||nx>=N||ny>=N){return end();}
   var hi=ny*N+nx,eat=hi===S.apple,grow=eat&&((S.score+1)%SNAKE_GROW_EVERY===0);
-  S.prev=S.body.map(function(p){return[p[0],p[1]];});S.tickAt=performance.now();
+  var tn=now||performance.now();
+  S.prev=S.body.map(function(p){return[p[0],p[1]];});S.tickAt=tn;S.nextAt=tn+tickMs(S.score);
   if(!grow){var tl=S.body[S.body.length-1];S.occ[tl[1]*N+tl[0]]=0;}
   if(S.occ[hi]){return end();}
   S.body.unshift([nx,ny]);S.occ[hi]=1;
   if(!grow)S.body.pop();
   if(eat){S.score++;q("snk-score").textContent=S.score;tiers();haptic("light");S.apple=spawn();if(S.apple<0){draw();return end();}}
-  draw();S.tm=setTimeout(step,tickMs(S.score));
 }
 function end(){S.playing=false;clearTimeout(S.tm);draw();notify("error");S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:S.t};send();}
 async function send(){
@@ -6845,7 +6847,7 @@ G.snkPlay=async function(){
   if(S.busy||S.playing||S.att<1)return;S.busy=true;menu("Запускаем…",true);
   try{var d=await apiPost({action:"snake_start",request_id:rid()});if(d.status!=="success")throw new Error(d.message||"Не удалось начать.");
     S.run={id:d.run_id};S.att=Number(d.attempts)||0;attUI();S.busy=false;reset(Number(d.seed));sz();ovHide();draw();
-    S.playing=true;S.paused=false;haptic("medium");S.tm=setTimeout(step,500);
+    S.playing=true;S.paused=false;haptic("medium");S.prev=null;S.tickAt=performance.now();S.nextAt=performance.now()+500;
   }catch(e){S.busy=false;menu(e&&e.message||"Ошибка запуска.");}
 };
 async function load(){
@@ -6884,13 +6886,13 @@ function bind(){
     else if(S.paused){S.paused=false;ov('<h3>Пауза</h3><button class="snk-btn" onclick="snkResume()">ПРОДОЛЖИТЬ</button>');}});
   addEventListener("resize",function(){if(q("screen-snake").classList.contains("active")){sz();draw();}});
 }
-G.snkResume=function(){if(!S.playing)return;ovHide();S.paused=false;S.tm=setTimeout(step,600);};
+G.snkResume=function(){if(!S.playing)return;ovHide();S.paused=false;S.nextAt=performance.now()+600;};
 bind();
 })();
 </script>
 <style id="tucha-snake-fit">
-#screen-snake .snk-wrap{touch-action:pan-y;max-width:520px}
-#screen-snake .snk-board{width:100%;margin:0 auto}
+#screen-snake .snk-wrap{touch-action:pan-y;max-width:none;padding:4px 4px 16px}
+#screen-snake .snk-board{width:100%;margin:0 auto;border-radius:14px}
 #screen-snake .snk-pad{touch-action:none}
 #screen-snake .snk-padwrap{padding-bottom:12px}
 </style>
