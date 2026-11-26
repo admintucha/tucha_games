@@ -6750,8 +6750,7 @@ html body #u2 .u2-nm{max-width:100%;overflow:hidden;text-overflow:ellipsis;white
 "use strict";
 var N=15,DX=[0,1,0,-1],DY=[-1,0,1,0],G=window;
 var SNAKE_GROW_EVERY=2; // рост каждое N-е яблоко (как в Code.gs)
-var S={att:0,packs:[{id:"p5",n:5,price:0.10},{id:"p10",n:10,price:0.20},{id:"p25",n:25,price:0.40}],
-  tiers:[{apples:50,reward:0.25},{apples:100,reward:0.5},{apples:150,reward:0.75}],rec:{score:0,name:""},
+var S={att:1,packs:[],board:null,prize:null,tiers:[{apples:50},{apples:100},{apples:150}],rec:{score:0,name:""},
   loaded:false,busy:false,playing:false,paused:false,score:0,t:0,dir:1,q:[],moves:[],body:[],occ:null,apple:-1,rng:null,run:null,fin:null,tm:0};
 var cv,cx,size=0,cell=0,pad,knob;
 function q(i){return document.getElementById(i);}
@@ -6791,17 +6790,14 @@ function snkLoop(now){var s=q("screen-snake");if(!s||!s.classList.contains("acti
   if(cx){if(S.playing&&!S.paused&&S.nextAt&&now>=S.nextAt)step(now);draw(now);}
   S.raf=requestAnimationFrame(snkLoop);}
 /* ---------- интерфейс ---------- */
-function tiers(){var el=q("snk-tiers");if(!el)return;el.innerHTML=S.tiers.map(function(t){return'<span class="'+(S.score>=t.apples?"ok":"")+'"><b>'+t.apples+' 🍎</b>$'+money(t.reward)+'</span>';}).join("");}
+function tiers(){var el=q("snk-tiers");if(!el)return;el.innerHTML=S.tiers.map(function(t){return'<span class="'+(S.score>=t.apples?"ok":"")+'"><b>'+t.apples+' 🍎</b></span>';}).join("");}
 function recUI(){q("snk-rec-name").textContent=S.rec.score>0?S.rec.name:"Пока никого";q("snk-rec-score").textContent=S.rec.score+" 🍎";}
 function attUI(){q("snk-att").textContent=S.att;}
 function ov(html){var o=q("snk-ov");o.classList.remove("hide");o.innerHTML=html;}
 function ovHide(){q("snk-ov").classList.add("hide");}
 function menu(msg,ok){
-  var rows=S.tiers.map(function(t){return t.apples+" 🍎 = $"+money(t.reward);}).join(" · ");
-  ov('<h3>🐍 Змейка</h3><p>Собирай яблоки. Стена или хвост — конец забега.<br>'+rows+'</p>'
-   +'<div class="snk-big">🎟️ '+S.att+'</div>'
-   +'<button class="snk-btn" id="snk-play" '+(S.att<1||S.busy?"disabled":"")+' onclick="snkPlay()">'+(S.busy?"…":"ИГРАТЬ")+'</button>'
-   +'<p>Купить попытки:</p><div class="snk-packs">'+S.packs.map(function(p){return'<button '+(S.busy?"disabled":"")+' onclick="snkBuy(\''+p.id+'\')"><b>'+p.n+' 🎟️</b>$'+money(p.price)+'</button>';}).join("")+'</div>'
+  ov('<h3>🐍 Змейка</h3><p>Игра бесплатная. Собирай яблоки. Стена или свой хвост — конец забега.<br>Возрождение с того же места: $0.10 (до 3 раз за забег).</p>'
+   +'<button class="snk-btn" id="snk-play" '+(S.busy?"disabled":"")+' onclick="snkPlay()">'+(S.busy?"…":"ИГРАТЬ")+'</button>'
    +'<div class="snk-msg '+(ok?"ok":"")+'" id="snk-msg">'+E(msg||"")+'</div>');
 }
 function over(r,err){
@@ -6814,19 +6810,43 @@ function over(r,err){
 function input(d){if(!S.playing||S.paused)return;var last=S.q.length?S.q[S.q.length-1]:S.dir;if(d===last||d===(last+2)%4||S.q.length>=2)return;S.q.push(d);}
 function step(now){
   if(!S.playing||S.paused)return;
-  var m=S.q.length?S.q.shift():-1;if(m>=0&&m!==S.dir&&m!==(S.dir+2)%4){S.dir=m;S.moves.push(S.t+":"+m);}
-  var h=S.body[0],nx=h[0]+DX[S.dir],ny=h[1]+DY[S.dir];S.t++;
-  if(nx<0||ny<0||nx>=N||ny>=N){return end();}
+  var m=S.q.length?S.q.shift():-1,nd=S.dir;
+  if(m>=0&&m!==S.dir&&m!==(S.dir+2)%4)nd=m;
+  var h=S.body[0],nx=h[0]+DX[nd],ny=h[1]+DY[nd];
   var hi=ny*N+nx,eat=hi===S.apple,grow=eat&&((S.score+1)%SNAKE_GROW_EVERY===0);
+  var tl=S.body[S.body.length-1],tailFree=!grow&&tl[0]===nx&&tl[1]===ny;
+  if(nx<0||ny<0||nx>=N||ny>=N||(S.occ[hi]&&!tailFree))return die();
   var tn=now||performance.now();
+  if(nd!==S.dir){S.dir=nd;S.moves.push(S.t+":"+nd);}
+  S.t++;
   S.prev=S.body.map(function(p){return[p[0],p[1]];});S.tickAt=tn;S.nextAt=tn+tickMs(S.score);
-  if(!grow){var tl=S.body[S.body.length-1];S.occ[tl[1]*N+tl[0]]=0;}
-  if(S.occ[hi]){return end();}
+  if(!grow){S.occ[tl[1]*N+tl[0]]=0;}
   S.body.unshift([nx,ny]);S.occ[hi]=1;
   if(!grow)S.body.pop();
   if(eat){S.score++;q("snk-score").textContent=S.score;tiers();haptic("light");S.apple=spawn();if(S.apple<0){draw();return end();}}
 }
 function end(){S.playing=false;clearTimeout(S.tm);draw();notify("error");S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:S.t};send();}
+function die(){S.playing=false;S.dead=true;S.q=[];clearTimeout(S.tm);draw();notify("error");
+  ov('<h3>Конец забега</h3><p>Яблок: '+S.score+'</p><button class="snk-btn" onclick="snkRevive()">ВОЗРОДИТЬСЯ · $0.10</button><button class="snk-btn" onclick="snkEnd()">ЗАВЕРШИТЬ</button>');}
+G.snkRevive=async function(){
+  if(!S.dead||S.busy)return;S.busy=true;
+  try{var d=await apiPost({action:"snake_revive",request_id:rid(),run_id:S.run.id,tick:S.t});
+    if(d.status!=="success")throw new Error(d.message||"Не удалось возродиться.");
+    balance=Number(d.balance);updateBalanceUI();saveLocal();
+    S.busy=false;S.dead=false;ovHide();S.playing=true;S.paused=false;S.prev=null;S.tickAt=performance.now();S.nextAt=performance.now()+600;
+  }catch(e){S.busy=false;ov('<h3>Не получилось</h3><p>'+E(e&&e.message||"Ошибка")+'</p><button class="snk-btn" onclick="snkRevive()">ПОПРОБОВАТЬ</button><button class="snk-btn" onclick="snkEnd()">ЗАВЕРШИТЬ</button>');}
+};
+G.snkEnd=function(){if(!S.dead)return;S.dead=false;S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:Math.max(1,S.t)};send();};
+function boardUI(){
+  var sc=q("screen-snake");if(!sc)return;var el=q("snk-board-box");
+  if(!el){el=document.createElement("div");el.id="snk-board-box";el.style.cssText="margin:8px 12px;padding:10px;border-radius:14px;background:rgba(255,255,255,.75);font-size:13px;line-height:1.5";
+    var b=sc.querySelector(".game-back-btn");if(b&&b.parentNode)b.parentNode.insertBefore(el,b.nextSibling);else sc.insertBefore(el,sc.firstChild);}
+  var bd=S.board,pr=S.prize,t="<b>Лидеры недели</b> (по яблокам)";
+  if(pr&&pr.name)t+="<br>🎁 Приз недели: "+E(pr.name);
+  if(bd&&bd.top&&bd.top.length)t+="<br>"+bd.top.map(function(r,i){return(i+1)+". "+E(r.name)+" — "+r.score;}).join("<br>");
+  else t+="<br>Пока пусто";
+  el.innerHTML=t;
+}
 async function send(){
   over(null);
   try{var d=await apiPost({action:"snake_finish",request_id:S.fin.request_id,run_id:S.fin.run_id,moves:S.fin.moves,ticks:S.fin.ticks});
@@ -6844,14 +6864,14 @@ G.snkBuy=async function(id){
   }catch(e){S.busy=false;menu(e&&e.message||"Ошибка покупки.");}
 };
 G.snkPlay=async function(){
-  if(S.busy||S.playing||S.att<1)return;S.busy=true;menu("Запускаем…",true);
+  if(S.busy||S.playing)return;S.busy=true;menu("Запускаем…",true);
   try{var d=await apiPost({action:"snake_start",request_id:rid()});if(d.status!=="success")throw new Error(d.message||"Не удалось начать.");
     S.run={id:d.run_id};S.att=Number(d.attempts)||0;attUI();S.busy=false;reset(Number(d.seed));sz();ovHide();draw();
     S.playing=true;S.paused=false;haptic("medium");S.prev=null;S.tickAt=performance.now();S.nextAt=performance.now()+500;
   }catch(e){S.busy=false;menu(e&&e.message||"Ошибка запуска.");}
 };
 async function load(){
-  try{var d=await apiPost({action:"snake_state"});if(d.status==="success"){S.att=Number(d.attempts)||0;if(d.packs&&d.packs.length)S.packs=d.packs;if(d.tiers&&d.tiers.length)S.tiers=d.tiers;if(d.record)S.rec=d.record;
+  try{var d=await apiPost({action:"snake_state"});if(d.status==="success"){S.att=Number(d.attempts)||0;S.packs=[];if(d.tiers)S.tiers=d.tiers;if(d.record)S.rec=d.record;S.board=d.board||null;S.prize=d.prize||null;boardUI();
       if(Number.isFinite(Number(d.balance))){balance=Number(d.balance);updateBalanceUI();}S.loaded=true;}
     else menu(d.message||"Ошибка загрузки.");
   }catch(e){menu("Нет связи с сервером.");}
@@ -6865,16 +6885,20 @@ G.snkOpen=function(){if(!S.raf)S.raf=requestAnimationFrame(snkLoop);
 };
 G.snkClose=function(){
   try{tg&&tg.enableVerticalSwipes&&tg.enableVerticalSwipes();}catch(e){}
-  if(S.playing){S.playing=false;clearTimeout(S.tm);S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:Math.max(1,S.t)};send();}  // выход = конец забега, счёт засчитывается
+  if(S.playing||S.dead){S.playing=false;S.dead=false;clearTimeout(S.tm);S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:Math.max(1,S.t)};send();}  // выход = конец забега, счёт засчитывается
 };
 /* ---------- управление: джойстик, свайп, клавиши ---------- */
 function bind(){
-  pad=q("snk-pad");knob=q("snk-knob");var drag=false,R=47;
-  function mv(e){var r=pad.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),m=Math.hypot(dx,dy)||1,k=Math.min(1,R/m);
-    knob.style.transform="translate("+dx*k+"px,"+dy*k+"px)";if(m>16)input(Math.abs(dx)>Math.abs(dy)?(dx>0?1:3):(dy>0?2:0));}
-  pad.addEventListener("pointerdown",function(e){drag=true;knob.classList.add("drag");try{pad.setPointerCapture(e.pointerId);}catch(_){}mv(e);e.preventDefault();});
+  pad=q("snk-pad");knob=q("snk-knob");var drag=false,R=44,kx=0,ky=0,lx=0,ly=0;
+  function mv(e){
+    kx+=e.clientX-lx;ky+=e.clientY-ly;lx=e.clientX;ly=e.clientY;
+    var m=Math.hypot(kx,ky);if(m>R){kx*=R/m;ky*=R/m;m=R;}
+    knob.style.transform="translate("+kx+"px,"+ky+"px)";
+    if(m>12)input(Math.abs(kx)>Math.abs(ky)?(kx>0?1:3):(ky>0?2:0));
+  }
+  pad.addEventListener("pointerdown",function(e){drag=true;kx=0;ky=0;lx=e.clientX;ly=e.clientY;knob.classList.add("drag");try{pad.setPointerCapture(e.pointerId);}catch(_){}mv(e);e.preventDefault();});
   pad.addEventListener("pointermove",function(e){if(drag)mv(e);});
-  function up(){drag=false;knob.classList.remove("drag");knob.style.transform="";}
+  function up(){drag=false;kx=0;ky=0;knob.classList.remove("drag");knob.style.transform="";}
   pad.addEventListener("pointerup",up);pad.addEventListener("pointercancel",up);
   var sx=0,sy=0,b=q("snk-board");
   b.addEventListener("touchstart",function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;},{passive:true});
