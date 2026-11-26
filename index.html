@@ -6749,6 +6749,7 @@ html body #u2 .u2-nm{max-width:100%;overflow:hidden;text-overflow:ellipsis;white
 (function(){
 "use strict";
 var N=15,DX=[0,1,0,-1],DY=[-1,0,1,0],G=window;
+var SNAKE_GROW_EVERY=2; // рост каждое N-е яблоко (как в Code.gs)
 var S={att:0,packs:[{id:"p5",n:5,price:0.10},{id:"p10",n:10,price:0.20},{id:"p25",n:25,price:0.40}],
   tiers:[{apples:50,reward:0.25},{apples:100,reward:0.5},{apples:150,reward:0.75}],rec:{score:0,name:""},
   loaded:false,busy:false,playing:false,paused:false,score:0,t:0,dir:1,q:[],moves:[],body:[],occ:null,apple:-1,rng:null,run:null,fin:null,tm:0};
@@ -6766,22 +6767,27 @@ function reset(seed){S.rng=mul(seed);S.occ=new Uint8Array(N*N);S.body=[[7,7],[6,
   S.apple=spawn();S.dir=1;S.q=[];S.moves=[];S.score=0;S.t=0;q("snk-score").textContent="0";tiers();}
 /* ---------- отрисовка ---------- */
 function ball(x,y,r,c1,c2){var g=cx.createRadialGradient(x-r*.35,y-r*.4,r*.1,x,y,r);g.addColorStop(0,c1);g.addColorStop(1,c2);cx.fillStyle=g;cx.beginPath();cx.arc(x,y,r,0,6.2832);cx.fill();}
-function draw(){
-  if(!cx)return;var d=dark(),i,j;cx.clearRect(0,0,size,size);
+function snkPos(j,t){var to=S.body[j],fr=S.prev&&S.prev[j];if(!fr||t>=1)return to;return[fr[0]+(to[0]-fr[0])*t,fr[1]+(to[1]-fr[1])*t];}
+function draw(now){
+  if(!cx)return;var d=dark(),i,j,t=1;
+  if(S.playing&&!S.paused&&S.prev&&S.tickAt)t=Math.min(1,Math.max(0,((now||performance.now())-S.tickAt)/tickMs(S.score)));
+  cx.clearRect(0,0,size,size);
   for(j=0;j<N;j++)for(i=0;i<N;i++){cx.fillStyle=((i+j)&1)?(d?"#112636":"#e4f2ff"):(d?"#0e2030":"#d6eafc");cx.fillRect(i*cell,j*cell,cell+.5,cell+.5);}
   if(S.apple>=0){var ax=(S.apple%N+.5)*cell,ay=(Math.floor(S.apple/N)+.5)*cell,r=cell*.38;
     ball(ax,ay,r,"#ff8a8a","#d4142b");cx.fillStyle="#2e9e4f";cx.beginPath();cx.ellipse(ax+r*.35,ay-r*.95,r*.42,r*.22,-.6,0,6.2832);cx.fill();
     cx.strokeStyle="#6b3a12";cx.lineWidth=Math.max(1.5,cell*.07);cx.beginPath();cx.moveTo(ax,ay-r*.7);cx.lineTo(ax-r*.05,ay-r*1.15);cx.stroke();}
-  var b=S.body,n=b.length;
-  for(i=n-1;i>=0;i--){var x=(b[i][0]+.5)*cell,y=(b[i][1]+.5)*cell,rr=cell*(i===0?.47:.42-Math.min(.08,i*.003));
+  var b=S.body,n=b.length,P=[];for(i=0;i<n;i++)P.push(snkPos(i,t));
+  for(i=n-1;i>=0;i--){var x=(P[i][0]+.5)*cell,y=(P[i][1]+.5)*cell,rr=cell*(i===0?.47:.42-Math.min(.08,i*.003));
     if(i===0)ball(x,y,rr,"#7dffb0","#12a152");else (i%2)?ball(x,y,rr,"#58e68f","#0f9b4b"):ball(x,y,rr,"#ff7a85","#c8203a");}
-  if(n){var h=b[0],hx=(h[0]+.5)*cell,hy=(h[1]+.5)*cell,dx=DX[S.dir],dy=DY[S.dir],px=-dy,py=dx,er=cell*.11;
+  if(n){var h=b[0],hx=(P[0][0]+.5)*cell,hy=(P[0][1]+.5)*cell,dx=DX[S.dir],dy=DY[S.dir],px=-dy,py=dx,er=cell*.11;
     [-1,1].forEach(function(s){var ex=hx+dx*cell*.14+px*s*cell*.17,ey=hy+dy*cell*.14+py*s*cell*.17;
       cx.fillStyle="#fff";cx.beginPath();cx.arc(ex,ey,er*1.25,0,6.2832);cx.fill();cx.fillStyle="#10202e";cx.beginPath();cx.arc(ex+dx*er*.4,ey+dy*er*.4,er*.65,0,6.2832);cx.fill();});
-    cx.save();cx.translate(hx,hy);cx.rotate(Math.atan2(dy,dx)+Math.PI/2);       // шапка Деда Мороза
+    cx.save();cx.translate(hx,hy);cx.rotate(Math.atan2(dy,dx)+Math.PI/2);
     cx.fillStyle="#e5283a";cx.beginPath();cx.moveTo(-cell*.3,-cell*.18);cx.lineTo(cell*.02,-cell*.74);cx.lineTo(cell*.3,-cell*.18);cx.closePath();cx.fill();
     cx.fillStyle="#fff";cx.fillRect(-cell*.32,-cell*.26,cell*.64,cell*.1);cx.beginPath();cx.arc(cell*.02,-cell*.74,cell*.07,0,6.2832);cx.fill();cx.restore();}
 }
+// плавный цикл кадров, пока открыт экран Змейки
+function snkLoop(now){var s=q("screen-snake");if(!s||!s.classList.contains("active")){S.raf=0;return;}if(cx)draw(now);S.raf=requestAnimationFrame(snkLoop);}
 /* ---------- интерфейс ---------- */
 function tiers(){var el=q("snk-tiers");if(!el)return;el.innerHTML=S.tiers.map(function(t){return'<span class="'+(S.score>=t.apples?"ok":"")+'"><b>'+t.apples+' 🍎</b>$'+money(t.reward)+'</span>';}).join("");}
 function recUI(){q("snk-rec-name").textContent=S.rec.score>0?S.rec.name:"Пока никого";q("snk-rec-score").textContent=S.rec.score+" 🍎";}
@@ -6809,11 +6815,13 @@ function step(){
   var m=S.q.length?S.q.shift():-1;if(m>=0&&m!==S.dir&&m!==(S.dir+2)%4){S.dir=m;S.moves.push(S.t+":"+m);}
   var h=S.body[0],nx=h[0]+DX[S.dir],ny=h[1]+DY[S.dir];S.t++;
   if(nx<0||ny<0||nx>=N||ny>=N){return end();}
-  var hi=ny*N+nx,eat=hi===S.apple;
-  if(!eat){var tl=S.body[S.body.length-1];S.occ[tl[1]*N+tl[0]]=0;}
+  var hi=ny*N+nx,eat=hi===S.apple,grow=eat&&((S.score+1)%SNAKE_GROW_EVERY===0);
+  S.prev=S.body.map(function(p){return[p[0],p[1]];});S.tickAt=performance.now();
+  if(!grow){var tl=S.body[S.body.length-1];S.occ[tl[1]*N+tl[0]]=0;}
   if(S.occ[hi]){return end();}
   S.body.unshift([nx,ny]);S.occ[hi]=1;
-  if(!eat)S.body.pop();else{S.score++;q("snk-score").textContent=S.score;tiers();haptic("light");S.apple=spawn();if(S.apple<0){draw();return end();}}
+  if(!grow)S.body.pop();
+  if(eat){S.score++;q("snk-score").textContent=S.score;tiers();haptic("light");S.apple=spawn();if(S.apple<0){draw();return end();}}
   draw();S.tm=setTimeout(step,tickMs(S.score));
 }
 function end(){S.playing=false;clearTimeout(S.tm);draw();notify("error");S.fin={request_id:rid(),run_id:S.run.id,moves:S.moves.join(","),ticks:S.t};send();}
@@ -6847,7 +6855,7 @@ async function load(){
   }catch(e){menu("Нет связи с сервером.");}
   recUI();attUI();tiers();if(!S.playing&&!S.fin)menu();
 }
-G.snkOpen=function(){
+G.snkOpen=function(){if(!S.raf)S.raf=requestAnimationFrame(snkLoop);
   try{tg&&tg.disableVerticalSwipes&&tg.disableVerticalSwipes();}catch(e){}
   cv=q("snk-cv");cx=cv.getContext("2d");sz();
   if(!S.playing&&!S.fin){reset(1);S.body=[[7,7],[6,7],[5,7]];S.apple=-1;draw();menu("Загрузка…",true);}
@@ -6881,12 +6889,8 @@ bind();
 })();
 </script>
 <style id="tucha-snake-fit">
-#screen-snake .snk-wrap{touch-action:pan-y}
-#screen-snake .snk-board{
-  width:min(100%, max(220px, calc(100vh - 420px)));
-  width:min(100%, max(220px, calc(100dvh - 420px)));
-  margin:0 auto;
-}
+#screen-snake .snk-wrap{touch-action:pan-y;max-width:520px}
+#screen-snake .snk-board{width:100%;margin:0 auto}
 #screen-snake .snk-pad{touch-action:none}
 #screen-snake .snk-padwrap{padding-bottom:12px}
 </style>
