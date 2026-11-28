@@ -6903,8 +6903,6 @@ bind();
   const R = 300;                      // радиус зон (обрезается рамкой арены)
   const CORNER = 24;
   const BALL_R = 7;
-  const PEG_R = 7;
-  const PEGS = [[110, 90], [230, 90], [170, 60], [110, 170], [230, 170], [170, 200]];   // как PEGS на сервере
   const FRAME_MS = 1000 / 60;         // один шаг физики на сервере: 1/60 с
   const EMO = {fire: "🔥", heart: "❤️", like: "👍", dislike: "👎", sad: "😢", laugh: "😂", wow: "😱", money: "🤑", luck: "🍀"};
   const FALLBACK_COLOR = "#38bdf8";
@@ -7236,7 +7234,6 @@ bind();
     x.fillStyle = bg; x.fillRect(0, 0, CW, CH);
     drawZones(x, r);
     drawLabels(x, r);
-    drawPegs(x);
     drawBall(x, r, t);
     x.restore();
     drawFx(x);
@@ -7291,31 +7288,11 @@ bind();
       x.restore();
     });
   }
-  // Ледяные тумбы — препятствия для шарика
-  function drawPegs(x) {
-    PEGS.forEach(([px, py]) => {
-      x.save();
-      x.shadowColor = "rgba(0,30,50,.45)"; x.shadowBlur = 6; x.shadowOffsetY = 2;
-      const g = x.createRadialGradient(px - 2, py - 2, 1, px, py, PEG_R);
-      g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "#bae6fd"); g.addColorStop(1, "#38bdf8");
-      x.beginPath(); x.arc(px, py, PEG_R, 0, TAU); x.fillStyle = g; x.fill();
-      x.restore();
-    });
-  }
   function drawBall(x, r, t) {
     const b = ballPos(r, t);
     if (!b) return;                                   // до запуска шарика нет
-    const trail = [];
-    for (let k = 1; k <= 6; k++) {
-      const q = ballPos(r, t - k * 40);
-      if (q) trail.push([q, k]);
-    }
-    trail.forEach(([q, k]) => {
-      x.beginPath(); x.arc(q.x, q.y, BALL_R * (1 - k / 8), 0, TAU);
-      x.fillStyle = "rgba(255,255,255," + (0.25 * (1 - k / 7)).toFixed(3) + ")"; x.fill();
-    });
     x.save();
-    x.shadowColor = "rgba(255,255,255,.95)"; x.shadowBlur = 14;
+    x.shadowColor = "rgba(255,255,255,.9)"; x.shadowBlur = 12;
     const g = x.createRadialGradient(b.x - 2, b.y - 2, 1, b.x, b.y, BALL_R);
     g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "#e2e8f0"); g.addColorStop(1, "#94a3b8");
     x.beginPath(); x.arc(b.x, b.y, BALL_R, 0, TAU); x.fillStyle = g; x.fill();
