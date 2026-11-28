@@ -2574,8 +2574,8 @@ nav#main-nav button.active{color:#168bd0!important}
 
         <div class="ia-help-card" id="ia-help" hidden>
             Каждый ставит, и его зона на арене занимает долю банка, равную доле ставки.
-            Когда зашло два игрока, стартует отсчёт. Шарик запускается и рикошетит по арене.
-            Диск тормозит, и шарик садится в одну из зон. Владелец зоны забирает банк за вычетом комиссии.
+            Когда зашло два игрока, стартует отсчёт. Появляется шарик со стрелкой: стрелка быстро крутится, шарик летит туда, куда она показала,
+            рикошетит от стен и за 7 секунд постепенно останавливается в одной из зон. Владелец зоны забирает банк за вычетом комиссии.
             Шанс победы равен твоей доле в банке.
         </div>
 
@@ -6902,7 +6902,7 @@ bind();
   const CX = 170, CY = 130;           // центр зон (как PHYS.CX / PHYS.CY)
   const R = 300;                      // радиус зон (обрезается рамкой арены)
   const CORNER = 24;
-  const BALL_R = 7;
+  const BALL_R = 10;
   const FRAME_MS = 1000 / 60;         // один шаг физики на сервере: 1/60 с
   const EMO = {fire: "🔥", heart: "❤️", like: "👍", dislike: "👎", sad: "😢", laugh: "😂", wow: "😱", money: "🤑", luck: "🍀"};
   const FALLBACK_COLOR = "#38bdf8";
@@ -6932,7 +6932,7 @@ bind();
   const A = {
     ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null,
     tick: null, raf: 0, dpr: 1, busy: false, busyT: null, cancelling: false,
-    phaseKey: "", shownFor: "", imgs: {}, path: null, pathKey: "",
+    phaseKey: "", shownFor: "", imgs: {}, path: null, pathKey: "", sim: null,
     cdKey: "", cdTotal: 0, fx: [], emoLast: 0
   };
   const now = () => Date.now() + A.off;
@@ -7063,7 +7063,7 @@ bind();
     if (key !== A.phaseKey) {
       A.phaseKey = key;
       if (r.phase === "launch") { hapt("medium"); status("🧊 Шарик запущен!", ""); }
-      if (r.phase === "result" && r.result && A.shownFor !== r.id) { A.shownFor = r.id; showWinner(r); }
+      if (r.phase === "result" && r.result && A.shownFor !== r.id) { A.shownFor = r.id; const left = animLeft(r); if (left > 0) setTimeout(() => { if (A.st && A.st.id === r.id) { renderLists(); ticker(); showWinner(r); } }, left); else showWinner(r); }
     }
     renderLists(); renderPanel(); ticker();
   }
@@ -7092,6 +7092,8 @@ bind();
       big.textContent = ""; lbl.textContent = "ИДЁТ РОЗЫГРЫШ"; lbl.classList.add("on");
     } else if (r.phase === "locking") {
       lbl.textContent = "СТАВКИ ЗАКРЫТЫ"; lbl.classList.add("on");
+    } else if (r.phase === "result" && r.result && animLeft(r) > 0) {
+      big.textContent = ""; lbl.textContent = "ИДЁТ РОЗЫГРЫШ"; lbl.classList.add("on");
     } else if (r.phase === "result" && r.result) {
       big.textContent = r.result.winner.name; big.classList.add("on", "launch");
       lbl.textContent = "ПОБЕДИТЕЛЬ"; lbl.classList.add("on");
@@ -7121,7 +7123,7 @@ bind();
     if (box) {
       if (!r || !r.players.length) box.innerHTML = '<div class="ia-empty">Пока никто не в арене. Будь первым!</div>';
       else {
-        const won = r.result && r.phase === "result" ? String(r.result.winner.userid) : "";
+        const won = r.result && r.phase === "result" && animLeft(r) <= 0 ? String(r.result.winner.userid) : "";
         box.innerHTML = r.players.map(p => {
           const pct = r.total > 0 ? (p.amount / r.total * 100).toFixed(1) : "0.0";
           const me = String(p.userid) === uid();
@@ -7207,18 +7209,117 @@ bind();
     c.lineTo(0, r); c.arcTo(0, 0, r, 0, r);
     c.closePath();
   }
-  // Позиция шарика по траектории сервера. До запуска шарика нет.
+  /* ---------- ШАРИК: стрелка → запуск → плавная остановка ----------
+     Победителя выбирает сервер. Клиент по id раунда (детерминированно, у всех одинаково)
+     подбирает направление и силу запуска так, чтобы шарик остановился в зоне победителя. */
+  const SPIN_MS = 1500;                      // стрелка крутится
+  const FLY_MS = 7000;                       // полёт шарика ровно 7 секунд
+  const ANIM_MS = SPIN_MS + FLY_MS;          // весь розыгрыш: 8.5 с (на сервере launchMs = 8500)
+  const BALL_PW = 2.2;                       // профиль торможения: скорость ~ (1-u)^2.2, в конце ровно 0
+  function hash32(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h >>> 0;
+  }
+  // В какой зоне точка и насколько далеко от границы зоны (в пикселях)
+  function zoneAt(r, x, y) {
+    const dx = x - CX, dy = y - CY, d = Math.hypot(dx, dy);
+    if (d < 14) return {i: -1, m: 0};
+    const a = mod(Math.atan2(dy, dx) + Math.PI / 2, TAU) / TAU;
+    let acc = 0;
+    for (let i = 0; i < r.players.length; i++) {
+      const g0 = acc / r.total, g1 = (acc + r.players[i].amount) / r.total; acc += r.players[i].amount;
+      if (a >= g0 && a < g1) return {i: i, m: Math.min(a - g0, g1 - a) * TAU * d};
+    }
+    return {i: r.players.length - 1, m: 0};
+  }
+  function flyOnce(ang, dist, N) {
+    const T = N / 60, v0 = dist * (BALL_PW + 1) / T, dt = 1 / 60;
+    const lo = BALL_R, hiX = CW - BALL_R, hiY = CH - BALL_R;
+    const traj = new Float32Array((N + 1) * 2);
+    let x = CX, y = CY, vx = Math.cos(ang), vy = Math.sin(ang);
+    traj[0] = x; traj[1] = y;
+    for (let f = 1; f <= N; f++) {
+      const sp = v0 * Math.pow(1 - (f - 1) / N, BALL_PW);
+      x += vx * sp * dt; y += vy * sp * dt;
+      if (x < lo)  { x = lo + (lo - x);  vx = Math.abs(vx); }
+      if (x > hiX) { x = hiX - (x - hiX); vx = -Math.abs(vx); }
+      if (y < lo)  { y = lo + (lo - y);  vy = Math.abs(vy); }
+      if (y > hiY) { y = hiY - (y - hiY); vy = -Math.abs(vy); }
+      traj[f * 2] = x; traj[f * 2 + 1] = y;
+    }
+    return traj;
+  }
+  // Быстрый прогон: только конечная точка (без записи пути), для подбора направления
+  function flyEnd(ang, dist, N, out) {
+    const T = N / 60, v0 = dist * (BALL_PW + 1) / T, dt = 1 / 60, lo = BALL_R, hiX = CW - BALL_R, hiY = CH - BALL_R;
+    let x = CX, y = CY, vx = Math.cos(ang), vy = Math.sin(ang);
+    for (let f = 1; f <= N; f++) {
+      const q = 1 - (f - 1) / N, sp = v0 * q * q * Math.pow(q, BALL_PW - 2) * dt;
+      x += vx * sp; y += vy * sp;
+      if (x < lo)  { x = 2 * lo - x;  vx = Math.abs(vx); }
+      if (x > hiX) { x = 2 * hiX - x; vx = -Math.abs(vx); }
+      if (y < lo)  { y = 2 * lo - y;  vy = Math.abs(vy); }
+      if (y > hiY) { y = 2 * hiY - y; vy = -Math.abs(vy); }
+    }
+    out.x = x; out.y = y;
+  }
+  function buildSim(r, winIdx, N) {
+    const rnd = rng(hash32(String(r.id) + "|" + r.players.map(p => p.userid + ":" + p.amount).join(",")));
+    const plan = [[BALL_R, 500], [4, 500], [0, 1200]], pt = {x: 0, y: 0};
+    for (let mi = 0; mi < plan.length; mi++) {
+      for (let k = 0; k < plan[mi][1]; k++) {
+        const ang = rnd() * TAU, dist = 650 + rnd() * 700;
+        flyEnd(ang, dist, N, pt);
+        const z = zoneAt(r, pt.x, pt.y);
+        if (z.i === winIdx && z.m >= plan[mi][0]) return {traj: flyOnce(ang, dist, N), ang: ang, N: N};
+      }
+    }
+    // крайний случай (очень узкая зона): дотягиваем шарик до центра зоны победителя
+    const ang = rnd() * TAU, traj0 = flyOnce(ang, 900, N), n0 = traj0.length / 2, EXTRA = 45;
+    let acc = 0; for (let i = 0; i < winIdx; i++) acc += r.players[i].amount;
+    const mid = (acc + r.players[winIdx].amount / 2) / r.total, ta = -Math.PI / 2 + mid * TAU;
+    const tx = CX + Math.cos(ta) * 110, ty = CY + Math.sin(ta) * 110;
+    const fx = traj0[(n0 - 1) * 2], fy = traj0[(n0 - 1) * 2 + 1];
+    const traj = new Float32Array((n0 + EXTRA) * 2);
+    traj.set(traj0);
+    for (let e = 1; e <= EXTRA; e++) { const u = easeOut(e / EXTRA); traj[(n0 - 1 + e) * 2] = fx + (tx - fx) * u; traj[(n0 - 1 + e) * 2 + 1] = fy + (ty - fy) * u; }
+    return {traj: traj, ang: ang, N: N + EXTRA};
+  }
+  function getSim(r) {
+    if (!r || !r.result || !r.result.winner || !r.players || !r.players.length || !(r.total > 0)) return null;
+    const winIdx = r.players.findIndex(p => String(p.userid) === String(r.result.winner.userid));
+    if (winIdx < 0) return null;
+    const spinMs = SPIN_MS, flyMs = FLY_MS;
+    const key = r.id + "|" + r.result.winner.userid;
+    if (!A.sim || A.sim.key !== key) {
+      const s = buildSim(r, winIdx, Math.round(flyMs / FRAME_MS));
+      A.sim = {key: key, spinMs: spinMs, flyMs: flyMs, traj: s.traj, ang: s.ang, N: s.N};
+    }
+    return A.sim;
+  }
+  function animStart(r) { return r.launchEndsAt - r.launchMs; }
+  // Победитель «раскрыт» только когда шарик остановился
+  function animLeft(r) { return r && r.phase === "result" ? Math.max(0, animStart(r) + ANIM_MS - now()) : 0; }
+  // Состояние шарика: появление → вращение стрелки → полёт → остановка. До запуска шарика нет.
   function ballPos(r, t) {
-    if (!r || !r.result || !r.result.traj || !(r.phase === "launch" || r.phase === "result")) return null;
-    const traj = r.result.traj, n = traj.length / 2;
-    const start = r.launchEndsAt - r.launchMs;
-    const f = Math.max(0, (t - start) / FRAME_MS);
-    const i = Math.min(n - 1, Math.floor(f)), k = Math.min(n - 1, i + 1);
-    const u = Math.min(1, f - i);
+    if (!r || !(r.phase === "launch" || r.phase === "result")) return null;
+    const sim = getSim(r);
+    if (!sim) return null;
+    const n = sim.traj.length / 2;
+    const el = Math.max(0, t - animStart(r));
+    if (el < sim.spinMs) {
+      const u = clamp(el / sim.spinMs);
+      const arrow = sim.ang - TAU * 4 * Math.pow(1 - u, 3);       // быстро крутится и замедляется на нужном направлении
+      const pop = clamp(el / 260), scale = pop < 1 ? 1 + Math.sin(pop * Math.PI) * 0.25 : 1;
+      return {x: CX, y: CY, mode: "spin", arrow: arrow, arrowA: 1, scale: pop * scale, i: 0, f: 0};
+    }
+    const f = Math.min(n - 1, (el - sim.spinMs) / FRAME_MS);
+    const i = Math.floor(f), k = Math.min(n - 1, i + 1), u = f - i;
     return {
-      x: traj[i * 2] + (traj[k * 2] - traj[i * 2]) * u,
-      y: traj[i * 2 + 1] + (traj[k * 2 + 1] - traj[i * 2 + 1]) * u,
-      i: i, done: f >= n - 1
+      x: sim.traj[i * 2] + (sim.traj[k * 2] - sim.traj[i * 2]) * u,
+      y: sim.traj[i * 2 + 1] + (sim.traj[k * 2 + 1] - sim.traj[i * 2 + 1]) * u,
+      mode: f >= n - 1 ? "rest" : "fly", arrow: sim.ang, arrowA: clamp(1 - f / 9), scale: 1, i: i, f: f
     };
   }
   function draw() {
@@ -7242,7 +7343,7 @@ bind();
   function drawZones(x, r) {
     if (!r || !r.players.length || !(r.total > 0)) return;
     let acc = 0;
-    const won = r.result && r.phase === "result" ? String(r.result.winner.userid) : null;
+    const won = r.result && r.phase === "result" && animLeft(r) <= 0 ? String(r.result.winner.userid) : null;
     const me = uid();
     r.players.forEach(p => {
       const g0 = acc / r.total, g1 = (acc + p.amount) / r.total; acc += p.amount;
@@ -7291,11 +7392,35 @@ bind();
   function drawBall(x, r, t) {
     const b = ballPos(r, t);
     if (!b) return;                                   // до запуска шарика нет
+    const sim = A.sim;
+    // след за шариком
+    if (b.mode === "fly" && sim) {
+      for (let k = 1; k <= 14; k++) {
+        const j = b.i - k * 2; if (j < 0) break;
+        x.save(); x.globalAlpha = 0.28 * (1 - k / 15);
+        x.beginPath(); x.arc(sim.traj[j * 2], sim.traj[j * 2 + 1], BALL_R * (1 - k / 22), 0, TAU);
+        x.fillStyle = "#fff"; x.fill(); x.restore();
+      }
+    }
+    // стрелка направления (только пока шарик не запущен)
+    if (b.arrowA > 0.02 && b.scale > 0.6) {
+      x.save(); x.globalAlpha = b.arrowA;
+      x.translate(b.x, b.y); x.rotate(b.arrow);
+      x.shadowColor = "rgba(0,0,0,.45)"; x.shadowBlur = 6;
+      x.strokeStyle = "#fff"; x.fillStyle = "#fff"; x.lineWidth = 3.5; x.lineCap = "round";
+      const s0 = BALL_R + 5, s1 = BALL_R + 26;
+      x.beginPath(); x.moveTo(s0, 0); x.lineTo(s1 - 3, 0); x.stroke();
+      x.beginPath(); x.moveTo(s1 + 7, 0); x.lineTo(s1 - 5, -7); x.lineTo(s1 - 5, 7); x.closePath(); x.fill();
+      x.restore();
+    }
+    // сам шарик
     x.save();
-    x.shadowColor = "rgba(255,255,255,.9)"; x.shadowBlur = 12;
-    const g = x.createRadialGradient(b.x - 2, b.y - 2, 1, b.x, b.y, BALL_R);
+    x.translate(b.x, b.y); x.scale(b.scale, b.scale);
+    x.shadowColor = "rgba(255,255,255,.9)"; x.shadowBlur = 14;
+    const g = x.createRadialGradient(-3, -3, 1, 0, 0, BALL_R);
     g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "#e2e8f0"); g.addColorStop(1, "#94a3b8");
-    x.beginPath(); x.arc(b.x, b.y, BALL_R, 0, TAU); x.fillStyle = g; x.fill();
+    x.beginPath(); x.arc(0, 0, BALL_R, 0, TAU); x.fillStyle = g; x.fill();
+    x.shadowBlur = 0; x.lineWidth = 2; x.strokeStyle = "rgba(255,255,255,.95)"; x.stroke();
     x.restore();
   }
   function burst(n) {
