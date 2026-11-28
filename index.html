@@ -7215,7 +7215,7 @@ bind();
   const SPIN_MS = 1500;                      // стрелка крутится
   const FLY_MS = 7000;                       // полёт шарика ровно 7 секунд
   const ANIM_MS = SPIN_MS + FLY_MS;          // весь розыгрыш: 8.5 с (на сервере launchMs = 8500)
-  const BALL_PW = 2.2;                       // профиль торможения: скорость ~ (1-u)^2.2, в конце ровно 0
+  const BALL_PW = 1.7;                       // профиль торможения: скорость ~ (1-u)^1.7 (чем меньше, тем дольше шарик едет быстро), в конце ровно 0
   function hash32(str) {
     let h = 2166136261 >>> 0;
     for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
@@ -7255,7 +7255,7 @@ bind();
     const T = N / 60, v0 = dist * (BALL_PW + 1) / T, dt = 1 / 60, lo = BALL_R, hiX = CW - BALL_R, hiY = CH - BALL_R;
     let x = CX, y = CY, vx = Math.cos(ang), vy = Math.sin(ang);
     for (let f = 1; f <= N; f++) {
-      const q = 1 - (f - 1) / N, sp = v0 * q * q * Math.pow(q, BALL_PW - 2) * dt;
+      const q = 1 - (f - 1) / N, sp = v0 * Math.pow(q, BALL_PW) * dt;
       x += vx * sp; y += vy * sp;
       if (x < lo)  { x = 2 * lo - x;  vx = Math.abs(vx); }
       if (x > hiX) { x = 2 * hiX - x; vx = -Math.abs(vx); }
@@ -7269,14 +7269,14 @@ bind();
     const plan = [[BALL_R, 500], [4, 500], [0, 1200]], pt = {x: 0, y: 0};
     for (let mi = 0; mi < plan.length; mi++) {
       for (let k = 0; k < plan[mi][1]; k++) {
-        const ang = rnd() * TAU, dist = 650 + rnd() * 700;
+        const ang = rnd() * TAU, dist = 1500 + rnd() * 900;
         flyEnd(ang, dist, N, pt);
         const z = zoneAt(r, pt.x, pt.y);
         if (z.i === winIdx && z.m >= plan[mi][0]) return {traj: flyOnce(ang, dist, N), ang: ang, N: N};
       }
     }
     // крайний случай (очень узкая зона): дотягиваем шарик до центра зоны победителя
-    const ang = rnd() * TAU, traj0 = flyOnce(ang, 900, N), n0 = traj0.length / 2, EXTRA = 45;
+    const ang = rnd() * TAU, traj0 = flyOnce(ang, 1800, N), n0 = traj0.length / 2, EXTRA = 45;
     let acc = 0; for (let i = 0; i < winIdx; i++) acc += r.players[i].amount;
     const mid = (acc + r.players[winIdx].amount / 2) / r.total, ta = -Math.PI / 2 + mid * TAU;
     const tx = CX + Math.cos(ta) * 110, ty = CY + Math.sin(ta) * 110;
