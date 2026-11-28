@@ -2543,46 +2543,84 @@ nav#main-nav button.active{color:#168bd0!important}
 </div>
 
 <!-- PVP JACKPOT SCREEN -->
-<div id="screen-pvp" class="game-screen">
-    <div class="game-top-bar">
+<div id="screen-pvp" class="game-screen ia-screen">
+    <div class="game-top-bar ia-top">
         <button class="game-back-btn" onclick="closeGameScreen('pvp')">← Назад</button>
-        <div class="balance clickable" onclick="openDeposit()" style="padding: 6px 12px;">
+        <div class="ia-top-title">Ледяная арена</div>
+        <div class="balance clickable" onclick="openDeposit()" style="padding:6px 12px;">
             <span class="balance-icon">$</span><span class="global-balance">0.10</span>
         </div>
     </div>
-    <div class="pv-wrap">
-        <div class="pv-headline">
-            <div><span class="pv-kicker">TUCHА ARENA</span><div class="pv-title">PvP Джекпот</div></div>
-            <div class="pv-round-pill">РАУНД <b id="pv-round">—</b></div>
-        </div>
-        <div class="pv-status" id="pv-status">Подключаемся к игре…</div>
-        <div class="pv-wheel-card">
-            <div class="pv-wheelbox">
-                <div class="pv-pointer"></div>
-                <div id="pv-spin"><canvas id="pv-canvas" width="300" height="300"></canvas><div id="pv-avs"></div></div>
-                <div class="pv-center"><small>БАНК РАУНДА</small><b id="pv-pot">$0.00</b></div>
+
+    <div class="ia-wrap">
+        <div class="ia-mini-row">
+            <div class="ia-mini">
+                <small>ПОСЛЕДНИЙ РАУНД</small>
+                <b id="ia-last-name">—</b>
+                <span id="ia-last-val"></span>
             </div>
-            <div class="pv-timer" id="pv-timer">—</div>
-            <div class="pv-boost" id="pv-boost"></div>
-            <div class="pv-emos" id="pv-emos"></div>
-        </div>
-        <div class="pv-bet">
-            <div class="pv-bet-top"><span>ВЫБЕРИ СТАВКУ</span><span class="pv-min-label">МИН. $0.10</span></div>
-            <div class="pv-chips">
-                <button onclick="pvSetBet(0.1)">$0.10</button><button onclick="pvSetBet(0.5)">$0.50</button>
-                <button onclick="pvSetBet(1)">$1</button><button onclick="pvSetBet(2)">$2</button>
-                <button onclick="pvSetBet(5)">$5</button><button onclick="pvBetMax()">MAX</button>
-            </div>
-            <div class="pv-bet-row">
-                <input id="pv-bet" type="text" inputmode="decimal" value="1.00" oninput="pvUI()">
-                <button class="pv-adjust" onclick="pvBetMul(0.5)">½</button>
-                <button class="pv-adjust" onclick="pvBetMul(2)">×2</button>
+            <div class="ia-mini gold">
+                <small>КРУПНЕЙШИЙ ВЫИГРЫШ</small>
+                <b id="ia-lucky-name">—</b>
+                <span id="ia-lucky-val"></span>
             </div>
         </div>
-        <button class="pv-go" id="pv-go" onclick="pvBet()">ИГРАТЬ</button>
-        <div class="pv-note">Комиссия раунда: <b id="pv-fee">—</b> · победитель забирает остальной банк</div>
-        <div class="pv-box"><div class="pv-box-heading"><span>ИГРОКИ РАУНДА</span><span id="pv-player-count">0 игроков</span></div><div id="pv-players" class="pv-list"></div></div>
-        <div class="pv-box"><div class="pv-box-heading"><span>ИСТОРИЯ РАУНДОВ</span><span>ПОСЛЕДНИЕ</span></div><div id="pv-hist" class="pv-list"></div></div>
+
+        <div class="ia-info-row">
+            <span>Раунд <b id="ia-round">—</b></span>
+            <span>Банк <b id="ia-pot">$0.00</b></span>
+            <button class="ia-help" onclick="iaToggleHelp()" aria-label="Как играть">?</button>
+        </div>
+
+        <div class="ia-help-card" id="ia-help" hidden>
+            Каждый ставит, и его зона на арене занимает долю банка, равную доле ставки.
+            Когда зашло два игрока, стартует отсчёт. Шарик запускается и рикошетит по арене.
+            Диск тормозит, и шарик садится в одну из зон. Владелец зоны забирает банк за вычетом комиссии.
+            Шанс победы равен твоей доле в банке.
+        </div>
+
+        <div class="ia-arena">
+            <canvas id="ia-canvas"></canvas>
+            <div class="ia-big" id="ia-big"></div>
+            <div class="ia-biglbl" id="ia-biglbl"></div>
+        </div>
+
+        <div class="ia-status" id="ia-status">Подключаемся…</div>
+
+        <div class="ia-actions">
+            <button class="ia-add" id="ia-add" onclick="iaOpenBet()">ДОБАВИТЬ</button>
+            <button class="ia-cancel" id="ia-cancel" onclick="pvCancelBet()" hidden>ОТМЕНА</button>
+        </div>
+        <div class="ia-mine" id="ia-mine">Ты в раунде: $0.00</div>
+
+        <div class="ia-emos" id="ia-emos"></div>
+
+        <div class="ia-card">
+            <div class="ia-card-h"><span>ИГРОКИ</span><span id="ia-count">(0)</span></div>
+            <div id="ia-players" class="ia-list"></div>
+        </div>
+        <div class="ia-card">
+            <div class="ia-card-h"><span>ИСТОРИЯ РАУНДОВ</span></div>
+            <div id="ia-hist" class="ia-list"></div>
+        </div>
+        <div class="ia-note">Комиссия <b id="ia-fee">8%</b> · победитель забирает банк</div>
+    </div>
+
+    <div class="ia-modal" id="ia-modal" hidden onclick="if(event.target===this) iaCloseBet()">
+        <div class="ia-sheet">
+            <div class="ia-sheet-h"><b>Сделать ставку</b><button onclick="iaCloseBet()" aria-label="Закрыть">✕</button></div>
+            <input id="ia-bet-input" type="text" inputmode="decimal" value="1.00" oninput="pvUI()">
+            <div class="ia-quick">
+                <button onclick="pvBetMul(0.5)">½</button>
+                <button onclick="pvBetMul(2)">2×</button>
+                <button onclick="pvAdd(0.5)">+0.5</button>
+                <button onclick="pvAdd(1)">+1</button>
+                <button onclick="pvAdd(5)">+5</button>
+                <button onclick="pvBetMax()">MAX</button>
+            </div>
+            <div class="ia-min">Мин. $0.10 · макс. $100 за раунд</div>
+            <button class="ia-confirm" id="ia-go" onclick="pvBet()">ПОДТВЕРДИТЬ</button>
+        </div>
     </div>
 </div>
 
@@ -3316,6 +3354,10 @@ function runCrash() {
     $("crash-rocket-img").src = "./rocket.gif.gif";
     $("crash-sub").textContent = "ПОЛЁТ";
     crashBtn("ЗАБРАТЬ $" + money(crashBet), "linear-gradient(135deg, #16a34a, #059669)", false);
+    crashStartTimers();
+}
+// Таймеры полёта вынесены отдельно, чтобы их можно было перезапустить после сбоя сети (без сброса времени полёта).
+function crashStartTimers() {
     crashTick = setInterval(() => {
         crashMultiplier = Math.max(1, crashMultAt(Date.now() - crashFlightStart));
         $("crash-val").textContent = crashMultiplier.toFixed(2) + "x";
@@ -3373,8 +3415,26 @@ async function crashCashout() {
         crashResetT = setTimeout(crashReset, 2500);
     } catch (e) {
         crashBusy = false;
-        alert(e.message || "Ошибка. Баланс обновится после перезапуска игры.");
-        crashEnd(null);
+        // Сеть могла оборваться уже после того, как сервер обработал выплату — сверяемся с сервером,
+        // а не показываем «КРАШ» наугад.
+        let st = null;
+        try { st = await apiPost({ action: "crash_status" }); } catch (_) {}
+        if (st && st.status === "success" && st.active) {
+            // Ракета ещё летит: вернём кнопку «Забрать» и таймеры
+            crashState = "flying";
+            crashBtn("ЗАБРАТЬ $" + money(crashBet), "linear-gradient(135deg, #16a34a, #059669)", false);
+            crashStartTimers();
+            alert(e.message || "Не удалось забрать выигрыш. Попробуй ещё раз.");
+            return;
+        }
+        try {
+            const g = await apiPost({ action: "get" });
+            if (g.status === "success") { balance = Number(g.balance) || balance; updateBalanceUI(); saveLocal(); }
+        } catch (_) {}
+        inCrash = false;
+        alert(e.message || "Ошибка выплаты. Баланс уже обновлён.");
+        if (st && st.status === "success" && st.crashed) crashEnd(st.point);
+        else crashReset();
     }
 }
 async function confirmCrashBet() {
@@ -4861,207 +4921,6 @@ document.addEventListener("click", function(e) {
     document.body.appendChild(b);
 })();
 
-/* ===== PvP ДЖЕКПОТ: realtime через WebSocket ===== */
-// !!! ВСТАВЬ СЮДА АДРЕС СВОЕГО СЕРВЕРА С RENDER (начинается с wss://) !!!
-const PVP_WS_URL = "wss://tucha-pvp.onrender.com";
-let pv = {ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null, tick: null, busy: false, busyT: null, drawKey: "", wonShown: ""};
-
-function pvEsc(s) { return String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c])); }
-function pvNow() { return Date.now() + pv.off; }
-function pvToast(text, kind) { const t = $("pv-status"); if (!t) return; t.textContent = text; t.className = "pv-status" + (kind ? " " + kind : ""); }
-function pvGetBet() { return Math.round((parseFloat(String($("pv-bet").value).replace(",", ".")) || 0) * 100) / 100; }
-function pvSetBet(v) { $("pv-bet").value = money(v); pvUI(); haptic("light"); }
-function pvBetMul(f) { pvSetBet(Math.max(0.1, pvGetBet() * f)); }
-function pvBetMax() { pvSetBet(Math.max(0.1, Math.min(balance, 100))); }
-
-function pvOpen() {
-    pv.open = true; pv.tries = 0; pv.drawKey = ""; pv.wonShown = "";
-    if (!pv.tick) pv.tick = setInterval(pvTickFn, 250);
-    pvBuildEmos(); pvConnect(); pvUI(); pvRenderLists();
-}
-function pvClose() {
-    pv.open = false; pv.ready = false; pv.st = null;
-    clearTimeout(pv.rt); clearInterval(pv.tick); pv.tick = null; cancelAnimationFrame(pv.raf); pvFlameOff();
-    if (pv.ws) { try { pv.ws.close(); } catch (e) {} pv.ws = null; }
-}
-function pvConnect() {
-    if (!pv.open) return;
-    if (pv.ws && (pv.ws.readyState === 0 || pv.ws.readyState === 1)) return;
-    if (PVP_WS_URL.indexOf("ВСТАВЬ") >= 0) { pvToast("Не указан адрес PvP-сервера (PVP_WS_URL в index.html)", "lose"); return; }
-    if (!tg || !tg.initData) { pvToast("Открой игру через Telegram", "lose"); return; }
-    pvToast("Подключаюсь к серверу… (первый раз может занять до минуты)", "");
-    let ws;
-    try { ws = new WebSocket(PVP_WS_URL); } catch (e) { pvToast("Неверный адрес сервера", "lose"); return; }
-    pv.ws = ws; pv.ready = false;
-    ws.onopen = () => { pv.tries = 0; ws.send(JSON.stringify({type: "auth", initData: tg.initData})); };
-    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (x) { return; } pvOnMsg(m); };
-    ws.onclose = () => {
-        pv.ready = false; if (pv.ws === ws) pv.ws = null;
-        if (!pv.open) return;
-        pvToast("Связь потеряна, переподключаюсь…", "lose"); pvUI();
-        pv.rt = setTimeout(pvConnect, Math.min(6000, 1000 + pv.tries++ * 1000));
-    };
-    ws.onerror = () => {};
-}
-function pvOnMsg(m) {
-    if (m.type === "ready") { pv.ready = true; pvToast("Онлайн ✓ Делай ставку", ""); pvUI(); }
-    else if (m.type === "balance") { balance = Number(m.balance) || 0; updateBalanceUI(); saveLocal(); }
-    else if (m.type === "state") pvApplyState(m);
-    else if (m.type === "bet_ok") { pv.busy = false; clearTimeout(pv.busyT); notify("success"); pvUI(); }
-    else if (m.type === "info") pvToast(m.message, "");
-    else if (m.type === "emote") { if (String(m.userid) !== String(userId)) pvEmote(m.userid, m.id); }
-    else if (m.type === "flame") pvFlame(m);
-    else if (m.type === "flame_result") { pvToast("🔥 Множитель x" + m.mult + "! Выиграешь раунд — выигрыш ×" + m.mult, "win"); notify("success"); haptic("heavy"); }
-    else if (m.type === "error") { pv.busy = false; clearTimeout(pv.busyT); pvToast(m.message, "lose"); notify("error"); pvUI(); }
-}
-function pvBet() {
-    if (pv.busy || !pv.ready || !pv.ws || pv.ws.readyState !== 1) return;
-    const a = pvGetBet();
-    if (!(a >= 0.1)) { pvToast("Минимальная ставка — $0.10", "lose"); notify("error"); return; }
-    if (a > 100) { pvToast("Максимальная ставка — $100", "lose"); notify("error"); return; }
-    if (a > balance) { pvToast("Недостаточно средств", "lose"); notify("error"); return; }
-    pv.busy = true; pvUI(); haptic("medium");
-    pv.busyT = setTimeout(() => { pv.busy = false; pvUI(); }, 30000);
-    pv.ws.send(JSON.stringify({type: "bet", amount: a}));
-}
-
-/* --- состояние раунда --- */
-function pvFinalRot(f) { return 360 * 6 + 360 - f * 360; } // колесо крутится так, чтобы точка f оказалась под указателем
-function pvApplyRot(deg) {
-    pv.rot = deg;
-    const sp = $("pv-spin"); if (!sp) return;
-    sp.style.transform = "rotate(" + deg + "deg)";
-    document.querySelectorAll("#pv-avs .pv-av").forEach(a => { a.style.transform = "translate(-50%,-50%) rotate(" + (-deg) + "deg)"; }); // аватарки остаются «головой вверх»
-}
-// Плавный разгон за первые ~8% времени и длинное мягкое торможение до точной точки остановки
-function pvSetRot(deg, ms) {
-    cancelAnimationFrame(pv.raf);
-    if (!(ms > 0)) { pvApplyRot(deg); return; }
-    const from = pv.rot || 0, t0 = performance.now();
-    const frame = now => {
-        const t = Math.min(1, (now - t0) / ms), u = Math.min(1, t / 0.08);
-        const e = (1 - Math.pow(1 - t, 3.5)) * (3 * u * u - 2 * u * u * u);
-        pvApplyRot(from + (deg - from) * e);
-        if (t < 1) pv.raf = requestAnimationFrame(frame);
-    };
-    pv.raf = requestAnimationFrame(frame);
-}
-function pvApplyState(m) {
-    const prev = pv.st, r = m.round, pp = prev ? prev.phase : null;
-    pv.off = r.now - Date.now(); pv.st = r; pv.hist = m.history || [];
-    pvDraw(r);
-    if (r.phase === "spin" && pp !== "spin") {
-        const rem = Math.max(0, r.spinEndsAt - pvNow());
-        if (pp && rem > 500) { pvSetRot(0, 0); pvSetRot(pvFinalRot(r.result.fraction), rem); }
-        else pvSetRot(pvFinalRot(r.result.fraction), 0);
-        haptic("medium");
-    } else if (r.phase === "result" && pp !== "result") {
-        pvSetRot(pvFinalRot(r.result.fraction), 0); pvShowWinner(r);
-    } else if ((r.phase === "waiting" || r.phase === "countdown") && (pp === "spin" || pp === "result")) {
-        pvSetRot(0, 0); pv.wonShown = "";
-    }
-    const feeEl = $("pv-fee");
-    if (feeEl && r.fee !== undefined && r.fee !== null) { const n = Number(r.fee); feeEl.textContent = Number.isFinite(n) ? (n > 0 && n <= 1 ? Math.round(n * 1000) / 10 : n) + "%" : String(r.fee); }
-    const mp = r.players.find(p => String(p.userid) === String(userId)), bt = $("pv-boost");
-    if (bt) bt.textContent = (mp && mp.boost > 1) ? "🔥 Твой множитель выигрыша: x" + mp.boost : "";
-    pvRenderLists(); pvUI(); pvTickFn();
-}
-function pvShowWinner(r) {
-    if (pv.wonShown === r.id || !r.result) return;
-    pv.wonShown = r.id;
-    const me = String(r.result.winner.userid) === String(userId);
-    pvToast(me ? "🎉 ТЫ ВЫИГРАЛ +$" + money(r.result.payout) + (r.result.boost > 1 ? " (🔥 x" + r.result.boost + ")" : "") + "!" : "Победил " + r.result.winner.name + " · +$" + money(r.result.payout) + (r.result.boost > 1 ? " (🔥 x" + r.result.boost + ")" : ""), me ? "win" : "");
-    if (me) { notify("success"); haptic("heavy"); } else haptic("light");
-}
-function pvDraw(r) {
-    const c = $("pv-canvas"); if (!c) return;
-    const me = String(userId), wid = (r.phase === "result" && r.result) ? String(r.result.winner.userid) : "";
-    const key = r.id + "|" + wid + "|" + r.players.map(p => p.userid + ":" + p.amount).join(",");
-    $("pv-pot").textContent = "$" + money(r.total);
-    const roundEl = $("pv-round"); if (roundEl) roundEl.textContent = String(r.id ?? "—").replace(/[^a-zA-Z0-9#_-]/g, "").slice(-8);
-    const countEl = $("pv-player-count"); if (countEl) countEl.textContent = r.players.length + (r.players.length === 1 ? " игрок" : " игроков");
-    if (key === pv.drawKey) return; pv.drawKey = key;
-    const S = 300, dpr = Math.min(2, window.devicePixelRatio || 1);
-    c.width = S * dpr; c.height = S * dpr; c.style.width = S + "px"; c.style.height = S + "px";
-    const x = c.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, S, S);
-    const cx = S / 2, R = S * 0.42, TAU = Math.PI * 2;
-    x.beginPath(); x.arc(cx, cx, S * 0.5, 0, TAU); x.fillStyle = "#0a1a4a"; x.fill();   // подложка под аватарки
-    const segs = []; let acc = 0;
-    if (!r.players.length || r.total <= 0) { x.beginPath(); x.arc(cx, cx, R, 0, TAU); x.fillStyle = "#26427f"; x.fill(); }
-    else r.players.forEach(p => {
-        const f0 = acc / r.total, f1 = (acc + p.amount) / r.total; acc += p.amount;
-        const a0 = -Math.PI / 2 + f0 * TAU, a1 = -Math.PI / 2 + f1 * TAU, dim = wid && String(p.userid) !== wid;
-        segs.push({p: p, f: (f0 + f1) / 2, a0: a0, a1: a1, w: f1 - f0, dim: dim});
-        x.save(); x.globalAlpha = dim ? 0.35 : 1;
-        x.beginPath(); x.moveTo(cx, cx); x.arc(cx, cx, R, a0, a1); x.closePath(); x.fillStyle = p.color; x.fill();
-        const g = x.createRadialGradient(cx, cx, R * 0.2, cx, cx, R);   // объём: светлее у центра, темнее к краю
-        g.addColorStop(0, "rgba(255,255,255,.28)"); g.addColorStop(1, "rgba(0,0,0,.14)");
-        x.fillStyle = g; x.fill(); x.lineWidth = 2.5; x.strokeStyle = "#0a1740"; x.stroke(); x.restore();
-    });
-    x.beginPath(); x.arc(cx, cx, R + 3, 0, TAU); x.lineWidth = 6; x.strokeStyle = "#5ea2ff"; x.stroke();
-    segs.forEach(sg => {   // твоя зона подсвечена, даже если она крошечная (минимум ~4° дуги)
-        if (String(sg.p.userid) !== me) return;
-        const mid = (sg.a0 + sg.a1) / 2, half = Math.max((sg.a1 - sg.a0) / 2, 0.035);
-        x.save(); x.shadowColor = "#facc15"; x.shadowBlur = 12; x.lineWidth = 7; x.lineCap = "round"; x.strokeStyle = "#fff";
-        x.beginPath(); x.arc(cx, cx, R + 3, mid - half, mid + half); x.stroke(); x.restore();
-    });
-    // --- аватарки: в большой зоне — внутри, в маленькой — на ободе (всегда видны) ---
-    const items = segs.map(sg => {
-        const inner = Math.min(S * 0.19, sg.w * TAU * R * 0.62 * 0.9), isMe = String(sg.p.userid) === me;
-        const useInner = inner >= S * 0.095;
-        return {sg: sg, isMe: isMe, rim: !useInner, d: useInner ? inner : (isMe ? S * 0.095 : S * 0.074), f: sg.f};
-    });
-    const rims = items.filter(i => i.rim).sort((a, b) => a.f - b.f), gap = (S * 0.08) / (S * 0.455 * TAU);
-    for (let pass = 0; pass < 6; pass++) for (let i = 1; i < rims.length; i++) if (rims[i].f - rims[i - 1].f < gap) rims[i].f = rims[i - 1].f + gap;
-    const box = $("pv-avs"); let html = "";
-    items.forEach(it => {
-        const ang = it.f * TAU, rad = it.rim ? S * 0.455 : R * 0.62, p = it.sg.p;
-        if (it.rim) {   // ниточка от зоны к аватарке
-            const ta = -Math.PI / 2 + it.sg.f * TAU, tb = -Math.PI / 2 + ang;
-            x.save(); x.globalAlpha = it.sg.dim ? 0.35 : 1; x.beginPath();
-            x.moveTo(cx + Math.cos(ta) * R, cx + Math.sin(ta) * R); x.lineTo(cx + Math.cos(tb) * (rad - it.d / 2), cx + Math.sin(tb) * (rad - it.d / 2));
-            x.lineWidth = 2; x.strokeStyle = p.color; x.stroke(); x.restore();
-        }
-        const photo = p.photo || p.photo_url || (it.isMe && typeof telegramUser !== "undefined" && telegramUser && telegramUser.photo_url) || "";
-        const name = String(p.name || "?");
-        const inside = photo ? '<img src="' + pvEsc(photo) + '" referrerpolicy="no-referrer" alt="">' : pvEsc(name.trim().charAt(0).toUpperCase() || "?");
-        html += '<div data-uid="' + pvEsc(String(p.userid)) + '" class="pv-av' + (it.isMe ? " me" : "") + (it.sg.dim ? " dim" : "") + '" style="left:' + (50 + Math.sin(ang) * rad / S * 100).toFixed(2) + '%;top:' + (50 - Math.cos(ang) * rad / S * 100).toFixed(2) +
-            '%;width:' + (it.d / S * 100).toFixed(2) + '%;height:' + (it.d / S * 100).toFixed(2) + '%;font-size:' + (it.d / S * 0.45).toFixed(3) + 'em;background:' + p.color + '">' + inside + '</div>';
-    });
-    box.innerHTML = html; pvApplyRot(pv.rot || 0);
-}
-function pvRenderLists() {
-    const r = pv.st, box = $("pv-players"), hist = $("pv-hist"); if (!box || !hist) return;
-    if (!r || !r.players.length) box.innerHTML = '<div class="pv-empty">Пока никто не поставил. Будь первым!</div>';
-    else {
-        const wid = r.result ? String(r.result.winner.userid) : "";
-        box.innerHTML = r.players.map(p => {
-            const pct = r.total > 0 ? Math.round(p.amount / r.total * 1000) / 10 : 0;
-            const cls = "pv-row" + (String(p.userid) === String(userId) ? " me" : "") + (wid && wid === String(p.userid) && r.phase === "result" ? " won" : "");
-            return `<div class="${cls}"><span class="pv-dot" style="background:${p.color}"></span><span class="n">${pvEsc(p.name)}${String(p.userid) === String(userId) ? " (ты)" : ""}${p.boost > 1 ? " 🔥x" + p.boost : ""}</span><span class="a">$${money(p.amount)}</span><span class="p">${pct}%</span></div>`;
-        }).join("");
-    }
-    hist.innerHTML = pv.hist.length ? pv.hist.map(h => `<div class="pv-row"><span class="n">🏆 ${pvEsc(h.name)}</span><span class="a">+$${money(h.payout)}</span><span class="p">из $${money(h.total)}</span></div>`).join("") : '<div class="pv-empty">Раундов ещё не было</div>';
-}
-function pvTickFn() {
-    const r = pv.st, t = $("pv-timer"); if (!t) return;
-    if (!r) { t.textContent = "—"; return; }
-    const left = Math.max(0, Math.ceil((r.endsAt - pvNow()) / 1000));
-    if (r.phase === "waiting") t.textContent = r.players.length ? "Ждём второго игрока…" : "Раунд начнётся, когда зайдут двое";
-    else if (r.phase === "countdown") t.textContent = "⏱ Крутим через " + left + " с";
-    else if (r.phase === "locking") t.textContent = "Принимаем последние ставки…";
-    else if (r.phase === "spin") t.textContent = "🎡 Колесо крутится!";
-    else t.textContent = "Новый раунд скоро…";
-}
-function pvUI() {
-    const go = $("pv-go"), inp = $("pv-bet"); if (!go) return;
-    const r = pv.st, canBet = pv.ready && r && (r.phase === "waiting" || r.phase === "countdown");
-    go.disabled = !canBet || pv.busy;
-    go.textContent = pv.busy ? "ОТПРАВЛЯЕМ…" : (canBet ? "ИГРАТЬ · $" + money(pvGetBet()) : (pv.ready ? "РАУНД ЗАКРЫТ" : "НЕТ СВЯЗИ"));
-    document.querySelectorAll(".pv-bet button, .pv-bet input").forEach(el => { el.disabled = pv.busy; });
-}
-
-
 /* ===== v21: тосты вместо alert и быстрые ставки ===== */
 (function () {
     const t = document.createElement("div"); t.id = "tg-toast"; document.body.appendChild(t);
@@ -5077,37 +4936,6 @@ function addQuickBets(id) {
     inp.parentNode.insertBefore(row, inp.nextSibling);
 }
 ["roulette-bet", "crash-bet-input"].forEach(addQuickBets);
-
-/* ===== v22: стикеры и огонёк-множитель ===== */
-const PV_EMO = {fire: "🔥", heart: "❤️", like: "👍", dislike: "👎", sad: "😢", laugh: "😂", wow: "😱", money: "🤑", luck: "🍀"};
-let pvEmoLast = 0;
-function pvBuildEmos() {
-    const b = $("pv-emos"); if (!b || b.dataset.b) return; b.dataset.b = "1";
-    Object.keys(PV_EMO).forEach(k => { const e = document.createElement("button"); e.type = "button"; e.textContent = PV_EMO[k]; e.onclick = () => pvSendEmo(k); b.appendChild(e); });
-}
-function pvSendEmo(k) {
-    const n = Date.now(); if (n - pvEmoLast < 120) return; pvEmoLast = n;   // спамить можно, но не чаще ~8 в секунду
-    pvEmote(userId, k);
-    if (pv.ws && pv.ws.readyState === 1 && pv.ready) pv.ws.send(JSON.stringify({type: "emote", id: k}));
-    haptic("light");
-}
-function pvEmote(uid, k) {   // стикер вылетает над аватаркой игрока (или над колесом, если он не в раунде)
-    const box = document.querySelector(".pv-wheelbox"); if (!box || !PV_EMO[k]) return;
-    const av = document.querySelector('#pv-avs .pv-av[data-uid="' + String(uid) + '"]'), br = box.getBoundingClientRect();
-    let x = br.width / 2, y = br.height * 0.1;
-    if (av) { const ar = av.getBoundingClientRect(); x = ar.left - br.left + ar.width / 2; y = ar.top - br.top; }
-    const el = document.createElement("div"); el.className = "pv-emo"; el.textContent = PV_EMO[k];
-    el.style.left = (x + (Math.random() * 20 - 10)) + "px"; el.style.top = y + "px";
-    box.appendChild(el); setTimeout(() => el.remove(), 1800);
-}
-function pvFlameOff() { clearTimeout(pv.flameT); const f = $("pv-flame"); if (f) f.remove(); }
-function pvFlame(m) {
-    const card = document.querySelector(".pv-wheel-card"); if (!card) return; pvFlameOff();
-    const b = document.createElement("button"); b.id = "pv-flame"; b.type = "button"; b.textContent = "🔥";
-    b.style.left = Math.min(90, Math.max(10, Number(m.x) || 50)) + "%"; b.style.top = Math.min(88, Math.max(12, Number(m.y) || 50)) + "%";
-    b.onclick = () => { if (pv.ws && pv.ws.readyState === 1) pv.ws.send(JSON.stringify({type: "flame_claim", id: m.id})); pvFlameOff(); haptic("medium"); };
-    card.appendChild(b); pv.flameT = setTimeout(pvFlameOff, Number(m.ttl) || 3000);
-}
 
 /* INIT */
 loadUserData();
@@ -5372,27 +5200,7 @@ openAdminPanel=async function(){ await _openAdminOrig(); if($("admin-modal").sty
   window.updateUpgradeUI();
 })();
 </script>
-<script>
-/* v26: отмена ставки в PvP (пока раунд не закрыт). Сервер: {type:"cancel_bet"} -> {type:"cancel_ok"} + state/balance */
-(function(){
-  var go=document.getElementById("pv-go"); if(!go) return;
-  var b=document.createElement("button"); b.id="pv-cancel"; b.type="button"; b.textContent="✕ Отменить ставку";
-  go.parentNode.insertBefore(b,go.nextSibling);
-  function mine(){ var r=pv.st; return r&&r.players&&r.players.find(function(p){return String(p.userid)===String(userId);}); }
-  function can(){ var r=pv.st; return pv.ready&&r&&(r.phase==="waiting"||r.phase==="countdown")&&mine(); }
-  b.onclick=function(){
-    if(!can()||!pv.ws||pv.ws.readyState!==1||b.disabled) return;
-    b.disabled=true; haptic("medium");
-    pv.ws.send(JSON.stringify({type:"cancel_bet"}));
-    setTimeout(function(){b.disabled=false;},4000);
-  };
-  var ui=window.pvUI; window.pvUI=function(){ ui.apply(this,arguments); b.classList.toggle("on",!!can()); };
-  var om=window.pvOnMsg; window.pvOnMsg=function(m){
-    if(m.type==="cancel_ok"){ b.disabled=false; pvToast("Ставка отменена, деньги вернулись ✓","win"); notify("success"); pvUI(); return; }
-    om.apply(this,arguments); if(m.type==="error") b.disabled=false;
-  };
-})();
-</script>
+
 
 
 <style id="tucha-telegram-pattern-wheel-v2">
@@ -6920,5 +6728,674 @@ bind();
 #screen-snake .snk-pad{touch-action:none}
 #screen-snake .snk-padwrap{padding-bottom:12px}
 </style>
+
+<style id="ice-arena-css">
+/* ===== ЛЕДЯНАЯ АРЕНА — оформление (как в референсе) ===== */
+#screen-pvp.ia-screen, html body.dark #screen-pvp.ia-screen, body #screen-pvp.ia-screen {
+  background: radial-gradient(120% 55% at 50% 0%, #3b1d6e 0%, #1b1040 45%, #0b0820 100%) !important;
+  color: #f1f5f9;
+}
+#screen-pvp.ia-screen [hidden] { display: none !important; }
+#screen-pvp.ia-screen .game-top-bar {
+  background: rgba(11, 8, 32, .8) !important; border-bottom: 1px solid rgba(255, 255, 255, .08) !important; box-shadow: none !important;
+}
+#screen-pvp.ia-screen .game-back-btn { color: #e2e8f0 !important; }
+.ia-top-title { font-size: 15px; font-weight: 900; color: #fff; }
+
+.ia-wrap { max-width: 560px; margin: 0 auto; padding: 12px 12px 40px; display: flex; flex-direction: column; gap: 12px; }
+
+/* мини-карточки сверху */
+.ia-mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ia-mini {
+  background: rgba(20, 16, 48, .85); border: 1px solid rgba(255, 255, 255, .08); border-radius: 16px; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.ia-mini small { font-size: 9px; font-weight: 900; letter-spacing: 1px; color: #22d3ee; }
+.ia-mini.gold small { color: #facc15; }
+.ia-mini b { font-size: 14px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ia-mini span { font-size: 12px; font-weight: 800; color: #86efac; }
+.ia-mini.gold span { color: #fde047; }
+
+.ia-info-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #94a3b8; font-weight: 700; }
+.ia-info-row b { color: #fff; }
+.ia-info-row span:nth-child(2) { margin-left: auto; }
+.ia-help {
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(20, 16, 48, .8); color: #e2e8f0; font-weight: 900; font-size: 13px;
+}
+.ia-help-card {
+  background: rgba(20, 16, 48, .9); border: 1px solid rgba(255, 255, 255, .1); border-radius: 14px;
+  padding: 11px 13px; font-size: 12px; line-height: 1.5; color: #cbd5e1;
+}
+
+/* арена: плоская, с лучами от центра */
+.ia-arena {
+  position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 340 / 260;
+  border-radius: 26px; overflow: hidden;
+  border: 3px solid #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, .35), 0 0 30px rgba(168, 85, 247, .45), inset 0 0 22px rgba(0, 0, 0, .35);
+  background: #14b8d4;
+}
+#ia-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ia-big {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -62%);
+  font-size: 58px; font-weight: 950; color: #fbbf24; line-height: 1; pointer-events: none;
+  text-shadow: 0 3px 0 #9a3412, 0 0 18px rgba(251, 191, 36, .6); display: none;
+}
+.ia-biglbl {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, 6%);
+  font-size: 11px; font-weight: 900; letter-spacing: 1.2px; color: #fde68a; pointer-events: none; display: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+}
+.ia-big.on, .ia-biglbl.on { display: block; }
+.ia-big.launch { font-size: 22px; color: #fff; text-shadow: 0 2px 8px rgba(0, 0, 0, .5); }
+
+.ia-status {
+  min-height: 34px; display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 8px 14px; border-radius: 14px; font-size: 12px; font-weight: 800;
+  background: rgba(20, 16, 48, .85); border: 1px solid rgba(255, 255, 255, .1); color: #e2e8f0;
+}
+.ia-status.win { background: rgba(16, 185, 129, .18); border-color: #34d399; color: #bbf7d0; }
+.ia-status.lose { background: rgba(244, 63, 94, .16); border-color: #fb7185; color: #fecdd3; }
+
+/* кнопки под ареной */
+.ia-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ia-add, .ia-cancel { border-radius: 16px; padding: 15px 10px; font-weight: 950; font-size: 14px; letter-spacing: .5px; }
+.ia-add {
+  border: 2px solid #22d3ee; background: rgba(34, 211, 238, .08); color: #67e8f9;
+  box-shadow: 0 0 14px rgba(34, 211, 238, .25) inset;
+}
+.ia-add:disabled { opacity: .4; pointer-events: none; }
+.ia-cancel { border: 2px solid #fb7185; background: rgba(244, 63, 94, .1); color: #fda4af; }
+.ia-cancel:disabled { opacity: .5; }
+.ia-mine { text-align: center; font-size: 12px; font-weight: 800; color: #94a3b8; }
+
+/* модальное окно ставки */
+.ia-modal {
+  position: fixed; inset: 0; z-index: 9999; background: rgba(4, 2, 14, .7);
+  display: flex; align-items: flex-end; justify-content: center; padding: 14px;
+}
+.ia-sheet {
+  width: 100%; max-width: 420px; background: #1a1438; border: 1px solid rgba(168, 85, 247, .4);
+  border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 -8px 40px rgba(168, 85, 247, .3);
+}
+.ia-sheet-h { display: flex; align-items: center; justify-content: space-between; color: #fff; font-size: 16px; }
+.ia-sheet-h button { background: none; border: 0; color: #94a3b8; font-size: 18px; }
+#ia-bet-input {
+  width: 100%; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .15); background: rgba(0, 0, 0, .3);
+  color: #fff; font-size: 26px; font-weight: 950; text-align: center; padding: 12px;
+}
+.ia-quick { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.ia-quick button {
+  border-radius: 12px; border: 1px solid rgba(34, 211, 238, .35); background: rgba(34, 211, 238, .1);
+  color: #a5f3fc; font-weight: 900; font-size: 12px; padding: 10px 0;
+}
+.ia-quick button:active { transform: scale(.95); }
+.ia-min { text-align: center; font-size: 11px; color: #94a3b8; font-weight: 700; }
+.ia-confirm {
+  width: 100%; border: none; border-radius: 16px; padding: 15px; font-size: 15px; font-weight: 950; color: #fff;
+  background: linear-gradient(180deg, #a855f7, #7c3aed); box-shadow: 0 5px 0 #5b21b6;
+}
+.ia-confirm:active { transform: translateY(3px); box-shadow: 0 2px 0 #5b21b6; }
+.ia-confirm:disabled { background: #3f3a5c; box-shadow: none; color: #8b87a6; pointer-events: none; }
+
+/* стикеры */
+.ia-emos { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.ia-emos button {
+  width: 40px; height: 40px; border-radius: 13px; font-size: 19px; line-height: 1; padding: 0;
+  border: 1px solid rgba(255, 255, 255, .12); background: rgba(20, 16, 48, .8);
+}
+.ia-emos button:active { transform: scale(.88); }
+.ia-emo { position: absolute; font-size: 28px; pointer-events: none; z-index: 5; animation: iaEmo 1.7s ease-out forwards; }
+@keyframes iaEmo {
+  0% { opacity: 0; transform: translateY(10px) scale(.6); }
+  15% { opacity: 1; transform: translateY(0) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-50px) scale(1); }
+}
+
+/* списки */
+.ia-card {
+  background: rgba(20, 16, 48, .85); border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 20px; padding: 13px; box-shadow: 0 10px 26px rgba(0, 0, 0, .3);
+}
+.ia-card-h {
+  display: flex; justify-content: space-between; margin-bottom: 10px;
+  font-size: 11px; font-weight: 900; letter-spacing: .9px; color: #a78bfa;
+}
+.ia-list { display: flex; flex-direction: column; gap: 6px; }
+.ia-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 14px;
+  background: rgba(10, 8, 28, .7); border: 1px solid rgba(255, 255, 255, .05); color: #f1f5f9;
+}
+.ia-row.me { outline: 2px solid #22d3ee; }
+.ia-row.won { background: rgba(16, 185, 129, .2); outline: 2px solid #34d399; }
+.ia-av {
+  width: 36px; height: 36px; border-radius: 50%; flex: 0 0 36px; overflow: hidden; border: 2px solid #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #0b1020;
+}
+.ia-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ia-row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ia-row .n { font-size: 13px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ia-row .sub { font-size: 11px; color: #94a3b8; font-weight: 700; }
+.ia-row .sub b { color: #a5f3fc; }
+.ia-row .a { font-size: 14px; font-weight: 950; color: #fde68a; white-space: nowrap; }
+.ia-empty { text-align: center; font-size: 13px; font-weight: 800; color: #64748b; padding: 8px; }
+.ia-note { text-align: center; font-size: 11px; font-weight: 700; color: #64748b; }
+.ia-note b { color: #cbd5e1; }
+
+</style>
+<script id="ice-arena-js">
+/* =====================================================
+   ЛЕДЯНАЯ АРЕНА — клиент режима PvP (оформление по референсу)
+   Сервер: server.js (Render). Баланс: мост pvp_* в Code.gs.
+   Механика: диск с зонами по ставкам вращается и тормозит,
+   белый луч указывает на зону победителя, шарик садится в неё.
+   ===================================================== */
+(function () {
+  "use strict";
+
+  const WS_URL = window.ICE_ARENA_WS_URL || "wss://tucha-pvp.onrender.com";
+  const TAU = Math.PI * 2;
+  const CW = 340, CH = 260;           // логический размер арены
+  const CX = 170, CY = 130;           // центр диска
+  const R = 300;                      // радиус диска (обрезается рамкой арены)
+  const CORNER = 24;
+  const TURNS = 4;
+  const EMO = {fire: "🔥", heart: "❤️", like: "👍", dislike: "👎", sad: "😢", laugh: "😂", wow: "😱", money: "🤑", luck: "🍀"};
+  const FALLBACK_COLOR = "#38bdf8";
+
+  const $i = id => document.getElementById(id);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const mod = (x, m) => ((x % m) + m) % m;
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+  const uid = () => (typeof userId !== "undefined" ? String(userId) : "demo_user");
+  const tgObj = () => (typeof tg !== "undefined" && tg ? tg : null);
+  const set = (id, v) => { const e = $i(id); if (e) e.textContent = v; };
+  const hapt = t => { if (typeof haptic === "function") haptic(t); };
+  const notif = t => { if (typeof notify === "function") notify(t); };
+
+  // Детерминированный генератор: у всех игроков одинаковый путь шарика
+  function rng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const A = {
+    ws: null, open: false, ready: false, st: null, hist: [], off: 0, tries: 0, rt: null,
+    tick: null, raf: 0, dpr: 1, busy: false, busyT: null, cancelling: false,
+    phaseKey: "", shownFor: "", imgs: {}, path: null, pathKey: "",
+    cdKey: "", cdTotal: 0, fx: [], emoLast: 0
+  };
+  const now = () => Date.now() + A.off;
+
+  function status(text, kind) {
+    const e = $i("ia-status"); if (!e) return;
+    e.textContent = text;
+    e.className = "ia-status" + (kind ? " " + kind : "");
+  }
+
+  /* ---------- ставки ---------- */
+  function getBet() {
+    const inp = $i("ia-bet-input");
+    const v = parseFloat(String(inp ? inp.value : "0").replace(",", "."));
+    return Math.round((v || 0) * 100) / 100;
+  }
+  function setBet(v) {
+    const inp = $i("ia-bet-input"); if (!inp) return;
+    inp.value = money(clamp(v, 0.1, 100));
+    renderPanel(); hapt("light");
+  }
+  function setBusy(v) {
+    A.busy = v; clearTimeout(A.busyT);
+    if (v) A.busyT = setTimeout(() => { A.busy = false; renderPanel(); }, 30000);
+  }
+  function myRow() {
+    const r = A.st;
+    return r ? r.players.find(p => String(p.userid) === uid()) || null : null;
+  }
+  function canBetNow() {
+    const r = A.st;
+    return A.ready && !!r && (r.phase === "waiting" || r.phase === "countdown");
+  }
+
+  function iaOpenBet() {
+    if (!canBetNow()) return status(A.ready ? "Ставки сейчас закрыты" : "Нет связи с ареной", "lose");
+    const m = $i("ia-modal"); if (m) m.hidden = false;
+    hapt("light");
+  }
+  function iaCloseBet() { const m = $i("ia-modal"); if (m) m.hidden = true; }
+
+  function placeBet() {
+    if (A.busy || !A.ready || !A.ws || A.ws.readyState !== 1) return;
+    const a = getBet();
+    if (!(a >= 0.1)) return status("Минимальная ставка — $0.10", "lose");
+    if (a > 100) return status("Максимум $100 за раунд", "lose");
+    if (a > balance) return status("Недостаточно средств", "lose");
+    setBusy(true); iaCloseBet(); renderPanel(); hapt("medium");
+    A.ws.send(JSON.stringify({type: "bet", amount: a}));
+  }
+  function cancelBet() {
+    const r = A.st;
+    if (!r || !A.ws || A.ws.readyState !== 1 || A.cancelling || A.busy) return;
+    if (!(r.phase === "waiting" || r.phase === "countdown")) return;
+    if (!myRow()) return;
+    A.cancelling = true; renderPanel(); hapt("medium");
+    A.ws.send(JSON.stringify({type: "cancel_bet"}));
+    setTimeout(() => { A.cancelling = false; renderPanel(); }, 5000);
+  }
+
+  /* ---------- открытие / закрытие ---------- */
+  function open() {
+    A.open = true; A.tries = 0; A.shownFor = ""; A.phaseKey = "";
+    const c = $i("ia-canvas");
+    if (c) {
+      A.dpr = Math.min(2, window.devicePixelRatio || 1);
+      c.width = CW * A.dpr; c.height = CH * A.dpr;
+    }
+    buildEmos();
+    if (!A.raf) A.raf = requestAnimationFrame(loop);
+    if (!A.tick) A.tick = setInterval(ticker, 200);
+    connect(); renderPanel(); renderLists(); ticker();
+  }
+  function close() {
+    A.open = false; A.ready = false; A.st = null;
+    clearTimeout(A.rt); clearInterval(A.tick); A.tick = null;
+    cancelAnimationFrame(A.raf); A.raf = 0;
+    iaCloseBet();
+    if (A.ws) { try { A.ws.close(); } catch (e) {} A.ws = null; }
+  }
+
+  /* ---------- сеть ---------- */
+  function connect() {
+    if (!A.open) return;
+    if (A.ws && (A.ws.readyState === 0 || A.ws.readyState === 1)) return;
+    const t = tgObj();
+    if (!t || !t.initData) return status("Открой игру через Telegram", "lose");
+    status("Подключаемся к арене…", "");
+    let ws;
+    try { ws = new WebSocket(WS_URL); } catch (e) { return status("Неверный адрес сервера", "lose"); }
+    A.ws = ws; A.ready = false;
+    ws.onopen = () => { A.tries = 0; ws.send(JSON.stringify({type: "auth", initData: t.initData})); };
+    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (x) { return; } onMsg(m); };
+    ws.onclose = () => {
+      A.ready = false; if (A.ws === ws) A.ws = null;
+      if (!A.open) return;
+      status("Связь потеряна, переподключаюсь…", "lose"); renderPanel();
+      A.rt = setTimeout(connect, Math.min(6000, 1000 + A.tries++ * 1000));
+    };
+    ws.onerror = () => {};
+  }
+
+  function onMsg(m) {
+    if (m.type === "ready") { A.ready = true; status("На арене ✓ Нажми «Добавить»", ""); renderPanel(); }
+    else if (m.type === "balance") { balance = Number(m.balance) || 0; updateBalanceUI(); saveLocal(); }
+    else if (m.type === "state") applyState(m);
+    else if (m.type === "bet_ok") { setBusy(false); notif("success"); renderPanel(); }
+    else if (m.type === "cancel_ok") {
+      A.cancelling = false; notif("success");
+      status("Ставка отменена, $" + money(m.amount) + " вернулись ✓", "win"); renderPanel();
+    }
+    else if (m.type === "info") status(m.message, "");
+    else if (m.type === "emote") { if (String(m.userid) !== uid()) floatEmo(m.id); }
+    else if (m.type === "error") {
+      setBusy(false); A.cancelling = false;
+      status(m.message, "lose"); notif("error"); renderPanel();
+    }
+  }
+
+  /* ---------- состояние раунда ---------- */
+  function applyState(m) {
+    const r = m.round;
+    A.off = r.now - Date.now(); A.st = r; A.hist = m.history || [];
+    if (r.phase === "countdown" && A.cdKey !== r.id) {
+      A.cdKey = r.id; A.cdTotal = Math.max(1000, r.endsAt - now());
+    }
+    const key = r.id + ":" + r.phase;
+    if (key !== A.phaseKey) {
+      A.phaseKey = key;
+      if (r.phase === "launch") { hapt("medium"); status("🧊 Шарик запущен!", ""); }
+      if (r.phase === "result" && r.result && A.shownFor !== r.id) { A.shownFor = r.id; showWinner(r); }
+    }
+    renderLists(); renderPanel(); ticker();
+  }
+  function showWinner(r) {
+    const me = String(r.result.winner.userid) === uid(), pay = money(r.result.payout);
+    status(me ? "🎉 Ты выиграл +$" + pay + "!" : "Победил " + r.result.winner.name + " · +$" + pay, me ? "win" : "");
+    if (me) { burst(120); notif("success"); hapt("heavy"); } else hapt("light");
+  }
+
+  // Большой отсчёт в центре, банк, раунд, комиссия — раз в 200 мс
+  function ticker() {
+    const r = A.st;
+    set("ia-pot", "$" + money(r ? r.total : 0));
+    set("ia-round", r && r.id ? "#" + String(r.id).slice(0, 6) : "—");
+    set("ia-fee", r ? r.fee + "%" : "8%");
+    set("ia-count", "(" + (r ? r.players.length : 0) + ")");
+    const big = $i("ia-big"), lbl = $i("ia-biglbl");
+    if (!big || !lbl) return;
+    big.className = "ia-big"; lbl.className = "ia-biglbl";
+    if (!r) return;
+    if (r.phase === "countdown") {
+      const left = Math.max(0, Math.ceil((r.endsAt - now()) / 1000));
+      big.textContent = String(left); big.classList.add("on");
+      lbl.textContent = "ДО СТАРТА"; lbl.classList.add("on");
+    } else if (r.phase === "launch") {
+      big.textContent = ""; lbl.textContent = "ИДЁТ РОЗЫГРЫШ"; lbl.classList.add("on");
+    } else if (r.phase === "locking") {
+      lbl.textContent = "СТАВКИ ЗАКРЫТЫ"; lbl.classList.add("on");
+    } else if (r.phase === "result" && r.result) {
+      big.textContent = r.result.winner.name; big.classList.add("on", "launch");
+      lbl.textContent = "ПОБЕДИТЕЛЬ"; lbl.classList.add("on");
+    } else {
+      lbl.textContent = r.players.length ? "ЖДЁМ ВТОРОГО ИГРОКА" : "ЖДЁМ ИГРОКОВ"; lbl.classList.add("on");
+    }
+  }
+
+  function avatarHtml(p, size) {
+    const bg = p.color || FALLBACK_COLOR;
+    const ph = p.photo ? `<img src="${esc(p.photo)}" referrerpolicy="no-referrer" alt="">` : esc(String(p.name || "?").trim().charAt(0).toUpperCase() || "?");
+    return `<div class="ia-av" style="background:${bg};width:${size}px;height:${size}px;flex-basis:${size}px">${ph}</div>`;
+  }
+
+  function renderLists() {
+    const r = A.st;
+    // мини-карточки: последний раунд и крупнейший выигрыш из истории
+    const last = A.hist[0];
+    set("ia-last-name", last ? last.name : "—");
+    set("ia-last-val", last ? "+$" + money(last.payout) : "");
+    let lucky = null;
+    A.hist.forEach(h => { if (!lucky || h.payout > lucky.payout) lucky = h; });
+    set("ia-lucky-name", lucky ? lucky.name : "—");
+    set("ia-lucky-val", lucky ? "+$" + money(lucky.payout) : "");
+
+    const box = $i("ia-players"), hist = $i("ia-hist");
+    if (box) {
+      if (!r || !r.players.length) box.innerHTML = '<div class="ia-empty">Пока никто не в арене. Будь первым!</div>';
+      else {
+        const won = r.result && r.phase === "result" ? String(r.result.winner.userid) : "";
+        box.innerHTML = r.players.map(p => {
+          const pct = r.total > 0 ? (p.amount / r.total * 100).toFixed(1) : "0.0";
+          const me = String(p.userid) === uid();
+          const cls = "ia-row" + (me ? " me" : "") + (won === String(p.userid) ? " won" : "");
+          return `<div class="${cls}">${avatarHtml(p, 36)}` +
+            `<div class="info"><span class="n">${esc(p.name)}${me ? " (ты)" : ""}</span>` +
+            `<span class="sub"><b>${pct}%</b> Шанс</span></div>` +
+            `<span class="a">$${money(p.amount)}</span></div>`;
+        }).join("");
+      }
+    }
+    if (hist) {
+      hist.innerHTML = A.hist.length
+        ? A.hist.map(h => `<div class="ia-row"><div class="info"><span class="n">🏆 ${esc(h.name)}</span>` +
+          `<span class="sub">банк $${money(h.total)}</span></div><span class="a">+$${money(h.payout)}</span></div>`).join("")
+        : '<div class="ia-empty">Раундов ещё не было</div>';
+    }
+  }
+
+  function renderPanel() {
+    const add = $i("ia-add"), cb = $i("ia-cancel"), go = $i("ia-go"), inp = $i("ia-bet-input"), mine = $i("ia-mine");
+    if (!add) return;
+    const r = A.st, canBet = canBetNow(), m = myRow();
+    add.disabled = !canBet || A.busy;
+    add.textContent = A.busy ? "ОТПРАВЛЯЕМ…" : "ДОБАВИТЬ";
+    if (go) { go.disabled = !canBet || A.busy; go.textContent = A.busy ? "ОТПРАВЛЯЕМ…" : "ПОДТВЕРДИТЬ"; }
+    if (inp) inp.disabled = A.busy;
+    if (cb) {
+      const openNow = !!r && (r.phase === "waiting" || r.phase === "countdown");
+      cb.hidden = !(openNow && m); cb.disabled = A.cancelling || A.busy;
+    }
+    if (mine) {
+      const amt = m ? m.amount : 0;
+      const share = m && r.total > 0 ? " · шанс " + (m.amount / r.total * 100).toFixed(1) + "%" : "";
+      mine.textContent = "Ты в раунде: $" + money(amt) + share;
+    }
+  }
+
+  /* ---------- стикеры ---------- */
+  function buildEmos() {
+    const b = $i("ia-emos");
+    if (!b || b.dataset.b) return;
+    b.dataset.b = "1";
+    Object.keys(EMO).forEach(k => {
+      const e = document.createElement("button");
+      e.type = "button"; e.textContent = EMO[k];
+      e.onclick = () => sendEmo(k);
+      b.appendChild(e);
+    });
+  }
+  function sendEmo(k) {
+    const n = Date.now(); if (n - A.emoLast < 120) return; A.emoLast = n;
+    floatEmo(k);
+    if (A.ws && A.ws.readyState === 1 && A.ready) A.ws.send(JSON.stringify({type: "emote", id: k}));
+    hapt("light");
+  }
+  function floatEmo(k) {
+    const arena = document.querySelector(".ia-arena"); if (!arena || !EMO[k]) return;
+    const el = document.createElement("div");
+    el.className = "ia-emo"; el.textContent = EMO[k];
+    el.style.left = (25 + Math.random() * 50) + "%";
+    el.style.top = (10 + Math.random() * 40) + "%";
+    arena.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
+  }
+
+  /* ---------- геометрия диска и шарика ---------- */
+  function startAngle(commit) {
+    return ((parseInt(String(commit || "0").slice(0, 8), 16) / 4294967296) * TAU) || 0;
+  }
+  // Диск крутится и тормозит так, что сектор победителя встаёт под белый луч (сверху).
+  function rotation(r, t) {
+    const s0 = startAngle(r && r.commit);
+    if (!r || !r.result || !(r.phase === "launch" || r.phase === "result")) return s0;
+    const delta = TURNS * TAU + mod(-r.result.fraction * TAU - s0, TAU);
+    const p = r.phase === "result" ? 1 : clamp((t - (r.launchEndsAt - r.launchMs)) / r.launchMs);
+    return s0 + delta * easeOut(p);
+  }
+  // Путь шарика (в единицах R от центра): вылет из центра, рикошеты, финиш на луче победителя.
+  function ballPath(r) {
+    const key = r.id + ":" + r.result.fraction;
+    if (A.pathKey === key) return A.path;
+    const rnd = rng(parseInt(String(r.result.seed).slice(0, 8), 16) || 1);
+    const pts = [{x: 0, y: 0.04}];
+    const k = 5 + Math.floor(rnd() * 3);
+    for (let i = 0; i < k; i++) {
+      const a = rnd() * TAU, rad = 0.18 + rnd() * 0.34;
+      pts.push({x: Math.cos(a) * rad, y: Math.sin(a) * rad});
+    }
+    pts.push({x: 0, y: -0.3});
+    const w = []; let sum = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const v = (0.6 + rnd()) * (i === pts.length - 2 ? 1.6 : 1);
+      w.push(v); sum += v;
+    }
+    A.path = {pts: pts, w: w.map(v => v / sum)};
+    A.pathKey = key;
+    return A.path;
+  }
+  function ballAt(r, t) {
+    if (!r || !r.result || !(r.phase === "launch" || r.phase === "result")) {
+      return {x: 0, y: 0.04 + Math.sin(t / 420) * 0.01, s: 1, idle: true};
+    }
+    const p = r.phase === "result" ? 1 : clamp((t - (r.launchEndsAt - r.launchMs)) / r.launchMs);
+    const path = ballPath(r), pts = path.pts, w = path.w;
+    let acc = 0;
+    for (let i = 0; i < w.length; i++) {
+      if (p <= acc + w[i] || i === w.length - 1) {
+        const u = clamp((p - acc) / w[i]), e = 1 - (1 - u) * (1 - u);
+        const a = pts[i], b = pts[i + 1];
+        return {x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e, s: 1 + 0.25 * Math.sin(Math.PI * u), idle: false};
+      }
+      acc += w[i];
+    }
+    return {x: 0, y: -0.3, s: 1, idle: false};
+  }
+
+  /* ---------- отрисовка ---------- */
+  function photo(url) {
+    if (!url) return null;
+    if (!A.imgs[url]) { const im = new Image(); im.referrerPolicy = "no-referrer"; im.src = url; A.imgs[url] = im; }
+    return A.imgs[url];
+  }
+  function loop() {
+    if (!A.open) { A.raf = 0; return; }
+    A.raf = requestAnimationFrame(loop);
+    draw();
+  }
+  function roundRect(x, c, w, h, r) {
+    c.beginPath();
+    c.moveTo(r, 0); c.lineTo(w - r, 0); c.arcTo(w, 0, w, r, r);
+    c.lineTo(w, h - r); c.arcTo(w, h, w - r, h, r);
+    c.lineTo(r, h); c.arcTo(0, h, 0, h - r, r);
+    c.lineTo(0, r); c.arcTo(0, 0, r, 0, r);
+    c.closePath();
+  }
+  function draw() {
+    const c = $i("ia-canvas");
+    if (!c || !c.width) return;
+    const x = c.getContext("2d"), t = now(), r = A.st;
+    x.setTransform(A.dpr, 0, 0, A.dpr, 0, 0);
+    x.clearRect(0, 0, CW, CH);
+    x.save();
+    roundRect(x, x, CW, CH, CORNER); x.clip();
+    // фон арены
+    const bg = x.createLinearGradient(0, 0, 0, CH);
+    bg.addColorStop(0, "#22d3ee"); bg.addColorStop(1, "#0e7fa0");
+    x.fillStyle = bg; x.fillRect(0, 0, CW, CH);
+    const rot = rotation(r, t);
+    drawSectors(x, r, rot);
+    drawRays(x, rot);
+    drawLabels(x, r, rot);
+    drawBall(x, r, t);
+    x.restore();
+    // рамка-свечение поверх (сама рамка в CSS)
+    drawFx(x);
+  }
+  function drawSectors(x, r, rot) {
+    if (!r || !r.players.length || !(r.total > 0)) return;
+    let acc = 0;
+    const won = r.result && r.phase === "result" ? String(r.result.winner.userid) : null;
+    const me = uid();
+    r.players.forEach(p => {
+      const g0 = acc / r.total, g1 = (acc + p.amount) / r.total; acc += p.amount;
+      const a0 = -Math.PI / 2 + rot + g0 * TAU, a1 = -Math.PI / 2 + rot + g1 * TAU;
+      const dim = won && won !== String(p.userid);
+      x.save();
+      x.globalAlpha = dim ? 0.3 : 1;
+      x.beginPath(); x.moveTo(CX, CY); x.arc(CX, CY, R, a0, a1); x.closePath();
+      x.fillStyle = p.color || FALLBACK_COLOR; x.fill();
+      if (String(p.userid) === me && a1 - a0 > 0.03) {
+        x.lineWidth = 4; x.strokeStyle = "#fde047"; x.shadowColor = "#fde047"; x.shadowBlur = 10;
+        x.beginPath(); x.arc(CX, CY, R - 6, a0 + 0.01, a1 - 0.01); x.stroke();
+        x.shadowBlur = 0;
+      }
+      x.restore();
+    });
+    // белые границы зон-лучи
+    acc = 0;
+    r.players.forEach(p => {
+      acc += p.amount;
+      const a = -Math.PI / 2 + rot + (acc / r.total) * TAU;
+      x.save();
+      x.strokeStyle = "rgba(255,255,255,.95)"; x.lineWidth = 3;
+      x.shadowColor = "rgba(255,255,255,.8)"; x.shadowBlur = 8;
+      x.beginPath(); x.moveTo(CX, CY); x.lineTo(CX + Math.cos(a) * R, CY + Math.sin(a) * R); x.stroke();
+      x.restore();
+    });
+  }
+  // Главный белый луч — сверху, под ним зона победителя
+  function drawRays(x) {
+    x.save();
+    x.strokeStyle = "#ffffff"; x.lineWidth = 3; x.shadowColor = "#ffffff"; x.shadowBlur = 12;
+    x.beginPath(); x.moveTo(CX, CY); x.lineTo(CX, -4); x.stroke();
+    x.restore();
+    x.beginPath(); x.arc(CX, CY, 7, 0, TAU); x.fillStyle = "#e0f7ff"; x.fill();
+  }
+  // Аватарки и проценты в зонах
+  function drawLabels(x, r, rot) {
+    if (!r || !r.players.length || !(r.total > 0)) return;
+    let acc = 0;
+    r.players.forEach(p => {
+      const g0 = acc / r.total, g1 = (acc + p.amount) / r.total; acc += p.amount;
+      const ang = -Math.PI / 2 + rot + ((g0 + g1) / 2) * TAU;
+      const ax = CX + Math.cos(ang) * 102, ay = CY + Math.sin(ang) * 102, sz = 34;
+      x.save();
+      x.beginPath(); x.arc(ax, ay, sz / 2 + 2, 0, TAU); x.fillStyle = "#fff"; x.fill();
+      x.beginPath(); x.arc(ax, ay, sz / 2, 0, TAU); x.clip();
+      const img = p.photo ? photo(p.photo) : null;
+      x.fillStyle = p.color || FALLBACK_COLOR; x.fillRect(ax - sz / 2, ay - sz / 2, sz, sz);
+      if (img && img.complete && img.naturalWidth) x.drawImage(img, ax - sz / 2, ay - sz / 2, sz, sz);
+      else {
+        x.fillStyle = "#0b1020"; x.font = "900 14px system-ui, sans-serif";
+        x.textAlign = "center"; x.textBaseline = "middle";
+        x.fillText(String(p.name || "?").trim().charAt(0).toUpperCase() || "?", ax, ay + 1);
+      }
+      x.restore();
+      const pct = (p.amount / r.total * 100).toFixed(0) + "%";
+      x.save();
+      x.font = "900 12px system-ui, sans-serif"; x.textAlign = "center"; x.textBaseline = "middle";
+      x.lineWidth = 3; x.strokeStyle = "rgba(0,0,0,.55)"; x.strokeText(pct, ax, ay + 26);
+      x.fillStyle = "#fde68a"; x.fillText(pct, ax, ay + 26);
+      x.restore();
+    });
+  }
+  function drawBall(x, r, t) {
+    const toPx = b => ({px: CX + b.x * R, py: CY + b.y * R});
+    const b = ballAt(r, t);
+    if (!b.idle) {
+      for (let k = 1; k <= 6; k++) {
+        const q = toPx(ballAt(r, t - k * 28));
+        x.beginPath(); x.arc(q.px, q.py, 6 * (1 - k / 7), 0, TAU);
+        x.fillStyle = "rgba(255,255,255," + (0.3 * (1 - k / 7)).toFixed(3) + ")"; x.fill();
+      }
+    }
+    const pos = toPx(b), rad = 8 * b.s;
+    x.save();
+    x.shadowColor = "rgba(255,255,255,.95)"; x.shadowBlur = 16;
+    const g = x.createRadialGradient(pos.px - 2, pos.py - 2, 1, pos.px, pos.py, rad);
+    g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "#e2e8f0"); g.addColorStop(1, "#94a3b8");
+    x.beginPath(); x.arc(pos.px, pos.py, rad, 0, TAU); x.fillStyle = g; x.fill();
+    x.restore();
+  }
+  function burst(n) {
+    const cols = ["#fde047", "#67e8f9", "#f472b6", "#34d399", "#ffffff"];
+    for (let i = 0; i < n; i++) {
+      A.fx.push({x: CX + (Math.random() - 0.5) * 80, y: CY, vx: (Math.random() - 0.5) * 6, vy: -Math.random() * 7 - 2,
+        rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.3, life: 1, c: cols[i % cols.length]});
+    }
+  }
+  function drawFx(x) {
+    A.fx = A.fx.filter(p => p.life > 0);
+    A.fx.forEach(p => {
+      p.vy += 0.2; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= 0.012;
+      x.save(); x.globalAlpha = Math.max(0, p.life);
+      x.translate(p.x, p.y); x.rotate(p.rot);
+      x.fillStyle = p.c; x.fillRect(-3, -2, 6, 4); x.restore();
+    });
+  }
+
+  /* ---------- кнопки для HTML ---------- */
+  window.pvOpen = open;
+  window.pvClose = close;
+  window.pvBet = placeBet;
+  window.pvCancelBet = cancelBet;
+  window.pvSetBet = v => setBet(v);
+  window.pvAdd = d => setBet(getBet() + d);
+  window.pvBetMul = f => setBet(getBet() * f);
+  window.pvBetMax = () => setBet(Math.min(balance, 100));
+  window.pvUI = renderPanel;
+  window.pvSendEmo = sendEmo;
+  window.iaOpenBet = iaOpenBet;
+  window.iaCloseBet = iaCloseBet;
+  window.iaToggleHelp = () => { const h = $i("ia-help"); if (h) h.hidden = !h.hidden; };
+})();
+
+</script>
 </body>
 </html>
