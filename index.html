@@ -7225,7 +7225,7 @@ bind();
   function zoneAt(r, x, y) {
     const dx = x - CX, dy = y - CY, d = Math.hypot(dx, dy);
     if (d < 14) return {i: -1, m: 0};
-    const a = mod(Math.atan2(dy, dx) + Math.PI / 2, TAU) / TAU;
+    const a = mod(mod(Math.atan2(dy, dx) + Math.PI / 2, TAU) / TAU - (r.rot || 0), 1);
     let acc = 0;
     for (let i = 0; i < r.players.length; i++) {
       const g0 = acc / r.total, g1 = (acc + r.players[i].amount) / r.total; acc += r.players[i].amount;
@@ -7278,7 +7278,7 @@ bind();
     // крайний случай (очень узкая зона): дотягиваем шарик до центра зоны победителя
     const ang = rnd() * TAU, traj0 = flyOnce(ang, 1800, N), n0 = traj0.length / 2, EXTRA = 45;
     let acc = 0; for (let i = 0; i < winIdx; i++) acc += r.players[i].amount;
-    const mid = (acc + r.players[winIdx].amount / 2) / r.total, ta = -Math.PI / 2 + mid * TAU;
+    const mid = (acc + r.players[winIdx].amount / 2) / r.total, ta = -Math.PI / 2 + ((r.rot || 0) + mid) * TAU;
     const tx = CX + Math.cos(ta) * 110, ty = CY + Math.sin(ta) * 110;
     const fx = traj0[(n0 - 1) * 2], fy = traj0[(n0 - 1) * 2 + 1];
     const traj = new Float32Array((n0 + EXTRA) * 2);
@@ -7347,7 +7347,7 @@ bind();
     const me = uid();
     r.players.forEach(p => {
       const g0 = acc / r.total, g1 = (acc + p.amount) / r.total; acc += p.amount;
-      const a0 = -Math.PI / 2 + g0 * TAU, a1 = -Math.PI / 2 + g1 * TAU;
+      const rot = r.rot || 0, a0 = -Math.PI / 2 + (rot + g0) * TAU, a1 = -Math.PI / 2 + (rot + g1) * TAU;
       const dim = won && won !== String(p.userid);
       x.save();
       x.globalAlpha = dim ? 0.3 : 1;
@@ -7367,7 +7367,7 @@ bind();
     let acc = 0;
     r.players.forEach(p => {
       const g0 = acc / r.total, g1 = (acc + p.amount) / r.total; acc += p.amount;
-      const ang = -Math.PI / 2 + ((g0 + g1) / 2) * TAU;
+      const ang = -Math.PI / 2 + ((r.rot || 0) + (g0 + g1) / 2) * TAU;
       const ax = CX + Math.cos(ang) * 104, ay = CY + Math.sin(ang) * 104, sz = 34;
       x.save();
       x.beginPath(); x.arc(ax, ay, sz / 2 + 2, 0, TAU); x.fillStyle = "#fff"; x.fill();
